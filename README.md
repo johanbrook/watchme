@@ -1,4 +1,4 @@
-mementapp
+Mementapp
 =========
 
-Android app for keeping track of movies
+Android app for keeping track of movies.
