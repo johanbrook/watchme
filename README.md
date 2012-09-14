@@ -1,4 +1,4 @@
-mementapp
+WatchMe App for Android
 =========
 
-Android app for keeping track of movies
+Android app for keeping track of movies.
