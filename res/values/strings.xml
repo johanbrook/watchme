@@ -5,5 +5,8 @@
     <string name="menu_settings">Settings</string>
     <string name="title_activity_main">Movies</string>
     <string name="no_movies_found">No movies found</string>
+    <string name="add_movie_button">Add Movie</string>
+    <string name="title_activity_add_movie">Add Movie</string>
+    <string name="add_movie">Add Movie</string>
 
 </resources>
