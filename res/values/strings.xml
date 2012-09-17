@@ -3,6 +3,7 @@
     <string name="app_name">WatchMe</string>
     <string name="hello_world">WatchMe app!</string>
     <string name="menu_settings">Settings</string>
-    <string name="title_activity_main">MainActivity</string>
+    <string name="title_activity_main">Movies</string>
+    <string name="no_movies_found">No movies found</string>
 
 </resources>
