@@ -1,5 +1,10 @@
-package se.chalmers.watchme;
+package se.chalmers.watchme.activity;
 
+import se.chalmers.watchme.R;
+import se.chalmers.watchme.R.id;
+import se.chalmers.watchme.R.layout;
+import se.chalmers.watchme.R.menu;
+import se.chalmers.watchme.model.Movie;
 import android.os.Bundle;
 import android.annotation.SuppressLint;
 import android.app.Activity;

@@ -5,7 +5,7 @@
  * The higher rating a movie has, the more you want to see it. 
  */
 
-package se.chalmers.watchme;
+package se.chalmers.watchme.model;
 
 import java.io.Serializable;
 import java.util.LinkedList;

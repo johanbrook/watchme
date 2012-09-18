@@ -1,7 +1,8 @@
-package se.chalmers.watchme;
+package se.chalmers.watchme.activity;
 
 import java.io.Serializable;
 
+import se.chalmers.watchme.R;
 import android.os.Bundle;
 import android.app.ListActivity;
 import android.content.Intent;
@@ -22,7 +23,7 @@ public class MainActivity extends ListActivity {
         setContentView(R.layout.activity_main);
         
         this.moviesAdapter = new ArrayAdapter<Serializable>(this, android.R.layout.simple_list_item_1);
-        setListAdapter(moviesAdapter);
+        setListAdapter(this.moviesAdapter);
     }
     
     @Override
