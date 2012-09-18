@@ -39,10 +39,10 @@ public class AddMovieActivity extends Activity {
 				String query = textField.getText().toString();
 				
 				Intent home = new Intent(context, MainActivity.class);
-				home.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 				home.putExtra("movie", query);
+				setResult(RESULT_OK, home);
 				
-				startActivity(home);
+				finish();
 			}
 		});
     }

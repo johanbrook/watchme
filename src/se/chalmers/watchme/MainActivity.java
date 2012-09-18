@@ -5,35 +5,36 @@ import java.util.Arrays;
 import java.util.List;
 
 import android.os.Bundle;
-import android.app.Activity;
 import android.app.ListActivity;
 import android.content.Intent;
-import android.support.v4.app.NavUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 
 public class MainActivity extends ListActivity {
 	
-	private List<String> list;
 	private ArrayAdapter<String> moviesAdapter;
+	
+	static final int ADD_MOVIE_REQUEST = 1;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         
-        String movie = getIntent().getStringExtra("movie");
-        
+        // Initial data
         String[] strings = {"The Lord Of The Rings", "The Godfather", "Star Wars"};
-        list = new ArrayList<String>(Arrays.asList(strings));
+        List<String> list = new ArrayList<String>(Arrays.asList(strings));
         
-        if (movie != null) {
-        	list.add(movie);
-        }
-        
-        moviesAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, list);
+        this.moviesAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, list);
         setListAdapter(moviesAdapter);
+    }
+    
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    	if(requestCode == ADD_MOVIE_REQUEST && resultCode == RESULT_OK) {
+    		this.moviesAdapter.add(data.getStringExtra("movie"));
+    	}
     }
 
     @Override
@@ -44,9 +45,11 @@ public class MainActivity extends ListActivity {
     
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Intent intent = new Intent(this, AddMovieActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(intent);
+        
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setClass(this, AddMovieActivity.class);
+        
+        startActivityForResult(intent, ADD_MOVIE_REQUEST);
         
         return true;
     }
