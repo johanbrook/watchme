@@ -34,7 +34,6 @@ public class AddMovieActivity extends Activity {
         
         this.addButton.setOnClickListener(new OnClickListener() {
 			
-			@Override
 			public void onClick(View v) {
 				String query = textField.getText().toString();
 				
