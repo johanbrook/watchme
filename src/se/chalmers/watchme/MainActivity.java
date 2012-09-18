@@ -1,9 +1,6 @@
 package se.chalmers.watchme;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
+import java.io.Serializable;
 
 import android.os.Bundle;
 import android.app.ListActivity;
@@ -14,28 +11,24 @@ import android.widget.ArrayAdapter;
 
 public class MainActivity extends ListActivity {
 	
-	private ArrayAdapter<String> moviesAdapter;
+	public static final int ADD_MOVIE_REQUEST = 1;
 	
-	static final int ADD_MOVIE_REQUEST = 1;
+	private ArrayAdapter<Serializable> moviesAdapter;
+	
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         
-        Movie movie = (Movie)getIntent().getSerializableExtra("movie");
-        
-        list = new LinkedList<Movie>();
-        list.add(new Movie("Example Movie"));
-        
-        this.moviesAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, list);
+        this.moviesAdapter = new ArrayAdapter<Serializable>(this, android.R.layout.simple_list_item_1);
         setListAdapter(moviesAdapter);
     }
     
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     	if(requestCode == ADD_MOVIE_REQUEST && resultCode == RESULT_OK) {
-    		this.moviesAdapter.add(data.getStringExtra("movie"));
+    		this.moviesAdapter.add(data.getSerializableExtra("movie"));
     	}
     }
 

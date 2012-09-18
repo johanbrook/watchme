@@ -35,10 +35,10 @@ public class AddMovieActivity extends Activity {
         this.addButton.setOnClickListener(new OnClickListener() {
 			
 			public void onClick(View v) {
-				Movie query = new Movie(textField.getText().toString());
+				Movie movie = new Movie(textField.getText().toString());
 				
 				Intent home = new Intent(context, MainActivity.class);
-				home.putExtra("movie", query);
+				home.putExtra("movie", movie);
 				setResult(RESULT_OK, home);
 				
 				finish();
