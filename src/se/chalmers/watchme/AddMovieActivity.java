@@ -35,7 +35,7 @@ public class AddMovieActivity extends Activity {
         this.addButton.setOnClickListener(new OnClickListener() {
 			
 			public void onClick(View v) {
-				String query = textField.getText().toString();
+				Movie query = new Movie(textField.getText().toString());
 				
 				Intent home = new Intent(context, MainActivity.class);
 				home.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

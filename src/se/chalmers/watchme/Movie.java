@@ -7,10 +7,11 @@
 
 package se.chalmers.watchme;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
-public class Movie {
+public class Movie implements Serializable {
 	private String title, note;
 	private int rating;
 	private List<String> tags;
@@ -61,5 +62,29 @@ public class Movie {
 	 */
 	public void setRating(int newRating) {
 		rating = newRating;
+	}
+	
+	/**
+	 * @return The title of the Movie.
+	 */
+	public String getTitle() {
+		return title;
+	}
+	
+	@Override
+	public String toString() {
+		return title;
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if(o == null) {
+			return false;
+		} else if(this.getClass() != o.getClass()) {
+			return false;
+		} else {
+			Movie tmp = (Movie)o;
+			return this.title == tmp.title;
+		}
 	}
 }

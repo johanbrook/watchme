@@ -2,6 +2,7 @@ package se.chalmers.watchme;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 import android.os.Bundle;
@@ -15,24 +16,24 @@ import android.widget.ArrayAdapter;
 
 public class MainActivity extends ListActivity {
 	
-	private List<String> list;
-	private ArrayAdapter<String> moviesAdapter;
+	private List<Movie> list;
+	private ArrayAdapter<Movie> moviesAdapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         
-        String movie = getIntent().getStringExtra("movie");
+        Movie movie = (Movie)getIntent().getSerializableExtra("movie");
         
-        String[] strings = {"The Lord Of The Rings", "The Godfather", "Star Wars"};
-        list = new ArrayList<String>(Arrays.asList(strings));
+        list = new LinkedList<Movie>();
+        list.add(new Movie("Example Movie"));
         
         if (movie != null) {
         	list.add(movie);
         }
         
-        moviesAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, list);
+        moviesAdapter = new ArrayAdapter<Movie>(this, android.R.layout.simple_list_item_1, list);
         setListAdapter(moviesAdapter);
     }
 
