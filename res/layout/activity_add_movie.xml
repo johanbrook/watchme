@@ -11,7 +11,8 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="20dp"
         android:ems="10"
-        android:inputType="textCapWords" >
+        android:inputType="textCapWords" 
+        android:hint="@string/enter_movie_hint" >
 
         <requestFocus />
     </EditText>

@@ -8,5 +8,6 @@
     <string name="add_movie_button">Add Movie</string>
     <string name="title_activity_add_movie">Add Movie</string>
     <string name="add_movie">Add Movie</string>
+    <string name="enter_movie_hint">Enter movie title</string>
 
 </resources>
