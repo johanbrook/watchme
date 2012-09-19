@@ -4,6 +4,7 @@
 /gen
 
 *.class
+*.metadata
 
 # Package Files #
 *.jar
