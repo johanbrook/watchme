@@ -3,6 +3,8 @@
  * 
  * A Movie contains information about its title, rating, note and tags.
  * The higher rating a movie has, the more you want to see it. 
+ * 
+ * @author lisastenberg
  */
 
 package se.chalmers.watchme.model;
@@ -57,11 +59,10 @@ public class Movie implements Serializable {
 	}
 	
 	/**
-	 * Change the rating of the Movie.
-	 * @param newRating the new rating.
+	 * @return A list of tags connected to the Movie.
 	 */
-	public void setRating(int newRating) {
-		rating = newRating;
+	public List<String> getTags() {
+		return tags;
 	}
 	
 	/**
@@ -69,6 +70,36 @@ public class Movie implements Serializable {
 	 */
 	public String getTitle() {
 		return title;
+	}
+	
+	/**
+	 * @return The note of the Movie.
+	 */
+	public String getNote() {
+		return note;
+	}
+	
+	/**
+	 * Set the note of the Movie to the given parameter.
+	 * @param note The new note.
+	 */
+	public void setNote(String note) {
+		this.note = note;
+	}
+	
+	/**
+	 * @return The rating of the Movie.
+	 */
+	public int getRating() {
+		return rating;
+	}
+	
+	/**
+	 * Change the rating of the Movie.
+	 * @param rating The new rating.
+	 */
+	public void setRating(int rating) {
+		this.rating = rating;
 	}
 	
 	@Override
