@@ -1,4 +1,4 @@
-package se.chalmers.watchme;
+package se.chalmers.watchme.model;
 
 import java.io.Serializable;
 
