@@ -1,8 +1,11 @@
 package se.chalmers.watchme.activity;
 
 import java.io.Serializable;
+import java.util.List;
 
 import se.chalmers.watchme.R;
+import se.chalmers.watchme.database.DatabaseHandler;
+import se.chalmers.watchme.model.Movie;
 import android.os.Bundle;
 import android.app.ListActivity;
 import android.content.Intent;
@@ -15,6 +18,7 @@ public class MainActivity extends ListActivity {
 	public static final int ADD_MOVIE_REQUEST = 1;
 	
 	private ArrayAdapter<Serializable> moviesAdapter;
+	private DatabaseHandler db;
 	
 
     @Override
@@ -24,12 +28,24 @@ public class MainActivity extends ListActivity {
         
         this.moviesAdapter = new ArrayAdapter<Serializable>(this, android.R.layout.simple_list_item_1);
         setListAdapter(this.moviesAdapter);
+        
+        db = new DatabaseHandler(this);
+		List<Movie> list = db.getAllMovies();
+		for(Movie m : list) {
+			this.moviesAdapter.add(m);
+		}
     }
     
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     	if(requestCode == ADD_MOVIE_REQUEST && resultCode == RESULT_OK) {
-    		this.moviesAdapter.add(data.getSerializableExtra("movie"));
+    		// Get all movies from the database and add to the list.
+    		// TODO: Should we just use the old list instead of clear and just add the last movie to moviesAdapter?
+    		this.moviesAdapter.clear();
+    		List<Movie> list = db.getAllMovies();
+    		for(Movie m : list) {
+    			this.moviesAdapter.add(m);
+    		}
     	}
     }
 

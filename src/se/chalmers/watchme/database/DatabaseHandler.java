@@ -1,6 +1,6 @@
 package se.chalmers.watchme.database;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import se.chalmers.watchme.model.Movie;
@@ -16,7 +16,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "movieManager";
     private static final String TABLE_MOVIES = "movies";
  
-    // Contacts Table Columns names
+    // The Columns names in the table Movies
     private static final String KEY_ID = "id";
     private static final String KEY_TITLE = "title";
     private static final String KEY_RATING = "rating";
@@ -26,7 +26,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 	
-	//Creates new tables
 	@Override
 	public void onCreate(SQLiteDatabase db) {
 		String CREATE_CONTACTS_TABLE = "CREATE TABLE " + TABLE_MOVIES + "("
@@ -35,7 +34,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.execSQL(CREATE_CONTACTS_TABLE);
 	}
 
-	//Updrading database
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 		db.execSQL("DROP TABLE IF EXISTS " + TABLE_MOVIES);
@@ -68,12 +66,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		SQLiteDatabase db = this.getReadableDatabase();
 
 		Cursor cursor = db.query(TABLE_MOVIES, new String[] { KEY_ID,
-				KEY_TITLE, KEY_RATING, KEY_NOTE }, KEY_ID + "=?",
+				KEY_TITLE, KEY_RATING, KEY_NOTE }, KEY_ID + " = ?",
 				new String[] { String.valueOf(id) }, null, null, null, null);
 		if (cursor != null)
 			cursor.moveToFirst();
 
-		Movie movie = new Movie(cursor.getString(0), Integer.parseInt(cursor.getString(1)), cursor.getString(2));
+		Movie movie = new Movie(cursor.getString(1), Integer.parseInt(cursor.getString(1)), cursor.getString(3));
 		return movie;
 	}
 	
@@ -81,7 +79,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 	 * @return All Movies stored in the database.
 	 */
 	public List<Movie> getAllMovies() {
-		List<Movie> allMovies = new ArrayList<Movie>();
+		List<Movie> allMovies = new LinkedList<Movie>();
 
 		String selectQuery = "SELECT * FROM " + TABLE_MOVIES;
 
@@ -90,13 +88,48 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
 		if (cursor.moveToFirst()) {
 			do {
-				Movie movie = new Movie(cursor.getString(0),
-						Integer.parseInt(cursor.getString(1)),
-						cursor.getString(2));
+				Movie movie = new Movie(cursor.getString(1),
+						Integer.parseInt(cursor.getString(2)),
+						cursor.getString(3));
 				allMovies.add(movie);
 			} while (cursor.moveToNext());
 		}
 		
 		return allMovies;
 	}
+	
+	
+	/**
+	 * Updates information about a Movie in the database.
+	 * @param movie The movie you want to update.
+	 * @return Number of updated rows.
+	 */
+	/*
+	 * NOT WORKING YET
+	public int updateMovie(Movie movie) {
+		SQLiteDatabase db = this.getWritableDatabase();
+		
+		ContentValues values = new ContentValues();
+	    values.put(KEY_TITLE, movie.getTitle()); // Contact Name
+	    values.put(KEY_RATING, movie.getRating()); // Contact Phone Number
+	    values.put(KEY_NOTE, movie.getNote());
+		
+	    //TODO: Get movie:id. Where?
+	    return db.update(TABLE_MOVIES, values, KEY_ID + " = ?", new String[] {"movieid"});
+	}
+	*/
+	
+	/**
+	 * Deletes a Movie from the database.
+	 * @param movie The movie you want to delete.
+	 * @return Number of deleted rows.
+	 */
+	/*
+	 * NOT WORKING YET
+	public int deleteMovie(Movie movie) {
+		SQLiteDatabase db = this.getWritableDatabase();
+		
+		return db.delete(TABLE_MOVIES, KEY_ID + " = ?", new String[] {"movieid"});
+	}
+	*/
 }
