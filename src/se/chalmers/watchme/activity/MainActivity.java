@@ -29,23 +29,15 @@ public class MainActivity extends ListActivity {
         this.moviesAdapter = new ArrayAdapter<Serializable>(this, android.R.layout.simple_list_item_1);
         setListAdapter(this.moviesAdapter);
         
-        db = new DatabaseHandler(this);
-		List<Movie> list = db.getAllMovies();
-		for(Movie m : list) {
-			this.moviesAdapter.add(m);
-		}
+        this.db = new DatabaseHandler(this);
+		
+        refreshMovieList();
     }
     
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     	if(requestCode == ADD_MOVIE_REQUEST && resultCode == RESULT_OK) {
-    		// Get all movies from the database and add to the list.
-    		// TODO: Should we just use the old list instead of clear and just add the last movie to moviesAdapter?
-    		this.moviesAdapter.clear();
-    		List<Movie> list = db.getAllMovies();
-    		for(Movie m : list) {
-    			this.moviesAdapter.add(m);
-    		}
+    		refreshMovieList();
     	}
     }
 
@@ -64,5 +56,14 @@ public class MainActivity extends ListActivity {
         startActivityForResult(intent, ADD_MOVIE_REQUEST);
         
         return true;
+    }
+    
+    private void refreshMovieList() {
+    	this.moviesAdapter.clear();
+    	List<Movie> list = this.db.getAllMovies();
+		
+    	for(Movie m : list) {
+			this.moviesAdapter.add(m);
+		}
     }
 }
