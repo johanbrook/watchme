@@ -3,11 +3,15 @@ package se.chalmers.watchme.activity;
 import java.io.Serializable;
 
 import se.chalmers.watchme.R;
+import se.chalmers.watchme.model.Movie;
 import android.os.Bundle;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 
 public class MainActivity extends ListActivity {
@@ -24,6 +28,8 @@ public class MainActivity extends ListActivity {
         
         this.moviesAdapter = new ArrayAdapter<Serializable>(this, android.R.layout.simple_list_item_1);
         setListAdapter(this.moviesAdapter);
+        
+        this.getListView().setOnItemLongClickListener(new OnDeleteListener());
     }
     
     @Override
@@ -48,5 +54,17 @@ public class MainActivity extends ListActivity {
         startActivityForResult(intent, ADD_MOVIE_REQUEST);
         
         return true;
+    }
+    
+    
+    private class OnDeleteListener implements OnItemLongClickListener {
+    	public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+			
+			Movie movie = (Movie) getListView().getItemAtPosition(position);
+			moviesAdapter.remove(movie);
+			
+			return true;
+		}
+    	
     }
 }
