@@ -49,6 +49,7 @@ public class AddMovieActivity extends Activity {
 				
 				Intent home = new Intent(context, MainActivity.class);
 				setResult(RESULT_OK, home);
+				home.putExtra("movie", movie);
 				
 				finish();
 			}

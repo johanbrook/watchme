@@ -1,8 +1,5 @@
 package se.chalmers.watchme.activity;
 
-import java.io.Serializable;
-import java.util.List;
-
 import se.chalmers.watchme.R;
 import se.chalmers.watchme.database.DatabaseHandler;
 import se.chalmers.watchme.model.Movie;
@@ -20,7 +17,7 @@ public class MainActivity extends ListActivity {
 	
 	public static final int ADD_MOVIE_REQUEST = 1;
 	
-	private ArrayAdapter<Serializable> moviesAdapter;
+	private ArrayAdapter<Movie> moviesAdapter;
 	private DatabaseHandler db;
 	
 
@@ -29,19 +26,18 @@ public class MainActivity extends ListActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         
-        this.moviesAdapter = new ArrayAdapter<Serializable>(this, android.R.layout.simple_list_item_1);
-        setListAdapter(this.moviesAdapter);
-        
         this.db = new DatabaseHandler(this);
+        
+        this.moviesAdapter = new ArrayAdapter<Movie>(this, android.R.layout.simple_list_item_1, this.db.getAllMovies());
+        setListAdapter(this.moviesAdapter);
 		
-        refreshMovieList();
         this.getListView().setOnItemLongClickListener(new OnDeleteListener());
     }
     
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     	if(requestCode == ADD_MOVIE_REQUEST && resultCode == RESULT_OK) {
-    		refreshMovieList();
+    		this.moviesAdapter.add((Movie) data.getSerializableExtra("movie"));
     	}
     }
 
@@ -62,21 +58,19 @@ public class MainActivity extends ListActivity {
         return true;
     }
     
-    private void refreshMovieList() {
-    	this.moviesAdapter.clear();
-    	List<Movie> list = this.db.getAllMovies();
-		
-    	for(Movie m : list) {
-			this.moviesAdapter.add(m);
-		}
-    }
     
     private class OnDeleteListener implements OnItemLongClickListener {
     	public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
 			
 			Movie movie = (Movie) getListView().getItemAtPosition(position);
+			
+			// TODO: We don't want to maintain two different datasets (the DB and the list adapter).
+			// Make the adapter somehow listen to the DB instead.
+			// Check out the use of Cursors here: http://developer.android.com/guide/topics/ui/binding.html
+			// And we'll perhaps in the future use Content Providers instead.
 			db.deleteMovie(movie);
-			refreshMovieList();
+			moviesAdapter.remove(movie);
+			
 			return true;
 		}    	
     }
