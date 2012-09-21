@@ -140,5 +140,34 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		
 		return db.delete(TABLE_MOVIES, KEY_MOVIE_ID + " = ?", new String[] { String.valueOf(movie.getId()) });
 	}
+	
+	/**
+	 * Adds a tag to the database.
+	 * @param tag The tag you want to add.
+	 */
+	public void addTag(Tag tag) {
+		
+	}
+	
+	/**
+	 * @return All Tags stored in the database.
+	 */
+	public List<Tag> getAllTags() {
+		List<Tag> allTags = new LinkedList<Tag>();
 
+		String selectQuery = "SELECT * FROM " + TABLE_TAGS;
+
+		SQLiteDatabase db = this.getWritableDatabase();
+		Cursor cursor = db.rawQuery(selectQuery, null);
+
+		if (cursor.moveToFirst()) {
+			do {
+				Tag tag = new Tag(cursor.getString(1), cursor.getString(1));
+				tag.setId(Long.parseLong(cursor.getString(0)));
+				allTags.add(tag);
+			} while (cursor.moveToNext());
+		}
+		
+		return allTags;
+	}
 }

@@ -14,6 +14,8 @@ public class Tag implements Serializable {
 	private String slug;
 	private long id;
 	
+	//TODO: The construcor should just look like this: Tag(String name)
+	//Slug should be auto-generated
 	public Tag(String name, String slug) {
 		this.name = name;
 		this.slug = slug;
