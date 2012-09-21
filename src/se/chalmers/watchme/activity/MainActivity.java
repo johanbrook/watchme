@@ -11,6 +11,9 @@ import android.app.ListActivity;
 import android.content.Intent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 
 public class MainActivity extends ListActivity {
@@ -32,6 +35,7 @@ public class MainActivity extends ListActivity {
         this.db = new DatabaseHandler(this);
 		
         refreshMovieList();
+        this.getListView().setOnItemLongClickListener(new OnDeleteListener());
     }
     
     @Override
@@ -65,5 +69,15 @@ public class MainActivity extends ListActivity {
     	for(Movie m : list) {
 			this.moviesAdapter.add(m);
 		}
+    }
+    
+    private class OnDeleteListener implements OnItemLongClickListener {
+    	public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+			
+			Movie movie = (Movie) getListView().getItemAtPosition(position);
+			moviesAdapter.remove(movie);
+			
+			return true;
+		}    	
     }
 }

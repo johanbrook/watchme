@@ -10,20 +10,46 @@ import java.io.Serializable;
 
 public class Tag implements Serializable {
 
-	String name;
-	String slug;
+	private String name;
+	private String slug;
 	
 	public Tag(String name, String slug) {
 		this.name = name;
 		this.slug = slug;
 	}
 	
+	/*
+	 * TODO: 	Add util function which takes a string and "slugifies" it
+	 * 			i.e. removes unwanted characters: "Komedi film" => "komedi-film".
+	 * 			(if we need the 'slug' attribute at all.
+	*/ 
+	
 	public String getName() {
-		return name;
+		return this.name;
 	}
 	
 	public String getSlug() {
-		return slug;
+		return this.slug;
 	}
+	
+	public String toString() {
+		return this.name;
+	}
+	
+	public boolean equals(Object obj) {
+		if(this == obj) {
+			return true;
+		}
+		
+		if(obj == null || getClass() != obj.getClass()) {
+			return false;
+		}
+		
+		Tag t = (Tag) obj;
+		
+		return this.name.equalsIgnoreCase(t.name);
+	}
+	
+	
 	
 }
