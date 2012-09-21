@@ -75,8 +75,8 @@ public class MainActivity extends ListActivity {
     	public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
 			
 			Movie movie = (Movie) getListView().getItemAtPosition(position);
-			moviesAdapter.remove(movie);
-			
+			db.deleteMovie(movie);
+			refreshMovieList();
 			return true;
 		}    	
     }
