@@ -17,7 +17,7 @@ public class Movie implements Serializable {
 	private String title, note;
 	private int rating;
 	private long id;
-	private List<String> tags;
+	private List<Tag> tags;
 	
 	/**
 	 * Creates a movie with the given title, rating 0 and an empty note.
@@ -37,7 +37,7 @@ public class Movie implements Serializable {
 		this.title = title;
 		this.note = note;
 		this.rating = rating;
-		tags = new LinkedList<String>();
+		tags = new LinkedList<Tag>();
 	}
 	
 	/**
@@ -45,7 +45,7 @@ public class Movie implements Serializable {
 	 * 
 	 * @param tag The tag you want to add.
 	 */
-	public void addTag(String tag) {
+	public void addTag(Tag tag) {
 		tags.add(tag);
 	}
 	
@@ -55,14 +55,14 @@ public class Movie implements Serializable {
 	 * @param tag The tag you want to remove.
 	 * @return true if the removal went through.
 	 */
-	public boolean removeTag(String tag) {
+	public boolean removeTag(Tag tag) {
 		return tags.remove(tag);
 	}
 	
 	/**
 	 * @return A list of tags connected to the Movie.
 	 */
-	public List<String> getTags() {
+	public List<Tag> getTags() {
 		return tags;
 	}
 	
