@@ -16,6 +16,7 @@ import java.util.List;
 public class Movie implements Serializable {
 	private String title, note;
 	private int rating;
+	private long id;
 	private List<String> tags;
 	
 	/**
@@ -63,6 +64,21 @@ public class Movie implements Serializable {
 	 */
 	public List<String> getTags() {
 		return tags;
+	}
+	
+	/**
+	 * @return the ID of the Movie.
+	 */
+	public long getId() {
+		return id;
+	}
+	
+	/**
+	 * Sets the id of the Movie.
+	 * @param id the Id you want to set.
+	 */
+	public void setId(long id) {
+		this.id = id;
 	}
 	
 	/**

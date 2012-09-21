@@ -54,7 +54,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 	    values.put(KEY_NOTE, movie.getNote());
 	 
 	    // Inserting Row
-	    db.insert(TABLE_MOVIES, null, values);
+	    long movieId = db.insert(TABLE_MOVIES, null, values);
+	    movie.setId(movieId);
 	    db.close(); // Closing database connection
 	}
 	
@@ -104,8 +105,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 	 * @param movie The movie you want to update.
 	 * @return Number of updated rows.
 	 */
-	/*
-	 * NOT WORKING YET
 	public int updateMovie(Movie movie) {
 		SQLiteDatabase db = this.getWritableDatabase();
 		
@@ -114,22 +113,17 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 	    values.put(KEY_RATING, movie.getRating()); // Contact Phone Number
 	    values.put(KEY_NOTE, movie.getNote());
 		
-	    //TODO: Get movie:id. Where?
-	    return db.update(TABLE_MOVIES, values, KEY_ID + " = ?", new String[] {"movieid"});
+	    return db.update(TABLE_MOVIES, values, KEY_ID + " = ?", new String[] { String.valueOf(movie.getId()) });
 	}
-	*/
 	
 	/**
 	 * Deletes a Movie from the database.
 	 * @param movie The movie you want to delete.
 	 * @return Number of deleted rows.
 	 */
-	/*
-	 * NOT WORKING YET
 	public int deleteMovie(Movie movie) {
 		SQLiteDatabase db = this.getWritableDatabase();
 		
-		return db.delete(TABLE_MOVIES, KEY_ID + " = ?", new String[] {"movieid"});
+		return db.delete(TABLE_MOVIES, KEY_ID + " = ?", new String[] { String.valueOf(movie.getId()) });
 	}
-	*/
 }
