@@ -41,6 +41,10 @@ public class AddMovieActivity extends Activity {
         
         db = new DatabaseHandler(this);
         
+        /**
+         * Click callback. Create a new Movie object and set it on
+         * the Intent, and then finish this Activity.
+         */
         this.addButton.setOnClickListener(new OnClickListener() {
 			
 			public void onClick(View v) {

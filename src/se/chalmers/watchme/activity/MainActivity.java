@@ -34,6 +34,11 @@ public class MainActivity extends ListActivity {
         this.getListView().setOnItemLongClickListener(new OnDeleteListener());
     }
     
+    /**
+     * Callback for getting data from the "Add movie" activity.
+     * 
+     * On successful creation, add the created Movie object to this list.
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     	if(requestCode == ADD_MOVIE_REQUEST && resultCode == RESULT_OK) {
@@ -47,6 +52,9 @@ public class MainActivity extends ListActivity {
         return true;
     }
     
+    /**
+     * When the user clicks the 'Add Movie' button in the Action bar.
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         
@@ -58,7 +66,13 @@ public class MainActivity extends ListActivity {
         return true;
     }
     
-    
+    /**
+     * The listener for when the user does a long-tap on an item in the list.
+     * 
+     * The Movie object in the list should be removed from the list and database.
+     * 
+     * @author Johan
+     */
     private class OnDeleteListener implements OnItemLongClickListener {
     	public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
 			
