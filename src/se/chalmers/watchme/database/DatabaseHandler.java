@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import se.chalmers.watchme.model.Movie;
+import se.chalmers.watchme.model.Tag;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -15,12 +16,17 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 1;
     private static final String DATABASE_NAME = "movieManager";
     private static final String TABLE_MOVIES = "movies";
+    private static final String TABLE_TAGS = "tags";
  
     // The Columns names in the table Movies
-    private static final String KEY_ID = "id";
+    private static final String KEY_MOVIE_ID = "id";
     private static final String KEY_TITLE = "title";
     private static final String KEY_RATING = "rating";
     private static final String KEY_NOTE = "note";
+    
+    // The Columns names in the table Tags
+    private static final String KEY_TAG_ID = "id";
+    private static final String KEY_NAME = "name";
  
     public DatabaseHandler(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -28,15 +34,21 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 	
 	@Override
 	public void onCreate(SQLiteDatabase db) {
-		String CREATE_CONTACTS_TABLE = "CREATE TABLE " + TABLE_MOVIES + "("
-                + KEY_ID + " INTEGER PRIMARY KEY," + KEY_TITLE + " TEXT,"
+		String CREATE_MOVIES_TABLE = "CREATE TABLE " + TABLE_MOVIES + "("
+                + KEY_MOVIE_ID + " INTEGER PRIMARY KEY," + KEY_TITLE + " TEXT,"
                 + KEY_RATING + " INTEGER," + KEY_NOTE + " TEXT" +  ")";
-        db.execSQL(CREATE_CONTACTS_TABLE);
+        db.execSQL(CREATE_MOVIES_TABLE);
+        
+        String CREATE_TAGS_TABLE = "CREATE TABLE " + TABLE_TAGS + "("
+        		+ KEY_TAG_ID + " INTEGER PRIMARY KEY, " + KEY_NAME + " TEXT)";
+        
+        db.execSQL(CREATE_TAGS_TABLE);
 	}
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 		db.execSQL("DROP TABLE IF EXISTS " + TABLE_MOVIES);
+		db.execSQL("DROP TABLE IF EXISTS " + TABLE_TAGS);
 		onCreate(db);
 	}
 	
@@ -66,8 +78,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 	public Movie getMovie(int id) {
 		SQLiteDatabase db = this.getReadableDatabase();
 
-		Cursor cursor = db.query(TABLE_MOVIES, new String[] { KEY_ID,
-				KEY_TITLE, KEY_RATING, KEY_NOTE }, KEY_ID + " = ?",
+		Cursor cursor = db.query(TABLE_MOVIES, new String[] { KEY_MOVIE_ID,
+				KEY_TITLE, KEY_RATING, KEY_NOTE }, KEY_MOVIE_ID + " = ?",
 				new String[] { String.valueOf(id) }, null, null, null, null);
 		if (cursor != null)
 			cursor.moveToFirst();
@@ -115,7 +127,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 	    values.put(KEY_RATING, movie.getRating()); // Contact Phone Number
 	    values.put(KEY_NOTE, movie.getNote());
 		
-	    return db.update(TABLE_MOVIES, values, KEY_ID + " = ?", new String[] { String.valueOf(movie.getId()) });
+	    return db.update(TABLE_MOVIES, values, KEY_MOVIE_ID + " = ?", new String[] { String.valueOf(movie.getId()) });
 	}
 	
 	/**
@@ -126,6 +138,36 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 	public int deleteMovie(Movie movie) {
 		SQLiteDatabase db = this.getWritableDatabase();
 		
-		return db.delete(TABLE_MOVIES, KEY_ID + " = ?", new String[] { String.valueOf(movie.getId()) });
+		return db.delete(TABLE_MOVIES, KEY_MOVIE_ID + " = ?", new String[] { String.valueOf(movie.getId()) });
+	}
+	
+	/**
+	 * Adds a tag to the database.
+	 * @param tag The tag you want to add.
+	 */
+	public void addTag(Tag tag) {
+		
+	}
+	
+	/**
+	 * @return All Tags stored in the database.
+	 */
+	public List<Tag> getAllTags() {
+		List<Tag> allTags = new LinkedList<Tag>();
+
+		String selectQuery = "SELECT * FROM " + TABLE_TAGS;
+
+		SQLiteDatabase db = this.getWritableDatabase();
+		Cursor cursor = db.rawQuery(selectQuery, null);
+
+		if (cursor.moveToFirst()) {
+			do {
+				Tag tag = new Tag(cursor.getString(1), cursor.getString(1));
+				tag.setId(Long.parseLong(cursor.getString(0)));
+				allTags.add(tag);
+			} while (cursor.moveToNext());
+		}
+		
+		return allTags;
 	}
 }
