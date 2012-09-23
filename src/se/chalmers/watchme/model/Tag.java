@@ -11,7 +11,8 @@ import java.io.Serializable;
 
 public class Tag implements Serializable {
 
-	private String name, slug;
+	private String name;
+	private String slug;
 	private long id;
 	
 	/**
@@ -20,14 +21,14 @@ public class Tag implements Serializable {
 	 */
 	public Tag(String name) {
 		this.name = name;
-		slug = generateSlug(name);
+		this.slug = generateSlug(name);
 	}
 	
 	/**
 	 * @return the id of the Tag.
 	 */
 	public long getId() {
-		return id;
+		return this.id;
 	}
 	
 	/**
