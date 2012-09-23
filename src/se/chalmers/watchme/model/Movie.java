@@ -125,7 +125,9 @@ public class Movie implements Serializable {
 	
 	@Override
 	public boolean equals(Object o) {
-		if(o == null) {
+		if(this == o) {
+			return true;
+		} else if(o == null) {
 			return false;
 		} else if(this.getClass() != o.getClass()) {
 			return false;

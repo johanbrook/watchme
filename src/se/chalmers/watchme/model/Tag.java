@@ -3,29 +3,25 @@ package se.chalmers.watchme.model;
 import java.io.Serializable;
 
 /**
+ * A class that represents a Tag.
  * 
  * @author mattiashenriksson
- *
+ * @author lisastenberg
  */
 
 public class Tag implements Serializable {
 
-	private String name;
-	private String slug;
+	private String name, slug;
 	private long id;
 	
-	//TODO: The construcor should just look like this: Tag(String name)
-	//Slug should be auto-generated
-	public Tag(String name, String slug) {
+	/**
+	 * Creates a Tag and generates a slug after the given name.
+	 * @param name The name of the Tag.
+	 */
+	public Tag(String name) {
 		this.name = name;
-		this.slug = slug;
+		slug = generateSlug(name);
 	}
-	
-	/*
-	 * TODO: 	Add util function which takes a string and "slugifies" it
-	 * 			i.e. removes unwanted characters: "Komedi film" => "komedi-film".
-	 * 			(if we need the 'slug' attribute at all.
-	*/ 
 	
 	/**
 	 * @return the id of the Tag.
@@ -42,12 +38,27 @@ public class Tag implements Serializable {
 		this.id = id;
 	}
 	
+	/**
+	 * @return The name of the Tag.
+	 */
 	public String getName() {
 		return this.name;
 	}
 	
+	/**
+	 * @return The slug.
+	 */
 	public String getSlug() {
 		return this.slug;
+	}
+	
+	/**
+	 * Generates a slug of a given string.
+	 * @param s The string.
+	 * @return The slug.
+	 */
+	public static String generateSlug(String s) {
+		return s.toLowerCase();
 	}
 	
 	@Override
@@ -56,20 +67,16 @@ public class Tag implements Serializable {
 	}
 	
 	@Override
-	public boolean equals(Object obj) {
-		if(this == obj) {
+	public boolean equals(Object o) {
+		if(this == o) {
 			return true;
-		}
-		
-		if(obj == null || getClass() != obj.getClass()) {
+		} else if(o == null) {
 			return false;
+		} else if(this.getClass() != o.getClass()) {
+			return false;
+		} else {
+			Tag tmp = (Tag)o;
+			return this.getSlug().equals(tmp.getSlug());
 		}
-		
-		Tag t = (Tag) obj;
-		
-		return this.name.equalsIgnoreCase(t.name);
 	}
-	
-	
-	
 }

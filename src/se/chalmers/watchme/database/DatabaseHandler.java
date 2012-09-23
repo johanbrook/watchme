@@ -162,7 +162,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
 		if (cursor.moveToFirst()) {
 			do {
-				Tag tag = new Tag(cursor.getString(1), cursor.getString(1));
+				Tag tag = new Tag(cursor.getString(1));
 				tag.setId(Long.parseLong(cursor.getString(0)));
 				allTags.add(tag);
 			} while (cursor.moveToNext());
