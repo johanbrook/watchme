@@ -70,9 +70,7 @@ public class Tag implements Serializable {
 	public boolean equals(Object o) {
 		if(this == o) {
 			return true;
-		} else if(o == null) {
-			return false;
-		} else if(this.getClass() != o.getClass()) {
+		} else if(o == null || this.getClass() != o.getClass()) {
 			return false;
 		} else {
 			Tag tmp = (Tag)o;
