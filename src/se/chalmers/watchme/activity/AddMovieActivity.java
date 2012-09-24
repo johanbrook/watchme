@@ -30,7 +30,6 @@ import android.view.View.OnClickListener;
 public class AddMovieActivity extends Activity {
 	
 	private TextView textField;
-	private Button addButton;
 	private DatePicker picker;
 	
 	// The handler to interface with the notification system and scheduler
@@ -46,7 +45,6 @@ public class AddMovieActivity extends Activity {
         setContentView(R.layout.activity_add_movie);
         getActionBar().setDisplayHomeAsUpEnabled(true);
         
-        this.addButton = (Button) findViewById(R.id.add_movie_button);
         this.textField = (TextView) findViewById(R.id.movie_name_field);
         this.picker = (DatePicker) findViewById(R.id.date_picker);
         
@@ -63,6 +61,23 @@ public class AddMovieActivity extends Activity {
     	
     	// Set a notification for the date picked
     	
+    	setNotification();
+    	addMovie();
+		
+		finish();
+    }
+    
+    private void addMovie() {
+    	Movie movie = new Movie(textField.getText().toString());
+		db.addMovie(movie);
+		
+		Intent home = new Intent(this, MainActivity.class);
+		setResult(RESULT_OK, home);
+		home.putExtra("movie", movie);
+    }
+    
+    
+    private void setNotification() {
     	int day = this.picker.getDayOfMonth();
     	int month = this.picker.getMonth();
     	int year = this.picker.getYear();
@@ -77,20 +92,9 @@ public class AddMovieActivity extends Activity {
     	
     	this.notifications.setDateForNotification(date);
     	
-    	Toast.makeText(this, "Notification set for " + day + "/" + (month+1) + "/"+year, Toast.LENGTH_SHORT).show();
-    	
-    	
-    	// Create and save a new Movie object
-    	
-    	Movie movie = new Movie(textField.getText().toString());
-		db.addMovie(movie);
-		
-		Intent home = new Intent(AddMovieActivity.this, MainActivity.class);
-		setResult(RESULT_OK, home);
-		home.putExtra("movie", movie);
-		
-		finish();
+    	Toast.makeText(this, "Notification set for " + day + "/" + (month+1) + "/"+year, Toast.LENGTH_LONG).show();
     }
+    
     
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
