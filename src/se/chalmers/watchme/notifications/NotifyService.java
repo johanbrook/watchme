@@ -41,6 +41,11 @@ public class NotifyService extends Service {
 	}
 	
 	@Override
+	public void onDestroy() {
+		this.manager.cancel(NOTIFICATION);
+	}
+	
+	@Override
 	public int onStartCommand(Intent intent, int flags, int startID) {
 		// If this service was started by AlarmTask, show a notification
 		if(intent.getBooleanExtra(INTENT_NOTIFY, false)) {
