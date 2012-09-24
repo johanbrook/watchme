@@ -12,6 +12,7 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 
 public class AlarmTask implements Runnable {
 	
@@ -28,6 +29,7 @@ public class AlarmTask implements Runnable {
 	}
 	
 	public void run() {
+		Log.i("Custom", "Run alarm task");
 		Intent intent = new Intent(this.ctx, NotifyService.class);
 		intent.putExtra(NotifyService.INTENT_NOTIFY, true);
 		

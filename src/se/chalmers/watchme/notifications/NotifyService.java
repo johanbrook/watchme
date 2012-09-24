@@ -16,6 +16,7 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 import android.os.Binder;
+import android.util.Log;
 
 public class NotifyService extends Service {
 	
@@ -29,7 +30,7 @@ public class NotifyService extends Service {
 	private static final int NOTIFICATION = 666;
 	
 	/** Notification name */
-	public static final String INTENT_NOTIFY = "watchme";
+	public static final String INTENT_NOTIFY = "se.chalmers.watchme.notifications.INTENT_NOTIFY";
 	
 	private NotificationManager manager;
 	private IBinder binder = new ServiceBinder();
@@ -47,6 +48,8 @@ public class NotifyService extends Service {
 	
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startID) {
+		Log.i("Custom", "Received start id " + startID + ": " + intent.getBooleanExtra(INTENT_NOTIFY, false));
+		
 		// If this service was started by AlarmTask, show a notification
 		if(intent.getBooleanExtra(INTENT_NOTIFY, false)) {
 			showNotification();
@@ -79,10 +82,13 @@ public class NotifyService extends Service {
 			.setContentTitle(title)
 			.setContentText(text)
 			.setAutoCancel(true)
+			.setWhen(System.currentTimeMillis())
 			.build();
 		
 		// Send the notification to the system along with our id
 		this.manager.notify(NOTIFICATION, notification);
+		
+		Log.i("Custom", "Sent notification");
 		
 		// Stop and finish
 		this.stopSelf();

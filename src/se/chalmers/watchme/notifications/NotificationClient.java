@@ -13,6 +13,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
+import android.util.Log;
 
 public class NotificationClient {
 	
@@ -40,6 +41,7 @@ public class NotificationClient {
 	}
 	
 	public void connectToService() {
+		Log.i("Custom", "Connecting to service");
 		this.ctx.bindService(new Intent(this.ctx, NotificationService.class), this.connection, Context.BIND_AUTO_CREATE);
 		this.isBound = true;
 	}
@@ -52,6 +54,8 @@ public class NotificationClient {
 	}
 	
 	public void setDateForNotification(Calendar date) {
+		Log.i("Custom", "Set date for notification");
+		
 		if(this.service != null){
 			this.service.setAlarm(date);
 		}
