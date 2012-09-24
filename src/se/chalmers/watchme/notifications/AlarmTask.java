@@ -20,11 +20,11 @@ public class AlarmTask implements Runnable {
 	private final AlarmManager manager;
 	
 	public AlarmTask(Context context, Calendar date) {
-		// Get the Android alarm service
-		this.manager = (AlarmManager) this.ctx.getSystemService(Context.ALARM_SERVICE);
-				
 		this.ctx = context;
 		this.date = date;
+		
+		// Get the Android alarm service
+		this.manager = (AlarmManager) this.ctx.getSystemService(Context.ALARM_SERVICE);
 	}
 	
 	public void run() {
