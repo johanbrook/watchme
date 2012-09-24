@@ -7,6 +7,7 @@
 package se.chalmers.watchme.notifications;
 
 import se.chalmers.watchme.activity.MainActivity;
+import se.chalmers.watchme.model.Movie;
 import android.R;
 import android.annotation.TargetApi;
 import android.app.Notification;
@@ -29,8 +30,11 @@ public class NotifyService extends Service {
 	// ID to identify the notification
 	private static final int NOTIFICATION = 666;
 	
-	/** Notification name */
+	/** Intent key extra */
 	public static final String INTENT_NOTIFY = "se.chalmers.watchme.notifications.INTENT_NOTIFY";
+	
+	/** Intent key extra for a Movie */
+	public static final String INTENT_MOVIE = "se.chalmers.watchme.notifications.INTENT_MOVIE";
 	
 	private NotificationManager manager;
 	private IBinder binder = new ServiceBinder();
@@ -52,7 +56,7 @@ public class NotifyService extends Service {
 		
 		// If this service was started by AlarmTask, show a notification
 		if(intent.getBooleanExtra(INTENT_NOTIFY, false)) {
-			showNotification();
+			showNotification( (Movie) intent.getSerializableExtra(INTENT_MOVIE));
 		}
 		
 		// If the service is killed, it's no big deal as we've delivered our notification
@@ -66,9 +70,9 @@ public class NotifyService extends Service {
 	}
 	
 	@TargetApi(16)
-	private void showNotification() {
+	private void showNotification(Movie movie) {
 		CharSequence title = "Movie released";
-		CharSequence text = "The movie is released!";
+		CharSequence text = movie.getTitle() + " is released!";
 		int icon = R.drawable.ic_dialog_alert;
 		
 		// The intent to launch an activity if the user presses this notification
@@ -88,8 +92,7 @@ public class NotifyService extends Service {
 		// Send the notification to the system along with our id
 		this.manager.notify(NOTIFICATION, notification);
 		
-		Log.i("Custom", "Sent notification");
-		
+		Log.i("Custom", "Sent notification for movie "+ movie.getTitle());
 	}
 
 }

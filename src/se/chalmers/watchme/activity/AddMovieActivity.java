@@ -59,11 +59,7 @@ public class AddMovieActivity extends Activity {
      */
     public void onAddButtonClick(View view) {
     	
-    	// Set a notification for the date picked
-    	
-    	setNotification();
     	addMovie();
-		
 		finish();
     }
     
@@ -74,10 +70,17 @@ public class AddMovieActivity extends Activity {
 		Intent home = new Intent(this, MainActivity.class);
 		setResult(RESULT_OK, home);
 		home.putExtra("movie", movie);
+		
+		// Set a notification for the date picked
+    	setNotification(movie);
     }
     
     
-    private void setNotification() {
+    private void setNotification(Movie movie) {
+    	
+    	//TODO The date info below should come from the
+    	// movie model - not directly from the date picker
+    	
     	int day = this.picker.getDayOfMonth();
     	int month = this.picker.getMonth();
     	int year = this.picker.getYear();
@@ -90,7 +93,7 @@ public class AddMovieActivity extends Activity {
     	date.set(Calendar.MINUTE, 20);
     	date.set(Calendar.SECOND, 0);
     	
-    	this.notifications.setDateForNotification(date);
+    	this.notifications.setMovieNotification(movie, date);
     	
     	Toast.makeText(this, "Notification set for " + day + "/" + (month+1) + "/"+year, Toast.LENGTH_LONG).show();
     }

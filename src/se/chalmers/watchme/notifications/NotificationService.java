@@ -8,6 +8,8 @@ package se.chalmers.watchme.notifications;
 
 import java.util.Calendar;
 
+import se.chalmers.watchme.model.Movie;
+
 import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
@@ -37,9 +39,9 @@ public class NotificationService extends Service {
 		return START_STICKY;
 	}
 	
-	public void setAlarm(Calendar c) {
+	public void setAlarmTaskForMovie(Movie movie, Calendar date) {
 		Log.i("Custom", "Set alarm");
 		// Start a new task for the alarm on another thread (separated from the UI thread)
-		new AlarmTask(this, c).run();
+		new AlarmTask(this, movie, date).run();
 	}
 }

@@ -8,6 +8,8 @@ package se.chalmers.watchme.notifications;
 
 import java.util.Calendar;
 
+import se.chalmers.watchme.model.Movie;
+
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -18,10 +20,12 @@ public class AlarmTask implements Runnable {
 	
 	private final Context ctx;
 	private final Calendar date;
+	private final Movie movie;
 	private final AlarmManager manager;
 	
-	public AlarmTask(Context context, Calendar date) {
+	public AlarmTask(Context context, Movie movie, Calendar date) {
 		this.ctx = context;
+		this.movie = movie;
 		this.date = date;
 		
 		// Get the Android alarm service
@@ -32,6 +36,7 @@ public class AlarmTask implements Runnable {
 		Log.i("Custom", "Run alarm task");
 		Intent intent = new Intent(this.ctx, NotifyService.class);
 		intent.putExtra(NotifyService.INTENT_NOTIFY, true);
+		intent.putExtra(NotifyService.INTENT_MOVIE, movie);
 		
 		PendingIntent pending = PendingIntent.getService(this.ctx, 0, intent, 0);
 		

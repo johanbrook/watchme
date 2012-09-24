@@ -8,6 +8,8 @@ package se.chalmers.watchme.notifications;
 
 import java.util.Calendar;
 
+import se.chalmers.watchme.model.Movie;
+
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -52,11 +54,11 @@ public class NotificationClient {
 		}
 	}
 	
-	public void setDateForNotification(Calendar date) {
+	public void setMovieNotification(Movie movie, Calendar date) {
 		
 		if(this.service != null){
 			Log.i("Custom", "Set date for notification");
-			this.service.setAlarm(date);
+			this.service.setAlarmTaskForMovie(movie, date);
 		}
 	}
 }
