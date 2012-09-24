@@ -17,13 +17,22 @@
         <requestFocus />
     </EditText>
 
-    <Button
-        android:id="@+id/add_movie_button"
+    <DatePicker
+        android:id="@+id/date_picker"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/movieName"
+        android:layout_below="@+id/movie_name_field"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="72dp"
+        android:layout_marginTop="30dp" />
+
+    <Button
+        android:id="@+id/add_movie_button"
+        android:onClick="onAddButtonClick"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/date_picker"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="86dp"
         android:text="@string/add_movie" />
 
 </RelativeLayout>
