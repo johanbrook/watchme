@@ -40,15 +40,8 @@ public class NotificationClient {
 	}
 	
 	public void connectToService() {
-		this.ctx.bindService(new Intent(this.ctx, NotificationService.class), null, Context.BIND_AUTO_CREATE);
+		this.ctx.bindService(new Intent(this.ctx, NotificationService.class), this.connection, Context.BIND_AUTO_CREATE);
 		this.isBound = true;
-	}
-	
-	
-	public void setDateForNotification(Calendar date) {
-		if(this.service != null){
-			this.service.setAlarm(date);
-		}
 	}
 	
 	public void disconnectService() {
@@ -58,4 +51,9 @@ public class NotificationClient {
 		}
 	}
 	
+	public void setDateForNotification(Calendar date) {
+		if(this.service != null){
+			this.service.setAlarm(date);
+		}
+	}
 }
