@@ -12,6 +12,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         
+        <service android:name=".notifications.NotifyService" />
         <service android:name=".notifications.NotificationService"></service>
         
         <activity
