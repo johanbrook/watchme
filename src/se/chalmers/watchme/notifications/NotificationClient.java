@@ -42,21 +42,20 @@ public class NotificationClient {
 	
 	public void connectToService() {
 		Log.i("Custom", "Connecting to service");
-		this.ctx.bindService(new Intent(this.ctx, NotificationService.class), this.connection, Context.BIND_AUTO_CREATE);
-		this.isBound = true;
+		this.isBound = this.ctx.bindService(new Intent(this.ctx, NotificationService.class), this.connection, Context.BIND_AUTO_CREATE);
 	}
 	
 	public void disconnectService() {
 		if(this.isBound) {
-			this.ctx.unbindService(connection);
+			this.ctx.unbindService(this.connection);
 			this.isBound = false;
 		}
 	}
 	
 	public void setDateForNotification(Calendar date) {
-		Log.i("Custom", "Set date for notification");
 		
 		if(this.service != null){
+			Log.i("Custom", "Set date for notification");
 			this.service.setAlarm(date);
 		}
 	}
