@@ -90,8 +90,6 @@ public class NotifyService extends Service {
 		
 		Log.i("Custom", "Sent notification");
 		
-		// Stop and finish
-		this.stopSelf();
 	}
 
 }
