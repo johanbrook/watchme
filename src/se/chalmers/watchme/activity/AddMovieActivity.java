@@ -24,7 +24,8 @@ import android.view.View.OnClickListener;
 
 public class AddMovieActivity extends Activity {
 	
-	private TextView textField;
+	private TextView titleField;
+	private TextView noteField;
 	private Button addButton;
 	private final Context context = this;
 	private DatabaseHandler db;
@@ -37,7 +38,8 @@ public class AddMovieActivity extends Activity {
         getActionBar().setDisplayHomeAsUpEnabled(true);
         
         this.addButton = (Button) findViewById(R.id.add_movie_button);
-        this.textField = (TextView) findViewById(R.id.movie_name_field);
+        this.titleField = (TextView) findViewById(R.id.movie_name_field);
+        this.noteField = (TextView) findViewById(R.id.movie_note_field);
         
         db = new DatabaseHandler(this);
         
@@ -48,7 +50,11 @@ public class AddMovieActivity extends Activity {
         this.addButton.setOnClickListener(new OnClickListener() {
 			
 			public void onClick(View v) {
-				Movie movie = new Movie(textField.getText().toString());
+				String movieTitle = titleField.getText().toString();
+				String movieNote = noteField.getText().toString();
+				
+				Movie movie = new Movie(movieTitle);
+				movie.setNote(movieNote);
 				db.addMovie(movie);
 				
 				Intent home = new Intent(context, MainActivity.class);
