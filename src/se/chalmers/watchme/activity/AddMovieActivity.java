@@ -89,8 +89,8 @@ public class AddMovieActivity extends Activity {
     	date.set(year, month, day);
     	
     	// Set the timestamp to midnight
-    	date.set(Calendar.HOUR_OF_DAY, 22);
-    	date.set(Calendar.MINUTE, 20);
+    	date.set(Calendar.HOUR_OF_DAY, 0);
+    	date.set(Calendar.MINUTE, 0);
     	date.set(Calendar.SECOND, 0);
     	
     	this.notifications.setMovieNotification(movie, date);
