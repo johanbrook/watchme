@@ -11,6 +11,7 @@ import se.chalmers.watchme.database.DatabaseHandler;
 import se.chalmers.watchme.model.Movie;
 import se.chalmers.watchme.ui.DatePickerFragment;
 import se.chalmers.watchme.ui.DatePickerFragment.DatePickerListener;
+import se.chalmers.watchme.utils.DateConverter;
 import android.os.Bundle;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -53,18 +54,17 @@ public class AddMovieActivity extends FragmentActivity
         
         this.releaseDate = Calendar.getInstance();
         
-        
         this.titleField = (TextView) findViewById(R.id.movie_name_field);
         
+        //TODO Use the XML-value although it is overwritten here?
         this.dateField = (TextView) findViewById(R.id.release_date_label);
-        dateField.setText(this.toSimpleDate(this.releaseDate));
+        dateField.setText(DateConverter.toSimpleDate(this.releaseDate));
+        
         this.datePickerButton = (Button) findViewById(R.id.pick_release_date_button);
         this.noteField = (TextView) findViewById(R.id.movie_note_field);
         this.addButton = (Button) findViewById(R.id.add_movie_button);
         
         db = new DatabaseHandler(this);
-        
-        
         
         /**
          * Click callback. Shows the date picker for a movies release date
@@ -78,6 +78,7 @@ public class AddMovieActivity extends FragmentActivity
         	}
         });
         
+        
         /**
          * Click callback. Create a new Movie object and set it on
          * the Intent, and then finish this Activity.
@@ -90,6 +91,8 @@ public class AddMovieActivity extends FragmentActivity
 				
 				Movie movie = new Movie(movieTitle);
 				movie.setNote(movieNote);
+				
+				
 				db.addMovie(movie);
 				
 				Intent home = new Intent(context, MainActivity.class);
@@ -123,24 +126,7 @@ public class AddMovieActivity extends FragmentActivity
 		
 		this.releaseDate = pickedDate;
 
-		dateField.setText(toSimpleDate(this.releaseDate));
-		
-	}
-	
-	// TODO Make this method accessible to other classes? By utilities-class?
-	/**
-	 * Recieves a calendar instance and returns a String with simple
-	 * date format(MM/dd/yyyy)
-	 * 
-	 * @param calendar The calendar object to be used to create the string
-	 * @returns A simple string representing a date in the format: MM/dd/yyyy
-	 */
-	private String toSimpleDate(Calendar calendar) {
-		
-		SimpleDateFormat simpleDate = new SimpleDateFormat("MM/dd/yyyy");
-		String simpleDateString = simpleDate.format(calendar.getTime());
-		
-		return simpleDateString;
+		dateField.setText(DateConverter.toSimpleDate(this.releaseDate));
 		
 	}
 
