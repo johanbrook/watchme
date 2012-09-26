@@ -74,7 +74,7 @@ public class MainActivity extends ListActivity {
     /**
      * The listener for when the user does a long-tap on an item in the list.
      * 
-     * The Movie object in the list should be removed from the list and database.
+     * The Movie object in the list is removed if the user confirms that he wants to remove the Movie.
      * 
      * @author Johan
      */
