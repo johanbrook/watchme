@@ -13,6 +13,8 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -41,6 +43,8 @@ public class AddMovieActivity extends Activity {
         
         db = new DatabaseHandler(this);
         
+        this.addButton.setEnabled(false);
+        
         /**
          * Click callback. Create a new Movie object and set it on
          * the Intent, and then finish this Activity.
@@ -58,7 +62,34 @@ public class AddMovieActivity extends Activity {
 				finish();
 			}
 		});
+        
+        /**
+         * Disable "add button" if no Title on Movie has been set.
+         */
+        this.textField.addTextChangedListener(new TextWatcher() {
+
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            	if(s.toString().equals("")) {
+            		addButton.setEnabled(false);
+            	} else {
+            		addButton.setEnabled(true);
+            	}
+            }
+
+			public void afterTextChanged(Editable arg0) {
+				//TODO Added throw statement since methods never used. Is this
+				// the right way to do it? / Mattias
+				throw new UnsupportedOperationException();		
+			}
+
+			public void beforeTextChanged(CharSequence s, int start, int count,
+					int after) {
+				throw new UnsupportedOperationException();
+			}
+
+        });
     }
+    
     
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -76,5 +107,7 @@ public class AddMovieActivity extends Activity {
         }
         return super.onOptionsItemSelected(item);
     }
+    
+
 
 }
