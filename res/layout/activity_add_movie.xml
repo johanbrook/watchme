@@ -4,7 +4,7 @@
     android:layout_height="match_parent" >
 
     <EditText
-        android:id="@+id/movie_name_field"
+        android:id="@+id/title_field"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
@@ -12,16 +12,16 @@
         android:layout_marginTop="20dp"
         android:ems="10"
         android:inputType="textCapWords" 
-        android:hint="@string/enter_movie_hint" >
+        android:hint="@string/input_movie_hint" >
 
         <requestFocus />
     </EditText>
     
     <LinearLayout
-        android:id="@+id/date_area"
+        android:id="@+id/release_date_area"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/movie_name_field"
+        android:layout_below="@+id/title_field"
         android:layout_marginTop="20dp"
         android:layout_marginLeft="10dip"
 	    android:layout_marginRight="10dip"
@@ -32,27 +32,27 @@
 	        android:layout_width="0dp"
 		    android:layout_height="wrap_content"
 		    android:layout_weight="1"
-	        android:hint="@string/show_release_date_label"
+	        android:hint="@string/release_date_label"
 			android:textAppearance="?android:attr/textAppearanceLarge" />
         
         <Button 
-	        android:id="@+id/pick_release_date_button"
+	        android:id="@+id/release_date_button"
 	    	android:layout_width="wrap_content" 
 	    	android:layout_height="wrap_content"
-	    	android:text="@string/pick_release_date_button"
+	    	android:text="@string/release_date_button"
 	        android:onClick="showDatePickerDialog" />
         
 	</LinearLayout>
     
 	<EditText
-     	android:id="@+id/movie_note_field"
+     	android:id="@+id/note_field"
         android:layout_width="fill_parent"
 	    android:layout_height="wrap_content"
-	    android:layout_below="@+id/date_area"
+	    android:layout_below="@+id/release_date_area"
         android:ems="8"
 	    android:layout_marginLeft="10dip"
 	    android:layout_marginRight="10dip"
-        android:hint="@string/enter_note_hint"
+        android:hint="@string/input_note_hint"
         android:layout_marginTop="30dp"
 	    android:gravity="top"
 	    android:singleLine="false"
@@ -63,9 +63,9 @@
         android:id="@+id/add_movie_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/movie_note_field"
+        android:layout_below="@+id/note_field"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="30dp"
-        android:text="@string/add_movie" />
+        android:text="@string/add_movie_button" />
 
 </RelativeLayout>

@@ -7,10 +7,9 @@
     <string name="no_movies_found">No movies found</string>
     <string name="add_movie_button">Add Movie</string>
     <string name="title_activity_add_movie">Add Movie</string>
-    <string name="add_movie">Add Movie</string>
-    <string name="enter_movie_hint">Enter movie title</string>
-    <string name="enter_note_hint">Personal note</string>
-    <string name="pick_release_date_button">Pick</string>
-    <string name="show_release_date_label">Release date</string>
+    <string name="input_movie_hint">Enter movie title</string>
+    <string name="input_note_hint">Personal note</string>
+    <string name="release_date_button">Pick</string>
+    <string name="release_date_label">Release date</string>
 
 </resources>

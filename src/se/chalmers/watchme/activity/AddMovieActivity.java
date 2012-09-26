@@ -54,14 +54,14 @@ public class AddMovieActivity extends FragmentActivity
         
         this.releaseDate = Calendar.getInstance();
         
-        this.titleField = (TextView) findViewById(R.id.movie_name_field);
+        this.titleField = (TextView) findViewById(R.id.title_field);
         
         //TODO Use the XML-value although it is overwritten here?
         this.dateField = (TextView) findViewById(R.id.release_date_label);
         dateField.setText(DateConverter.toSimpleDate(this.releaseDate));
         
-        this.datePickerButton = (Button) findViewById(R.id.pick_release_date_button);
-        this.noteField = (TextView) findViewById(R.id.movie_note_field);
+        this.datePickerButton = (Button) findViewById(R.id.release_date_button);
+        this.noteField = (TextView) findViewById(R.id.note_field);
         this.addButton = (Button) findViewById(R.id.add_movie_button);
         
         db = new DatabaseHandler(this);
