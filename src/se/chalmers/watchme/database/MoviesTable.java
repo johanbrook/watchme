@@ -9,7 +9,7 @@ import android.util.Log;
  */
 public class MoviesTable {
 
-	private static final String TABLE_MOVIES = "movies";
+	public static final String TABLE_MOVIES = "movies";
 
 	private static final String COLUMN_MOVIE_ID = "id";
 	private static final String COLUMN_TITLE = "title";
