@@ -23,6 +23,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
@@ -33,9 +34,9 @@ public class AddMovieActivity extends FragmentActivity
 	implements DatePickerListener{
 	
 	private TextView titleField;
-	private TextView noteField;
 	private TextView dateField;
 	private Button datePickerButton;
+	private TextView noteField;
 	private Button addButton;
 	
 	private final Context context = this;
@@ -54,6 +55,7 @@ public class AddMovieActivity extends FragmentActivity
         
         
         this.titleField = (TextView) findViewById(R.id.movie_name_field);
+        
         this.dateField = (TextView) findViewById(R.id.release_date_label);
         dateField.setText(this.toSimpleDate(this.releaseDate));
         this.datePickerButton = (Button) findViewById(R.id.pick_release_date_button);
@@ -116,7 +118,7 @@ public class AddMovieActivity extends FragmentActivity
         return super.onOptionsItemSelected(item);
     }
     
-    // @Override is not allowed in Java 1.5
+    // @Override is not allowed in Java 1.5 for inherited interface methods
     public void setDate(Calendar pickedDate) {
 		
 		this.releaseDate = pickedDate;
