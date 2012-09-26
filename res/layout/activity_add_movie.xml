@@ -55,7 +55,6 @@
 	    android:gravity="top"
 	    android:singleLine="false"
 	    android:lines="5" />
-		android:background="@drawable/notefield"
 
     <Button
         android:id="@+id/add_movie_button"

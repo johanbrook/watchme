@@ -1,5 +1,8 @@
 package se.chalmers.watchme.activity;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+
 import se.chalmers.watchme.R;
 import se.chalmers.watchme.R.id;
 import se.chalmers.watchme.R.layout;
@@ -7,6 +10,7 @@ import se.chalmers.watchme.R.menu;
 import se.chalmers.watchme.database.DatabaseHandler;
 import se.chalmers.watchme.model.Movie;
 import se.chalmers.watchme.ui.DatePickerFragment;
+import se.chalmers.watchme.ui.DatePickerFragment.DatePickerListener;
 import android.os.Bundle;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -25,15 +29,19 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.NavUtils;
 import android.view.View.OnClickListener;
 
-public class AddMovieActivity extends FragmentActivity {
+public class AddMovieActivity extends FragmentActivity 
+	implements DatePickerListener{
 	
 	private TextView titleField;
 	private TextView noteField;
 	private TextView dateField;
 	private Button datePickerButton;
 	private Button addButton;
+	
 	private final Context context = this;
 	private DatabaseHandler db;
+	
+	private Calendar releaseDate;
 
     @SuppressLint("NewApi")
 	@Override
@@ -42,14 +50,19 @@ public class AddMovieActivity extends FragmentActivity {
         setContentView(R.layout.activity_add_movie);
         getActionBar().setDisplayHomeAsUpEnabled(true);
         
+        this.releaseDate = Calendar.getInstance();
+        
         
         this.titleField = (TextView) findViewById(R.id.movie_name_field);
         this.dateField = (TextView) findViewById(R.id.release_date_label);
+        dateField.setText(this.toSimpleDate(this.releaseDate));
         this.datePickerButton = (Button) findViewById(R.id.pick_release_date_button);
         this.noteField = (TextView) findViewById(R.id.movie_note_field);
         this.addButton = (Button) findViewById(R.id.add_movie_button);
         
         db = new DatabaseHandler(this);
+        
+        
         
         /**
          * Click callback. Shows the date picker for a movies release date
@@ -102,5 +115,31 @@ public class AddMovieActivity extends FragmentActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+    
+    // @Override is not allowed in Java 1.5
+    public void setDate(Calendar pickedDate) {
+		
+		this.releaseDate = pickedDate;
+
+		dateField.setText(toSimpleDate(this.releaseDate));
+		
+	}
+	
+	// TODO Make this method accessible to other classes? By utilities-class?
+	/**
+	 * Recieves a calendar instance and returns a String with simple
+	 * date format(MM/dd/yyyy)
+	 * 
+	 * @param calendar The calendar object to be used to create the string
+	 * @returns A simple string representing a date in the format: MM/dd/yyyy
+	 */
+	private String toSimpleDate(Calendar calendar) {
+		
+		SimpleDateFormat simpleDate = new SimpleDateFormat("MM/dd/yyyy");
+		String simpleDateString = simpleDate.format(calendar.getTime());
+		
+		return simpleDateString;
+		
+	}
 
 }
