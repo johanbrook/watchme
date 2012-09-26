@@ -16,12 +16,12 @@
 
         <requestFocus />
     </EditText>
-    
-        <EditText
+	
+	<EditText
      	android:id="@+id/movie_note_field"
         android:layout_width="fill_parent"
 	    android:layout_height="wrap_content"
-	    android:layout_below="@+id/movie_name_field"    
+	    android:layout_below="@+id/movie_name_field"
         android:ems="8"
 	    android:layout_marginLeft="10dip"
 	    android:layout_marginRight="10dip"
@@ -29,7 +29,8 @@
         android:layout_marginTop="30dp"
 	    android:gravity="top"
 	    android:singleLine="false"
-	    android:lines="5" />
+	    android:lines="5"
+		android:background="@drawable/notefield" />
 
     <Button
         android:id="@+id/add_movie_button"
