@@ -10,5 +10,7 @@
     <string name="add_movie">Add Movie</string>
     <string name="enter_movie_hint">Enter movie title</string>
     <string name="enter_note_hint">Personal note</string>
+    <string name="pick_release_date_button">Pick</string>
+    <string name="show_release_date_label">The movie\'s release date</string>
 
 </resources>
