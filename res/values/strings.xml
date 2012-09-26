@@ -11,5 +11,6 @@
     <string name="input_note_hint">Personal note</string>
     <string name="release_date_button">Pick</string>
     <string name="release_date_label">Release date</string>
+    <string name="input_tag_hint">Add tags</string>
 
 </resources>

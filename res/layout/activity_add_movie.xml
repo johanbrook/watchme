@@ -23,8 +23,8 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/title_field"
         android:layout_marginTop="20dp"
-        android:layout_marginLeft="10dip"
-	    android:layout_marginRight="10dip"
+        android:layout_marginLeft="20dip"
+	    android:layout_marginRight="20dip"
         android:orientation="horizontal">
         
         <TextView
@@ -44,16 +44,31 @@
         
 	</LinearLayout>
     
-	<EditText
-     	android:id="@+id/note_field"
+    <EditText
+     	android:id="@+id/tag_field"
         android:layout_width="fill_parent"
 	    android:layout_height="wrap_content"
 	    android:layout_below="@+id/release_date_area"
         android:ems="8"
 	    android:layout_marginLeft="10dip"
 	    android:layout_marginRight="10dip"
-        android:hint="@string/input_note_hint"
+        android:hint="@string/input_tag_hint"
         android:layout_marginTop="30dp"
+	    android:gravity="top"
+	    android:singleLine="false"
+	    android:lines="3"
+	    android:background="@drawable/tagfield" />
+    
+	<EditText
+     	android:id="@+id/note_field"
+        android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_below="@+id/tag_field"
+        android:ems="8"
+	    android:layout_marginLeft="10dip"
+	    android:layout_marginRight="10dip"
+        android:hint="@string/input_note_hint"
+        android:layout_marginTop="20dp"
 	    android:gravity="top"
 	    android:singleLine="false"
 	    android:lines="5"
