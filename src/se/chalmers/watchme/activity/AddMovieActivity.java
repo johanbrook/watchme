@@ -1,11 +1,17 @@
 package se.chalmers.watchme.activity;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+
 import se.chalmers.watchme.R;
 import se.chalmers.watchme.R.id;
 import se.chalmers.watchme.R.layout;
 import se.chalmers.watchme.R.menu;
 import se.chalmers.watchme.database.DatabaseHandler;
 import se.chalmers.watchme.model.Movie;
+import se.chalmers.watchme.ui.DatePickerFragment;
+import se.chalmers.watchme.ui.DatePickerFragment.DatePickerListener;
+import se.chalmers.watchme.utils.DateConverter;
 import android.os.Bundle;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -18,17 +24,26 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.NavUtils;
 import android.view.View.OnClickListener;
 
-public class AddMovieActivity extends Activity {
+public class AddMovieActivity extends FragmentActivity 
+	implements DatePickerListener{
 	
 	private TextView titleField;
+	private TextView dateField;
+	private Button datePickerButton;
 	private TextView noteField;
 	private Button addButton;
+	
 	private final Context context = this;
 	private DatabaseHandler db;
+	
+	private Calendar releaseDate;
 
     @SuppressLint("NewApi")
 	@Override
@@ -37,11 +52,32 @@ public class AddMovieActivity extends Activity {
         setContentView(R.layout.activity_add_movie);
         getActionBar().setDisplayHomeAsUpEnabled(true);
         
-        this.addButton = (Button) findViewById(R.id.add_movie_button);
+        this.releaseDate = Calendar.getInstance();
+        
         this.titleField = (TextView) findViewById(R.id.movie_name_field);
+        
+        //TODO Use the XML-value although it is overwritten here?
+        this.dateField = (TextView) findViewById(R.id.release_date_label);
+        dateField.setText(DateConverter.toSimpleDate(this.releaseDate));
+        
+        this.datePickerButton = (Button) findViewById(R.id.pick_release_date_button);
         this.noteField = (TextView) findViewById(R.id.movie_note_field);
+        this.addButton = (Button) findViewById(R.id.add_movie_button);
         
         db = new DatabaseHandler(this);
+        
+        /**
+         * Click callback. Shows the date picker for a movies release date
+         */
+        this.datePickerButton.setOnClickListener(new OnClickListener() {
+        	
+        	public void onClick(View v) {
+        		DialogFragment datePickerFragment = new DatePickerFragment();
+                datePickerFragment.show(getSupportFragmentManager(),
+                		"datePicker");
+        	}
+        });
+        
         
         /**
          * Click callback. Create a new Movie object and set it on
@@ -55,6 +91,8 @@ public class AddMovieActivity extends Activity {
 				
 				Movie movie = new Movie(movieTitle);
 				movie.setNote(movieNote);
+				
+				
 				db.addMovie(movie);
 				
 				Intent home = new Intent(context, MainActivity.class);
@@ -82,5 +120,14 @@ public class AddMovieActivity extends Activity {
         }
         return super.onOptionsItemSelected(item);
     }
+    
+    // @Override is not allowed in Java 1.5 for inherited interface methods
+    public void setDate(Calendar pickedDate) {
+		
+		this.releaseDate = pickedDate;
+
+		dateField.setText(DateConverter.toSimpleDate(this.releaseDate));
+		
+	}
 
 }

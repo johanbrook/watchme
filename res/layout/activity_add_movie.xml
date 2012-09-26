@@ -16,12 +16,39 @@
 
         <requestFocus />
     </EditText>
-	
+    
+    <LinearLayout
+        android:id="@+id/date_area"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/movie_name_field"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="10dip"
+	    android:layout_marginRight="10dip"
+        android:orientation="horizontal">
+        
+        <TextView
+	     	android:id="@+id/release_date_label"
+	        android:layout_width="0dp"
+		    android:layout_height="wrap_content"
+		    android:layout_weight="1"
+	        android:hint="@string/show_release_date_label"
+			android:textAppearance="?android:attr/textAppearanceLarge" />
+        
+        <Button 
+	        android:id="@+id/pick_release_date_button"
+	    	android:layout_width="wrap_content" 
+	    	android:layout_height="wrap_content"
+	    	android:text="@string/pick_release_date_button"
+	        android:onClick="showDatePickerDialog" />
+        
+	</LinearLayout>
+    
 	<EditText
      	android:id="@+id/movie_note_field"
         android:layout_width="fill_parent"
 	    android:layout_height="wrap_content"
-	    android:layout_below="@+id/movie_name_field"
+	    android:layout_below="@+id/date_area"
         android:ems="8"
 	    android:layout_marginLeft="10dip"
 	    android:layout_marginRight="10dip"
