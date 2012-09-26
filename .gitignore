@@ -13,6 +13,6 @@
 
 # Tests
 local.properties
-./WatchMeTest/local.properties
-./WatchMeTest/bin
-./WatchMeTest/gen
+WatchMeTest/local.properties
+WatchMeTest/bin
+WatchMeTest/gen
