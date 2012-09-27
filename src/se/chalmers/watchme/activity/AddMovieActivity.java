@@ -32,16 +32,13 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.widget.Toast;
 import android.support.v4.app.NavUtils;
-import android.view.View.OnClickListener;
 
 public class AddMovieActivity extends FragmentActivity implements DatePickerListener {
 	
 	private TextView dateField;
 	private TextView noteField;
 	
-	private final Context context = this;
 	private TextView titleField;
-	private DatePicker picker;
 	
 	// The handler to interface with the notification system and scheduler
 	private NotificationClient notifications;
@@ -71,9 +68,33 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
         this.notifications = new NotificationClient(this);
         this.notifications.connectToService();
         
+        // Disable add movie button on init
+        final Button addButton = (Button) findViewById(R.id.add_movie_button);
+        addButton.setEnabled(false);
+        
         /**
+         * Disable "add button" if no Title on Movie has been set.
          */
+        this.titleField.addTextChangedListener(new TextWatcher() {
         	
+        	
+        	public void onTextChanged(CharSequence s, int start, int before, int count) {
+            	if(s.toString().equals("")) {
+            		addButton.setEnabled(false);
+            	} else {
+            		addButton.setEnabled(true);
+            	}
+            }
+
+			public void afterTextChanged(Editable arg0) {
+				// Empty. Needs to be here
+			}
+
+			public void beforeTextChanged(CharSequence s, int start, int count,
+					int after) {
+				// Empty. Needs to be here
+			}
+
         });
     }
     
