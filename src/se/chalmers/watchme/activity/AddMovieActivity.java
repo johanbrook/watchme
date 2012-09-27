@@ -117,24 +117,10 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
     
     private void setNotification(Movie movie) {
     	
-    	//TODO The date info below should come from the
-    	// movie model - not directly from the date picker
+    	this.notifications.setMovieNotification(movie);
     	
-    	int day = this.picker.getDayOfMonth();
-    	int month = this.picker.getMonth();
-    	int year = this.picker.getYear();
-    	
-    	Calendar date = Calendar.getInstance();
-    	date.set(year, month, day);
-    	
-    	// Set the timestamp to midnight
-    	date.set(Calendar.HOUR_OF_DAY, 0);
-    	date.set(Calendar.MINUTE, 0);
-    	date.set(Calendar.SECOND, 0);
-    	
-    	this.notifications.setMovieNotification(movie, date);
-    	
-    	Toast.makeText(this, "Notification set for " + day + "/" + (month+1) + "/"+year, Toast.LENGTH_LONG).show();
+    	Toast.makeText(this, "Notification set for " + movie.getDate().get(Calendar.DAY_OF_MONTH) + 
+    			"/" + (movie.getDate().get(Calendar.MONTH)+1) + "/"+ movie.getDate().get(Calendar.YEAR), Toast.LENGTH_LONG).show();
     }
     
     

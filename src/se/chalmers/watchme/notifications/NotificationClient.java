@@ -54,11 +54,11 @@ public class NotificationClient {
 		}
 	}
 	
-	public void setMovieNotification(Movie movie, Calendar date) {
+	public void setMovieNotification(Movie movie) {
 		
 		if(this.service != null){
 			Log.i("Custom", "Set date for notification");
-			this.service.setAlarmTaskForMovie(movie, date);
+			this.service.setAlarmTaskForMovie(movie);
 		}
 	}
 }

@@ -39,9 +39,9 @@ public class NotificationService extends Service {
 		return START_STICKY;
 	}
 	
-	public void setAlarmTaskForMovie(Movie movie, Calendar date) {
+	public void setAlarmTaskForMovie(Movie movie) {
 		Log.i("Custom", "Set alarm");
 		// Start a new task for the alarm on another thread (separated from the UI thread)
-		new AlarmTask(this, movie, date).run();
+		new AlarmTask(this, movie).run();
 	}
 }

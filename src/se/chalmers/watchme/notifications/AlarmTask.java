@@ -19,14 +19,12 @@ import android.util.Log;
 public class AlarmTask implements Runnable {
 	
 	private final Context ctx;
-	private final Calendar date;
 	private final Movie movie;
 	private final AlarmManager manager;
 	
-	public AlarmTask(Context context, Movie movie, Calendar date) {
+	public AlarmTask(Context context, Movie movie) {
 		this.ctx = context;
 		this.movie = movie;
-		this.date = date;
 		
 		// Get the Android alarm service
 		this.manager = (AlarmManager) this.ctx.getSystemService(Context.ALARM_SERVICE);
@@ -40,7 +38,7 @@ public class AlarmTask implements Runnable {
 		
 		PendingIntent pending = PendingIntent.getService(this.ctx, 0, intent, 0);
 		
-		this.manager.set(AlarmManager.RTC, this.date.getTimeInMillis(), pending);
+		this.manager.set(AlarmManager.RTC, this.movie.getDate().getTimeInMillis(), pending);
 	}
 
 }
