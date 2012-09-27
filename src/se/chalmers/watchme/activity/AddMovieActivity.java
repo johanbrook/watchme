@@ -118,9 +118,7 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
     private void setNotification(Movie movie) {
     	
     	this.notifications.setMovieNotification(movie);
-    	
-    	Toast.makeText(this, "Notification set for " + movie.getDate().get(Calendar.DAY_OF_MONTH) + 
-    			"/" + (movie.getDate().get(Calendar.MONTH)+1) + "/"+ movie.getDate().get(Calendar.YEAR), Toast.LENGTH_LONG).show();
+    	Toast.makeText(this, "Notification set for " + DateConverter.toSimpleDate(movie.getDate()), Toast.LENGTH_LONG).show();
     }
     
     
