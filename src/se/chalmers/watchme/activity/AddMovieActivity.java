@@ -7,11 +7,13 @@ import se.chalmers.watchme.R.id;
 import se.chalmers.watchme.R.layout;
 import se.chalmers.watchme.R.menu;
 import se.chalmers.watchme.database.DatabaseHandler;
+import se.chalmers.watchme.imdb.IMDBHandler;
 import se.chalmers.watchme.model.Movie;
 import se.chalmers.watchme.ui.DatePickerFragment;
 import se.chalmers.watchme.ui.DatePickerFragment.DatePickerListener;
 import se.chalmers.watchme.utils.DateConverter;
 import se.chalmers.watchme.notifications.NotificationClient;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -46,6 +48,9 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
 	// The database handler
 	private DatabaseHandler db;
 	
+	// The IMDB API handler
+	private IMDBHandler imdb;
+	
 	private Calendar releaseDate;
 
     @SuppressLint("NewApi")
@@ -65,6 +70,9 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
         this.noteField = (TextView) findViewById(R.id.note_field);
         
         this.db = new DatabaseHandler(this);
+        
+        this.imdb = new IMDBHandler();
+        
         this.notifications = new NotificationClient(this);
         this.notifications.connectToService();
         
@@ -104,8 +112,13 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
 		
 		// Set a notification for the date picked
     	setNotification(movie);
+    	
+    	performSearch(movieTitle);
     }
     
+    private void performSearch(String title) {
+    	(new IMDBSearchTask()).execute(title);
+    }
     
     private void setNotification(Movie movie) {
     	
@@ -161,6 +174,26 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
         		"datePicker");
 	}
 
+    private class IMDBSearchTask extends AsyncTask<String, Void, String> {
+
+		@Override
+		protected String doInBackground(String... params) {
+			return imdb.searchForMovieTitle(params[0]);
+		}
+		
+		@Override
+		protected void onPostExecute(final String result) {
+			runOnUiThread(new Runnable() {
+				
+				public void run() {
+					if(result != null) {
+						Toast.makeText(AddMovieActivity.this, result, Toast.LENGTH_LONG).show();
+					}
+				}
+			});
+		}
+    	
+    }
     
     private class AddButtonToggler implements TextWatcher {
         	
