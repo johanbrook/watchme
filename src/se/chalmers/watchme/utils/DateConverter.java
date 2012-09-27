@@ -40,8 +40,8 @@ public class DateConverter {
 	 */
 	public static Calendar toCalendar(String simpleDateString) {
 		
-		int month = 01;
-		int day = 01;
+		int month = 1;
+		int day = 1;
 		int year = 2000;
 		
 		/* TODO Feels like super-ugly code. But this will have to do for now.
@@ -58,6 +58,11 @@ public class DateConverter {
 		
 		catch(NumberFormatException e) {
 			System.err.println("Parse exception: " + e.toString());
+			e.printStackTrace();
+		}
+		
+		catch(IndexOutOfBoundsException e) {
+			System.err.println("String formatted wrong " + e.toString());
 			e.printStackTrace();
 		}
 		

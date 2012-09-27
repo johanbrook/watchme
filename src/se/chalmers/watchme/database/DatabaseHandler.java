@@ -11,6 +11,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 public class DatabaseHandler extends SQLiteOpenHelper {
 
@@ -85,6 +86,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		Cursor cursor = db.query(TABLE_MOVIES, new String[] { KEY_MOVIE_ID,
 				KEY_TITLE, KEY_DATE, KEY_RATING, KEY_NOTE }, KEY_MOVIE_ID + " = ?",
 				new String[] { String.valueOf(id) }, null, null, null, null);
+		
 		if (cursor != null)
 			cursor.moveToFirst();
 
@@ -109,12 +111,14 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
 		if (cursor.moveToFirst()) {
 			do {
+				
 				Movie movie = new Movie(cursor.getString(1),
 						DateConverter.toCalendar(cursor.getString(2)),
-						Integer.parseInt(cursor.getString(2)),
-						cursor.getString(3));
+						Integer.parseInt(cursor.getString(3)),
+						cursor.getString(4));
 				movie.setId(Long.parseLong(cursor.getString(0)));
 				allMovies.add(movie);
+				
 			} while (cursor.moveToNext());
 		}
 		
