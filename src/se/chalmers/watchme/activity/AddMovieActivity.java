@@ -90,8 +90,8 @@ public class AddMovieActivity extends FragmentActivity
 				String movieNote = noteField.getText().toString();
 				
 				Movie movie = new Movie(movieTitle);
+				movie.setDate(releaseDate);
 				movie.setNote(movieNote);
-				
 				
 				db.addMovie(movie);
 				
