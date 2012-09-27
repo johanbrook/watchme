@@ -22,7 +22,8 @@ public class Movie implements Serializable {
 	private List<Tag> tags;
 	
 	/**
-	 * Creates a movie with the given title, rating 0 and an empty note.
+	 * Creates a movie with the given title, release date set as current date,
+	 * rating 0 and an empty note.
 	 * @param title The title of the Movie.
 	 */
 	public Movie(String title) {
@@ -41,6 +42,11 @@ public class Movie implements Serializable {
 		this.rating = rating;
 		this.note = note;
 		this.releaseDate = releaseDate;
+		
+		// Set the time of day to 00.00.00
+		this.releaseDate.set(Calendar.YEAR, Calendar.MONTH, Calendar.DAY_OF_MONTH,
+				0, 0, 0);
+		
 		tags = new LinkedList<Tag>();
 	}
 	

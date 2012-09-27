@@ -32,13 +32,12 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.widget.Toast;
 import android.support.v4.app.NavUtils;
-import android.view.View.OnClickListener;
 
 public class AddMovieActivity extends FragmentActivity implements DatePickerListener {
 	
 	private TextView dateField;
-	private Button datePickerButton;
 	private TextView noteField;
+	
 	private TextView titleField;
 	
 	// The handler to interface with the notification system and scheduler
@@ -63,23 +62,39 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
         dateField.setText(DateConverter.toSimpleDate(this.releaseDate));
         
         this.titleField = (TextView) findViewById(R.id.title_field);
-        this.datePickerButton = (Button) findViewById(R.id.release_date_button);
         this.noteField = (TextView) findViewById(R.id.note_field);
         
         this.db = new DatabaseHandler(this);
         this.notifications = new NotificationClient(this);
         this.notifications.connectToService();
         
+        // Disable add movie button on init
+        final Button addButton = (Button) findViewById(R.id.add_movie_button);
+        addButton.setEnabled(false);
+        
         /**
-         * Click callback. Shows the date picker for a movies release date
+         * Disable "add button" if no Title on Movie has been set.
          */
-        this.datePickerButton.setOnClickListener(new OnClickListener() {
+        this.titleField.addTextChangedListener(new TextWatcher() {
         	
-        	public void onClick(View v) {
-        		DialogFragment datePickerFragment = new DatePickerFragment();
-                datePickerFragment.show(getSupportFragmentManager(),
-                		"datePicker");
-        	}
+        	
+        	public void onTextChanged(CharSequence s, int start, int before, int count) {
+            	if(s.toString().equals("")) {
+            		addButton.setEnabled(false);
+            	} else {
+            		addButton.setEnabled(true);
+            	}
+            }
+
+			public void afterTextChanged(Editable arg0) {
+				// Empty. Needs to be here
+			}
+
+			public void beforeTextChanged(CharSequence s, int start, int count,
+					int after) {
+				// Empty. Needs to be here
+			}
+
         });
     }
     
@@ -155,6 +170,15 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
 
 		dateField.setText(DateConverter.toSimpleDate(this.releaseDate));
 		
+	}
+    
+    /**
+     * Click callback. Shows the date picker for a movies release date
+     */
+    public void onDatePickerButtonClick(View v) {
+		DialogFragment datePickerFragment = new DatePickerFragment();
+        datePickerFragment.show(getSupportFragmentManager(),
+        		"datePicker");
 	}
 
 }
