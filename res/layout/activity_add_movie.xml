@@ -74,8 +74,10 @@
 	    android:lines="5"
 		android:background="@drawable/notefield" />
 
+
     <Button
         android:id="@+id/add_movie_button"
+        android:onClick="onAddButtonClick"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/note_field"

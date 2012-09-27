@@ -1,6 +1,5 @@
 package se.chalmers.watchme.activity;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import se.chalmers.watchme.R;
@@ -12,6 +11,7 @@ import se.chalmers.watchme.model.Movie;
 import se.chalmers.watchme.ui.DatePickerFragment;
 import se.chalmers.watchme.ui.DatePickerFragment.DatePickerListener;
 import se.chalmers.watchme.utils.DateConverter;
+import se.chalmers.watchme.notifications.NotificationClient;
 import android.os.Bundle;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -26,23 +26,28 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.LinearLayout;
+import android.widget.DatePicker;
 import android.widget.TextView;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
+import android.widget.Toast;
 import android.support.v4.app.NavUtils;
 import android.view.View.OnClickListener;
 
-public class AddMovieActivity extends FragmentActivity 
-	implements DatePickerListener{
+public class AddMovieActivity extends FragmentActivity implements DatePickerListener {
 	
-	private TextView titleField;
 	private TextView dateField;
 	private Button datePickerButton;
 	private TextView noteField;
-	private Button addButton;
 	
 	private final Context context = this;
+	private TextView titleField;
+	private DatePicker picker;
+	
+	// The handler to interface with the notification system and scheduler
+	private NotificationClient notifications;
+	
+	// The database handler
 	private DatabaseHandler db;
 	
 	private Calendar releaseDate;
@@ -56,19 +61,17 @@ public class AddMovieActivity extends FragmentActivity
         
         this.releaseDate = Calendar.getInstance();
         
-        this.titleField = (TextView) findViewById(R.id.title_field);
-        
         //TODO Use the XML-value although it is overwritten here?
         this.dateField = (TextView) findViewById(R.id.release_date_label);
         dateField.setText(DateConverter.toSimpleDate(this.releaseDate));
         
+        this.titleField = (TextView) findViewById(R.id.title_field);
         this.datePickerButton = (Button) findViewById(R.id.release_date_button);
         this.noteField = (TextView) findViewById(R.id.note_field);
-        this.addButton = (Button) findViewById(R.id.add_movie_button);
         
-        db = new DatabaseHandler(this);
-        
-        this.addButton.setEnabled(false);
+        this.db = new DatabaseHandler(this);
+        this.notifications = new NotificationClient(this);
+        this.notifications.connectToService();
         
         /**
          * Click callback. Shows the date picker for a movies release date
@@ -81,55 +84,57 @@ public class AddMovieActivity extends FragmentActivity
                 		"datePicker");
         	}
         });
-        
-        
-        /**
-         * Click callback. Create a new Movie object and set it on
-         * the Intent, and then finish this Activity.
-         */
-        this.addButton.setOnClickListener(new OnClickListener() {
-			
-			public void onClick(View v) {
-				String movieTitle = titleField.getText().toString();
-				String movieNote = noteField.getText().toString();
-				
-				Movie movie = new Movie(movieTitle);
-				movie.setDate(releaseDate);
-				movie.setNote(movieNote);
-				
-				db.addMovie(movie);
-				
-				Intent home = new Intent(context, MainActivity.class);
-				setResult(RESULT_OK, home);
-				home.putExtra("movie", movie);
-				
-				finish();
-			}
-		});
-        
-        /**
-         * Disable "add button" if no Title on Movie has been set.
-         */
-        this.titleField.addTextChangedListener(new TextWatcher() {
-
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            	if(s.toString().equals("")) {
-            		addButton.setEnabled(false);
-            	} else {
-            		addButton.setEnabled(true);
-            	}
-            }
-
-			public void afterTextChanged(Editable arg0) {
-				//TODO Added throw statement since methods never used. Is this
-				// the right way to do it? / Mattias
-			}
-
-			public void beforeTextChanged(CharSequence s, int start, int count,
-					int after) {
-			}
-
-        });
+    }
+    
+    /**
+     * Click callback. Create a new Movie object and set it on
+     * the Intent, and then finish this Activity.
+     */
+    public void onAddButtonClick(View view) {
+    	
+    	addMovie();
+		finish();
+    }
+    
+    private void addMovie() {
+    	String movieTitle = this.titleField.getText().toString();
+    	String movieNote = this.noteField.getText().toString();
+    	
+    	Movie movie = new Movie(movieTitle);
+    	movie.setNote(movieNote);
+    	movie.setDate(this.releaseDate);
+    	
+		db.addMovie(movie);
+		
+		Intent home = new Intent(this, MainActivity.class);
+		setResult(RESULT_OK, home);
+		home.putExtra("movie", movie);
+		
+		// Set a notification for the date picked
+    	setNotification(movie);
+    }
+    
+    
+    private void setNotification(Movie movie) {
+    	
+    	//TODO The date info below should come from the
+    	// movie model - not directly from the date picker
+    	
+    	int day = this.picker.getDayOfMonth();
+    	int month = this.picker.getMonth();
+    	int year = this.picker.getYear();
+    	
+    	Calendar date = Calendar.getInstance();
+    	date.set(year, month, day);
+    	
+    	// Set the timestamp to midnight
+    	date.set(Calendar.HOUR_OF_DAY, 0);
+    	date.set(Calendar.MINUTE, 0);
+    	date.set(Calendar.SECOND, 0);
+    	
+    	this.notifications.setMovieNotification(movie, date);
+    	
+    	Toast.makeText(this, "Notification set for " + day + "/" + (month+1) + "/"+year, Toast.LENGTH_LONG).show();
     }
     
     
@@ -137,6 +142,18 @@ public class AddMovieActivity extends FragmentActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.activity_add_movie, menu);
         return true;
+    }
+    
+    
+    @Override
+    protected void onStop() {
+    	// Disconnect the service (if started) when this activity is stopped.
+    	
+    	if(this.notifications != null) {
+    		this.notifications.disconnectService();
+    	}
+    	
+    	super.onStop();
     }
 
     
