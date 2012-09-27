@@ -37,8 +37,8 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
 	
 	private TextView dateField;
 	private TextView noteField;
-	
 	private TextView titleField;
+	private Button addButton;
 	
 	// The handler to interface with the notification system and scheduler
 	private NotificationClient notifications;
@@ -69,33 +69,13 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
         this.notifications.connectToService();
         
         // Disable add movie button on init
-        final Button addButton = (Button) findViewById(R.id.add_movie_button);
-        addButton.setEnabled(false);
+        this.addButton = (Button) findViewById(R.id.add_movie_button);
+        this.addButton.setEnabled(false);
         
         /**
          * Disable "add button" if no Title on Movie has been set.
          */
-        this.titleField.addTextChangedListener(new TextWatcher() {
-        	
-        	
-        	public void onTextChanged(CharSequence s, int start, int before, int count) {
-            	if(s.toString().equals("")) {
-            		addButton.setEnabled(false);
-            	} else {
-            		addButton.setEnabled(true);
-            	}
-            }
-
-			public void afterTextChanged(Editable arg0) {
-				// Empty. Needs to be here
-			}
-
-			public void beforeTextChanged(CharSequence s, int start, int count,
-					int after) {
-				// Empty. Needs to be here
-			}
-
-        });
+        this.titleField.addTextChangedListener(new AddButtonToggler());
     }
     
     /**
@@ -181,4 +161,25 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
         		"datePicker");
 	}
 
+    
+    private class AddButtonToggler implements TextWatcher {
+        	
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+           	if(s.toString().equals("")) {
+           		addButton.setEnabled(false);
+           	} else {
+           		addButton.setEnabled(true);
+           	}
+        }
+
+		public void afterTextChanged(Editable arg0) {
+			// Empty. Needs to be here
+		}
+
+		public void beforeTextChanged(CharSequence s, int start, int count,
+				int after) {
+			// Empty. Needs to be here
+		}
+
+    }
 }
