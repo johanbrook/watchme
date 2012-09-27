@@ -10,6 +10,7 @@
 package se.chalmers.watchme.model;
 
 import java.io.Serializable;
+import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -17,14 +18,16 @@ public class Movie implements Serializable {
 	private String title, note;
 	private int rating;
 	private long id;
+	private Calendar releaseDate;
 	private List<Tag> tags;
 	
 	/**
-	 * Creates a movie with the given title, rating 0 and an empty note.
+	 * Creates a movie with the given title, release date set as current date,
+	 * rating 0 and an empty note.
 	 * @param title The title of the Movie.
 	 */
 	public Movie(String title) {
-		this(title, 0, "");
+		this(title, Calendar.getInstance(), 0, "");
 	}
 	
 	/**
@@ -32,11 +35,18 @@ public class Movie implements Serializable {
 	 * @param title The title of the Movie.
 	 * @param rating The rating.
 	 * @param note The added note.
+	 * @param releaseDate The release date
 	 */
-	public Movie(String title, int rating, String note) {
+	public Movie(String title, Calendar releaseDate, int rating, String note) {
 		this.title = title;
-		this.note = note;
 		this.rating = rating;
+		this.note = note;
+		this.releaseDate = releaseDate;
+		
+		// Set the time of day to 00.00.00
+		this.releaseDate.set(Calendar.YEAR, Calendar.MONTH, Calendar.DAY_OF_MONTH,
+				0, 0, 0);
+		
 		tags = new LinkedList<Tag>();
 	}
 	
@@ -116,6 +126,23 @@ public class Movie implements Serializable {
 	 */
 	public void setRating(int rating) {
 		this.rating = rating;
+	}
+	
+	/**
+	 * Returns the movie's release date represented by a Calendar object
+	 * @return The movie«s release date
+	 */
+	public Calendar getDate() {
+		return this.releaseDate;
+	}
+	
+	/**
+	 * Sets the movie's release date represented by a Calendar object
+	 * 
+	 * @param releaseDate The movie's release date
+	 */
+	public void setDate(Calendar releaseDate) {
+		this.releaseDate = releaseDate;
 	}
 	
 	@Override
