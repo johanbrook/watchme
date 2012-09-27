@@ -39,10 +39,7 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
 	private TextView dateField;
 	private Button datePickerButton;
 	private TextView noteField;
-	
-	private final Context context = this;
 	private TextView titleField;
-	private DatePicker picker;
 	
 	// The handler to interface with the notification system and scheduler
 	private NotificationClient notifications;
