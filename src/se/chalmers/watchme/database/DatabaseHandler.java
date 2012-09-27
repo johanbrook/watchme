@@ -93,6 +93,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
 		Movie movie = new Movie(cursor.getString(1), Integer.parseInt(cursor.getString(1)), cursor.getString(3));
 		movie.setId(Long.parseLong(cursor.getString(0)));
+		
 		return movie;
 	}
 	

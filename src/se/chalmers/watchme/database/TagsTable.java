@@ -10,10 +10,10 @@ import android.util.Log;
  */
 public class TagsTable {
 
-	private static final String TABLE_TAGS = "tags";
+	public static final String TABLE_TAGS = "tags";
 	
-    private static final String COLUMN_TAG_ID = "id";
-    private static final String COLUMN_NAME = "name";
+    public static final String COLUMN_TAG_ID = "_id";
+    public static final String COLUMN_NAME = "name";
     
     private static final String CREATE_TAGS_TABLE = "CREATE TABLE " + TABLE_TAGS + "("
     		+ COLUMN_TAG_ID + " INTEGER PRIMARY KEY, " + COLUMN_NAME + " TEXT)";

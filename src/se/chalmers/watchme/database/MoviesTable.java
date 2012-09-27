@@ -11,10 +11,10 @@ public class MoviesTable {
 
 	public static final String TABLE_MOVIES = "movies";
 
-	private static final String COLUMN_MOVIE_ID = "id";
-	private static final String COLUMN_TITLE = "title";
-	private static final String COLUMN_RATING = "rating";
-	private static final String COLUMN_NOTE = "note";
+	public static final String COLUMN_MOVIE_ID = "_id";
+	public static final String COLUMN_TITLE = "title";
+	public static final String COLUMN_RATING = "rating";
+	public static final String COLUMN_NOTE = "note";
 
 	private static final String CREATE_MOVIES_TABLE = "CREATE TABLE "
 			+ TABLE_MOVIES + "(" + COLUMN_MOVIE_ID + " INTEGER PRIMARY KEY,"
