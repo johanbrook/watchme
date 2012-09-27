@@ -5,11 +5,13 @@ import java.util.List;
 
 import se.chalmers.watchme.model.Movie;
 import se.chalmers.watchme.model.Tag;
+import se.chalmers.watchme.utils.DateConverter;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 public class DatabaseHandler extends SQLiteOpenHelper {
 
@@ -21,6 +23,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     // The Columns names in the table Movies
     private static final String KEY_MOVIE_ID = "id";
     private static final String KEY_TITLE = "title";
+    private static final String KEY_DATE = "date";
     private static final String KEY_RATING = "rating";
     private static final String KEY_NOTE = "note";
     
@@ -36,7 +39,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 	public void onCreate(SQLiteDatabase db) {
 		String CREATE_MOVIES_TABLE = "CREATE TABLE " + TABLE_MOVIES + "("
                 + KEY_MOVIE_ID + " INTEGER PRIMARY KEY," + KEY_TITLE + " TEXT,"
-                + KEY_RATING + " INTEGER," + KEY_NOTE + " TEXT" +  ")";
+                + KEY_DATE + " TEXT," + KEY_RATING + " INTEGER," + KEY_NOTE +
+                " TEXT" +  ")";
         db.execSQL(CREATE_MOVIES_TABLE);
         
         String CREATE_TAGS_TABLE = "CREATE TABLE " + TABLE_TAGS + "("
@@ -62,6 +66,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		//Is the ID inserted automatic?
 	    ContentValues values = new ContentValues();
 	    values.put(KEY_TITLE, movie.getTitle()); // Contact Name
+	    values.put(KEY_DATE, DateConverter.toSimpleDate(movie.getDate()));
 	    values.put(KEY_RATING, movie.getRating()); // Contact Phone Number
 	    values.put(KEY_NOTE, movie.getNote());
 	 
@@ -79,12 +84,16 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		SQLiteDatabase db = this.getReadableDatabase();
 
 		Cursor cursor = db.query(TABLE_MOVIES, new String[] { KEY_MOVIE_ID,
-				KEY_TITLE, KEY_RATING, KEY_NOTE }, KEY_MOVIE_ID + " = ?",
+				KEY_TITLE, KEY_DATE, KEY_RATING, KEY_NOTE }, KEY_MOVIE_ID + " = ?",
 				new String[] { String.valueOf(id) }, null, null, null, null);
+		
 		if (cursor != null)
 			cursor.moveToFirst();
 
-		Movie movie = new Movie(cursor.getString(1), Integer.parseInt(cursor.getString(1)), cursor.getString(3));
+		Movie movie = new Movie(cursor.getString(1),
+				DateConverter.toCalendar(cursor.getString(2)),
+				Integer.parseInt(cursor.getString(1)),
+				cursor.getString(3));
 		movie.setId(Long.parseLong(cursor.getString(0)));
 		return movie;
 	}
@@ -102,11 +111,14 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
 		if (cursor.moveToFirst()) {
 			do {
+				
 				Movie movie = new Movie(cursor.getString(1),
-						Integer.parseInt(cursor.getString(2)),
-						cursor.getString(3));
+						DateConverter.toCalendar(cursor.getString(2)),
+						Integer.parseInt(cursor.getString(3)),
+						cursor.getString(4));
 				movie.setId(Long.parseLong(cursor.getString(0)));
 				allMovies.add(movie);
+				
 			} while (cursor.moveToNext());
 		}
 		
@@ -124,6 +136,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		
 		ContentValues values = new ContentValues();
 	    values.put(KEY_TITLE, movie.getTitle()); // Contact Name
+	    values.put(KEY_DATE, DateConverter.toSimpleDate(movie.getDate()));
 	    values.put(KEY_RATING, movie.getRating()); // Contact Phone Number
 	    values.put(KEY_NOTE, movie.getNote());
 		
