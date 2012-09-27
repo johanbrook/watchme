@@ -123,12 +123,10 @@ public class AddMovieActivity extends FragmentActivity
 			public void afterTextChanged(Editable arg0) {
 				//TODO Added throw statement since methods never used. Is this
 				// the right way to do it? / Mattias
-				throw new UnsupportedOperationException();		
 			}
 
 			public void beforeTextChanged(CharSequence s, int start, int count,
 					int after) {
-				throw new UnsupportedOperationException();
 			}
 
         });
