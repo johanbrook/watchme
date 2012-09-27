@@ -37,7 +37,6 @@ import android.view.View.OnClickListener;
 public class AddMovieActivity extends FragmentActivity implements DatePickerListener {
 	
 	private TextView dateField;
-	private Button datePickerButton;
 	private TextView noteField;
 	
 	private final Context context = this;
@@ -66,7 +65,6 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
         dateField.setText(DateConverter.toSimpleDate(this.releaseDate));
         
         this.titleField = (TextView) findViewById(R.id.title_field);
-        this.datePickerButton = (Button) findViewById(R.id.release_date_button);
         this.noteField = (TextView) findViewById(R.id.note_field);
         
         this.db = new DatabaseHandler(this);
@@ -74,15 +72,8 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
         this.notifications.connectToService();
         
         /**
-         * Click callback. Shows the date picker for a movies release date
          */
-        this.datePickerButton.setOnClickListener(new OnClickListener() {
         	
-        	public void onClick(View v) {
-        		DialogFragment datePickerFragment = new DatePickerFragment();
-                datePickerFragment.show(getSupportFragmentManager(),
-                		"datePicker");
-        	}
         });
     }
     
@@ -158,6 +149,15 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
 
 		dateField.setText(DateConverter.toSimpleDate(this.releaseDate));
 		
+	}
+    
+    /**
+     * Click callback. Shows the date picker for a movies release date
+     */
+    public void onDatePickerButtonClick(View v) {
+		DialogFragment datePickerFragment = new DatePickerFragment();
+        datePickerFragment.show(getSupportFragmentManager(),
+        		"datePicker");
 	}
 
 }
