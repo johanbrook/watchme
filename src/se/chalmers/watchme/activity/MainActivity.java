@@ -33,7 +33,7 @@ public class MainActivity extends ListActivity {
         
         this.db = new DatabaseHandler(this);
         
-        this.moviesAdapter = new ArrayAdapter<Movie>(this, android.R.layout.simple_list_item_1, this.db.getAllMovies());
+        this.moviesAdapter = new ArrayAdapter<Movie>(this, R.layout.list_item_movie, this.db.getAllMovies());
         setListAdapter(this.moviesAdapter);
 		
         this.getListView().setOnItemLongClickListener(new OnDeleteListener());
