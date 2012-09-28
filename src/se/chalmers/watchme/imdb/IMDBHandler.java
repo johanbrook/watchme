@@ -9,6 +9,10 @@ package se.chalmers.watchme.imdb;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import se.chalmers.watchme.http.HttpRetriever;
 
 public class IMDBHandler {
@@ -40,11 +44,20 @@ public class IMDBHandler {
 		return s.toString();
 	}
 	
-	public String searchForMovieTitle(String title) {
+	public JSONArray searchForMovieTitle(String title) {
 		final String url = buildURL(title);
 		String response = this.http.get(url);
+		JSONArray movies = null;
 		
-		return response;
+		try{
+			movies = new JSONArray(response);
+		}
+		catch(JSONException e) {
+			e.printStackTrace();
+		}
+		
+		return movies;
 	}
+	
 	
 }

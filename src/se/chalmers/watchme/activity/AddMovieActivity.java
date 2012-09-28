@@ -1,11 +1,11 @@
 package se.chalmers.watchme.activity;
 
 import java.util.Calendar;
+import java.util.List;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import se.chalmers.watchme.R;
-import se.chalmers.watchme.R.id;
-import se.chalmers.watchme.R.layout;
-import se.chalmers.watchme.R.menu;
 import se.chalmers.watchme.database.DatabaseHandler;
 import se.chalmers.watchme.imdb.IMDBHandler;
 import se.chalmers.watchme.model.Movie;
@@ -16,9 +16,6 @@ import se.chalmers.watchme.notifications.NotificationClient;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.text.Editable;
@@ -27,8 +24,11 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.DatePicker;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.TextView;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
@@ -43,13 +43,18 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
 	private Button addButton;
 	
 	// The handler to interface with the notification system and scheduler
-	private NotificationClient notifications;
+	private NotificationClient notifications = new NotificationClient(this);
 	
 	// The database handler
-	private DatabaseHandler db;
+	private DatabaseHandler db = new DatabaseHandler(this);
 	
 	// The IMDB API handler
-	private IMDBHandler imdb;
+	private IMDBHandler imdb = new IMDBHandler();
+	
+	// The async IMDb search task
+	private IMDBSearchTask asyncTask;
+	
+	private ArrayAdapter<Movie> listAdapter;
 	
 	private Calendar releaseDate;
 
@@ -62,29 +67,36 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
         
         this.releaseDate = Calendar.getInstance();
         
-        //TODO Use the XML-value although it is overwritten here?
-        this.dateField = (TextView) findViewById(R.id.release_date_label);
-        dateField.setText(DateConverter.toSimpleDate(this.releaseDate));
+        initUIControls();
         
-        this.titleField = (TextView) findViewById(R.id.title_field);
-        this.noteField = (TextView) findViewById(R.id.note_field);
+        this.asyncTask = new IMDBSearchTask();
+        this.listAdapter = new ArrayAdapter<Movie>(this, R.layout.list_item);
         
-        this.db = new DatabaseHandler(this);
-        
-        this.imdb = new IMDBHandler();
-        
-        this.notifications = new NotificationClient(this);
         this.notifications.connectToService();
         
         // Disable add movie button on init
         this.addButton = (Button) findViewById(R.id.add_movie_button);
         this.addButton.setEnabled(false);
         
+        ((AutoCompleteTextView) this.titleField).setAdapter(this.listAdapter);
+    }
+    
+    
+    private void initUIControls() {
+    	 //TODO Use the XML-value although it is overwritten here?
+        this.dateField = (TextView) findViewById(R.id.release_date_label);
+        this.dateField.setText(DateConverter.toSimpleDate(this.releaseDate));
+        
+        this.titleField = (TextView) findViewById(R.id.title_field);
+        this.noteField = (TextView) findViewById(R.id.note_field);
+        
         /**
          * Disable "add button" if no Title on Movie has been set.
          */
         this.titleField.addTextChangedListener(new AddButtonToggler());
+        this.titleField.addTextChangedListener(new AutoCompleteWatcher());
     }
+    
     
     /**
      * Click callback. Create a new Movie object and set it on
@@ -104,21 +116,16 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
     	movie.setNote(movieNote);
     	movie.setDate(this.releaseDate);
     	
-		db.addMovie(movie);
+		this.db.addMovie(movie);
 		
 		Intent home = new Intent(this, MainActivity.class);
 		setResult(RESULT_OK, home);
 		home.putExtra("movie", movie);
 		
 		// Set a notification for the date picked
-    	setNotification(movie);
-    	
-    	performSearch(movieTitle);
+    	this.setNotification(movie);
     }
     
-    private void performSearch(String title) {
-    	(new IMDBSearchTask()).execute(title);
-    }
     
     private void setNotification(Movie movie) {
     	
@@ -174,23 +181,27 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
         		"datePicker");
 	}
 
-    private class IMDBSearchTask extends AsyncTask<String, Void, String> {
+    private class IMDBSearchTask extends AsyncTask<String, Void, JSONArray> {
 
 		@Override
-		protected String doInBackground(String... params) {
+		protected JSONArray doInBackground(String... params) {
 			return imdb.searchForMovieTitle(params[0]);
 		}
 		
 		@Override
-		protected void onPostExecute(final String result) {
-			runOnUiThread(new Runnable() {
+		protected void onPostExecute(final JSONArray results) {
+			if(results != null) {
+				listAdapter = new ArrayAdapter<Movie>(getBaseContext(), R.layout.list_item);
 				
-				public void run() {
-					if(result != null) {
-						Toast.makeText(AddMovieActivity.this, result, Toast.LENGTH_LONG).show();
-					}
+				((AutoCompleteTextView) titleField).setAdapter(listAdapter);
+				
+				for(int i = 0; i < results.length(); i++) {
+					JSONObject o = results.optJSONObject(i);
+					
+					listAdapter.add(new Movie(o.optString("original_name")));
+					listAdapter.notifyDataSetChanged();
 				}
-			});
+			}
 		}
     	
     }
@@ -214,5 +225,31 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
 			// Empty. Needs to be here
 		}
 
+    }
+    
+    
+    private class AutoCompleteWatcher implements TextWatcher {
+
+		public void afterTextChanged(Editable arg0) {
+		}
+
+		public void beforeTextChanged(CharSequence arg0, int arg1, int arg2,
+				int arg3) {
+		}
+
+		public void onTextChanged(CharSequence s, int arg1, int arg2, int arg3) {
+			
+			if(this.shouldAutoComplete(s.toString())) {
+				asyncTask.cancel(true);
+				asyncTask = new IMDBSearchTask();
+				asyncTask.execute(s.toString());
+			}
+		}
+		
+		private boolean shouldAutoComplete(String s) {
+			return 	s.length() > 3 && 
+					asyncTask.getStatus() != AsyncTask.Status.RUNNING;
+		}
+    	
     }
 }

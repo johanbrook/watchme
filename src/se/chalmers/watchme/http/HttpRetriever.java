@@ -45,9 +45,6 @@ public class HttpRetriever {
 			request.abort();
 			Log.i("Custom", "Error retrieving " + url);
 		}
-		finally {
-			this.client.getConnectionManager().shutdown();
-		}
 		
 		return null;
 	}
