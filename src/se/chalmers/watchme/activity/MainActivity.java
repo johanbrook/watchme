@@ -3,6 +3,7 @@ package se.chalmers.watchme.activity;
 import se.chalmers.watchme.R;
 import se.chalmers.watchme.database.DatabaseHandler;
 import se.chalmers.watchme.model.Movie;
+import se.chalmers.watchme.utils.MovieItemAdapter;
 import android.os.Bundle;
 import android.app.AlertDialog;
 import android.app.ListActivity;
@@ -33,7 +34,7 @@ public class MainActivity extends ListActivity {
         
         this.db = new DatabaseHandler(this);
         
-        this.moviesAdapter = new ArrayAdapter<Movie>(this, R.layout.list_item_movie, this.db.getAllMovies());
+        this.moviesAdapter = new MovieItemAdapter(this, R.layout.list_item_movie, this.db.getAllMovies());
         setListAdapter(this.moviesAdapter);
 		
         this.getListView().setOnItemLongClickListener(new OnDeleteListener());
