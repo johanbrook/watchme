@@ -54,6 +54,15 @@ public class Movie implements Serializable {
 	}
 	
 	/**
+	 * Appends a list of tags to the existing list of tags
+	 * 
+	 * @param tags The list of tags to be added
+	 */
+	public void addTags(List<Tag> tags){
+		this.tags.addAll(tags);
+	}
+	
+	/**
 	 * Removes a tag from the list with tags.
 	 * 
 	 * @param tag The tag you want to remove.

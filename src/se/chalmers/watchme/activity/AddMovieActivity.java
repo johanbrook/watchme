@@ -1,7 +1,9 @@
 package se.chalmers.watchme.activity;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 import se.chalmers.watchme.R;
 import se.chalmers.watchme.R.id;
@@ -9,6 +11,7 @@ import se.chalmers.watchme.R.layout;
 import se.chalmers.watchme.R.menu;
 import se.chalmers.watchme.database.DatabaseHandler;
 import se.chalmers.watchme.model.Movie;
+import se.chalmers.watchme.model.Tag;
 import se.chalmers.watchme.ui.DatePickerFragment;
 import se.chalmers.watchme.ui.DatePickerFragment.DatePickerListener;
 import se.chalmers.watchme.utils.DateConverter;
@@ -37,6 +40,7 @@ public class AddMovieActivity extends FragmentActivity
 	private TextView titleField;
 	private TextView dateField;
 	private Button datePickerButton;
+	private TextView tagField;
 	private TextView noteField;
 	private Button addButton;
 	
@@ -61,6 +65,7 @@ public class AddMovieActivity extends FragmentActivity
         dateField.setText(DateConverter.toSimpleDate(this.releaseDate));
         
         this.datePickerButton = (Button) findViewById(R.id.release_date_button);
+        this.tagField = (TextView) findViewById(R.id.tag_field);
         this.noteField = (TextView) findViewById(R.id.note_field);
         this.addButton = (Button) findViewById(R.id.add_movie_button);
         
@@ -89,8 +94,34 @@ public class AddMovieActivity extends FragmentActivity
 				String movieTitle = titleField.getText().toString();
 				String movieNote = noteField.getText().toString();
 				
+				// TODO Better suited list for tags?
+				List<Tag> newTags = new ArrayList<Tag>();
+				
+				/* 
+				 * Split the text input into separate strings input at
+				 * commas (",") from tag-field
+				 */
+				String [] tagStrings = tagField.getText().toString().split(",");
+				
+				for(String tagString : tagStrings) {
+					
+					/* Remove whitespaces from the beginning and end of each
+					 * string to allow for multi-word tags.
+					 */
+					tagString = tagString.trim();
+					
+					// Create tag objects from the strings
+					newTags.add(new Tag(tagString));
+				}
+				
+
+				for(int n = 0; n < tagStrings.length; n++) {
+					newTags.add(new Tag(tagStrings[n].trim()));
+				}
+				
 				Movie movie = new Movie(movieTitle);
 				movie.setDate(releaseDate);
+				movie.addTags(newTags);
 				movie.setNote(movieNote);
 				
 				db.addMovie(movie);
