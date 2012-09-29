@@ -10,6 +10,7 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="20dp"
+        android:gravity="center"
         android:ems="10"
         android:inputType="textCapWords" 
         android:hint="@string/input_movie_hint" >
@@ -17,12 +18,20 @@
         <requestFocus />
     </EditText>
     
+    <RatingBar
+        android:id="@+id/rating_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_below="@+id/title_field"
+        android:layout_centerHorizontal="true" />
+    
     <LinearLayout
         android:id="@+id/release_date_area"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/title_field"
-        android:layout_marginTop="20dp"
+        android:layout_below="@+id/rating_bar"
+        android:layout_marginTop="10dp"
         android:layout_marginLeft="20dip"
 	    android:layout_marginRight="20dip"
         android:orientation="horizontal">
@@ -53,7 +62,7 @@
 	    android:layout_marginLeft="10dip"
 	    android:layout_marginRight="10dip"
         android:hint="@string/input_tag_hint"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="20dp"
 	    android:gravity="top"
 	    android:singleLine="false"
 	    android:lines="3"
@@ -68,10 +77,10 @@
 	    android:layout_marginLeft="10dip"
 	    android:layout_marginRight="10dip"
         android:hint="@string/input_note_hint"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
 	    android:gravity="top"
 	    android:singleLine="false"
-	    android:lines="5"
+	    android:lines="4"
 		android:background="@drawable/notefield" />
 
     <Button
@@ -80,7 +89,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/note_field"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="20dp"
         android:text="@string/add_movie_button" />
 
 </RelativeLayout>
