@@ -28,6 +28,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
@@ -119,10 +120,14 @@ public class AddMovieActivity extends FragmentActivity
 					newTags.add(new Tag(tagStrings[n].trim()));
 				}
 				
-				Movie movie = new Movie(movieTitle);
-				movie.setDate(releaseDate);
-				movie.addTags(newTags);
-				movie.setNote(movieNote);
+				/*
+				 * Extract the rating from the ratingBar and convert it to
+				 * an integer
+				 */
+				RatingBar ratingBar = (RatingBar) findViewById(R.id.rating_bar); 
+				int rating = (int) ratingBar.getRating();
+				
+				Movie movie = new Movie(movieTitle, releaseDate, rating, movieNote);
 				
 				db.addMovie(movie);
 				
