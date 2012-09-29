@@ -1,0 +1,126 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:isScrollContainer="true" >
+    
+    <RelativeLayout
+        android:id="@+id/top_detail_area"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+		
+	    <ImageView
+	        android:id="@+id/poster"
+	        android:layout_width="100dp"
+	        android:layout_height="100dp"
+	        android:layout_marginTop="5dp"
+	        android:layout_marginLeft="5dp"
+	        android:adjustViewBounds="true"
+	        android:src="@drawable/ic_launcher" />
+	
+	    <TextView
+	        android:id="@+id/releaseDate"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_toRightOf="@+id/poster"
+	        android:layout_marginLeft="10dp"
+	        android:layout_marginTop="5dp"
+	        android:hint="@string/release_date_label"
+	        android:textAppearance="?android:attr/textAppearanceLarge" />
+	    
+	    <TextView
+	        android:id="@+id/genres"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_toRightOf="@+id/poster"
+	        android:layout_below="@+id/releaseDate"
+	        android:layout_marginLeft="10dp"
+	        android:layout_marginTop="5dp"
+	        android:hint="@string/genres_label"
+	        android:textAppearance="?android:attr/textAppearanceSmall" />
+	    
+	    <TextView
+	        android:id="@+id/duration"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_toRightOf="@+id/poster"
+	        android:layout_below="@+id/genres"
+	        android:layout_marginLeft="10dp"
+	        android:layout_marginTop="5dp"
+	        android:hint="@string/duration_label"
+	        android:textAppearance="?android:attr/textAppearanceSmall" />
+	
+	    <Button
+	        android:id="@+id/imdb_button"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_toRightOf="@+id/poster"
+	        android:layout_below="@+id/duration"
+	        android:layout_marginLeft="10dp"
+	        android:layout_marginTop="5dp"
+	        android:text="@string/imdb_button"
+	        style="?android:attr/buttonStyleSmall" />
+	    
+	</RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/top_detail_area"
+        android:layout_marginTop="20dp" >
+	    
+        <LinearLayout
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_marginRight="10dp"
+	        android:layout_marginLeft="10dp"
+	        android:orientation="vertical"
+	        android:layout_weight="1" >
+	
+	        <TextView
+	            android:id="@+id/my_rating_label"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:layout_marginTop="5dp"
+		        android:hint="@string/my_rating_label"
+		        android:textAppearance="?android:attr/textAppearanceSmall" />
+	
+	        <RatingBar
+	            android:id="@+id/my_rating_bar"
+	            style="?android:attr/ratingBarStyleSmall"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_marginTop="10dp"
+	            android:isIndicator="true" />
+	        
+	    </LinearLayout>
+	    
+        <LinearLayout
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_marginRight="10dp"
+	        android:layout_marginLeft="10dp"
+	        android:orientation="vertical"
+	        android:layout_weight="1" >
+	        
+            <TextView
+	            android:id="@+id/imdb_rating_label"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:layout_marginTop="5dp"
+		        android:hint="@string/imdb_rating_label"
+		        android:textAppearance="?android:attr/textAppearanceSmall" />
+    
+	        <TextView
+	            android:id="@+id/imdb_rating_number_label"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:layout_marginTop="5dp"
+		        android:hint="@string/imdb_rating_number_label"
+		        android:textAppearance="?android:attr/textAppearanceSmall" />
+	        
+	    </LinearLayout>
+	    
+    </LinearLayout>
+
+</RelativeLayout>
