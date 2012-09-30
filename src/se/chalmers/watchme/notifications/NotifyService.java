@@ -1,6 +1,8 @@
 /**
 *	NotifyService.java
 *
+*	The service responsible for showing notifications.
+*
 *	@author Johan
 */
 
@@ -42,6 +44,7 @@ public class NotifyService extends Service {
 
 	@Override
 	public void onCreate() {
+		// Fetch the system's notification service manager
 		this.manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 	}
 	
@@ -71,14 +74,16 @@ public class NotifyService extends Service {
 	
 	@TargetApi(16)
 	private void showNotification(Movie movie) {
+
+		// The content of the notification box
 		CharSequence title = "Movie released";
-		CharSequence text = "'"+movie.getTitle() + "' is released!";
+		CharSequence text = "'" + movie.getTitle() + "' is released!";
 		int icon = R.drawable.ic_popup_reminder;
 		
 		// The intent to launch an activity if the user presses this notification
 		PendingIntent pending = PendingIntent.getActivity(this, 0, new Intent(this, MainActivity.class), 0);
 
-		// Build a notification
+		// Build the notification
 
 		Notification notification = new Notification.Builder(this)
 			.setSmallIcon(icon)

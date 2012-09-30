@@ -1,15 +1,15 @@
 /**
 *	NotificationService.java
 *
+*	The service class which provides a server functionality for
+*	clients to connect to.
+*
 *	@author Johan
 */
 
 package se.chalmers.watchme.notifications;
 
-import java.util.Calendar;
-
 import se.chalmers.watchme.model.Movie;
-
 import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
@@ -20,8 +20,14 @@ public class NotificationService extends Service {
 	
 	private final IBinder binder = new ServiceBinder();
 
+	/**
+	 * Embedded Binder class which provides a reference
+	 * to this service. 
+	 * 
+	 * @author Johan
+	 */
 	public class ServiceBinder extends Binder {
-		NotificationService getService() {
+		public NotificationService getService() {
 			return NotificationService.this;
 		}
 	}
@@ -39,6 +45,13 @@ public class NotificationService extends Service {
 		return START_STICKY;
 	}
 	
+	/**
+	 * Set a new alarm task for a movie.
+	 * 
+	 * <p>The task is started on a separate thread.</p>
+	 * 
+	 * @param movie The movie
+	 */
 	public void setAlarmTaskForMovie(Movie movie) {
 		Log.i("Custom", "Set alarm");
 		// Start a new task for the alarm on another thread (separated from the UI thread)

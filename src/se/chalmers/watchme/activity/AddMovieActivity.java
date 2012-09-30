@@ -65,6 +65,8 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
         this.noteField = (TextView) findViewById(R.id.note_field);
         
         this.db = new DatabaseHandler(this);
+        
+        // Create a notification client and hook up to the notification service
         this.notifications = new NotificationClient(this);
         this.notifications.connectToService();
         
@@ -126,9 +128,12 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
     	setNotification(movie);
     }
     
-    
+    /**
+     * Queue a notification for the added movie
+     * 
+     * @param movie The movie
+     */
     private void setNotification(Movie movie) {
-    	
     	this.notifications.setMovieNotification(movie);
     	Toast.makeText(this, "Notification set for " + DateConverter.toSimpleDate(movie.getDate()), Toast.LENGTH_LONG).show();
     }

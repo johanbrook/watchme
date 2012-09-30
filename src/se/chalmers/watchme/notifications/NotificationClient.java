@@ -1,15 +1,16 @@
 /**
-*	NotificationManager.java
+*	NotificationClient.java
+*
+*	The client responsible for handling notifications. This client
+*	should be bound to a service. See the methods connectToService()
+*	and disconnectFromService().
 *
 *	@author Johan
 */
 
 package se.chalmers.watchme.notifications;
 
-import java.util.Calendar;
-
 import se.chalmers.watchme.model.Movie;
-
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -22,12 +23,20 @@ public class NotificationClient {
 	private Context ctx;
 	private NotificationService service;
 	private boolean isBound;
-	
 	private ServiceConnection connection;
-	
+
+	/**
+	 * Create a new client from a context.
+	 * 
+	 * @param context The context
+	 */
 	public NotificationClient(Context context) {
 		this.ctx = context;
 		this.isBound = false;
+		
+		/**
+		 * The connection to the notification service.
+		 */
 		this.connection = new ServiceConnection() {
 
 			public void onServiceConnected(ComponentName name, IBinder s) {
@@ -42,11 +51,22 @@ public class NotificationClient {
 		};
 	}
 	
+	/**
+	 * Initiate the connection to the service. 
+	 */
 	public void connectToService() {
 		Log.i("Custom", "Connecting to service");
-		this.isBound = this.ctx.bindService(new Intent(this.ctx, NotificationService.class), this.connection, Context.BIND_AUTO_CREATE);
+		
+		// Bind to NotificationService with the connection.
+		this.isBound = this.ctx.bindService(
+								new Intent(this.ctx, NotificationService.class), 
+								this.connection, 
+								Context.BIND_AUTO_CREATE);
 	}
 	
+	/**
+	 * Disconnect from the service
+	 */
 	public void disconnectService() {
 		if(this.isBound) {
 			this.ctx.unbindService(this.connection);
@@ -54,6 +74,11 @@ public class NotificationClient {
 		}
 	}
 	
+	/**
+	 * Set a notification for a movie.
+	 * 
+	 * @param movie The movie
+	 */
 	public void setMovieNotification(Movie movie) {
 		
 		if(this.service != null){
