@@ -76,10 +76,6 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
         
         initUIControls();
         
-        this.titleField = (TextView) findViewById(R.id.title_field);
-        this.tagField = (TextView) findViewById(R.id.tag_field);
-        this.noteField = (TextView) findViewById(R.id.note_field);
-        
         this.asyncTask = new IMDBSearchTask();
         this.autoCompleteAdapter = new ArrayAdapter<String>(this, R.layout.list_item);
         
@@ -102,6 +98,7 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
         
         this.titleField = (TextView) findViewById(R.id.title_field);
         this.noteField = (TextView) findViewById(R.id.note_field);
+        this.tagField = (TextView) findViewById(R.id.tag_field);
         
         // Add listeners to the title field
         this.titleField.addTextChangedListener(new AddButtonToggler());
