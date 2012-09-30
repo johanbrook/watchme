@@ -18,12 +18,21 @@
         <requestFocus />
     </EditText>
     
+    <TextView
+        android:id="@+id/rating_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_below="@+id/title_field"
+        android:layout_centerHorizontal="true"
+        android:hint="@string/rating_hint"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+    
     <RatingBar
         android:id="@+id/rating_bar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:layout_below="@+id/title_field"
+        android:layout_below="@+id/rating_label"
         android:layout_centerHorizontal="true" />
     
     <LinearLayout
@@ -41,7 +50,7 @@
 	        android:layout_width="0dp"
 		    android:layout_height="wrap_content"
 		    android:layout_weight="1"
-	        android:hint="@string/release_date_label"
+	        android:hint="@string/release_date_hint"
 			android:textAppearance="?android:attr/textAppearanceLarge" />
         
         <Button 
@@ -62,7 +71,7 @@
 	    android:layout_marginLeft="10dip"
 	    android:layout_marginRight="10dip"
         android:hint="@string/input_tag_hint"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
 	    android:gravity="top"
 	    android:singleLine="false"
 	    android:lines="3"
@@ -89,7 +98,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/note_field"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
         android:text="@string/add_movie_button" />
 
 </RelativeLayout>
