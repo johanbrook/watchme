@@ -240,7 +240,12 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
 
     }
     
-    
+    /**
+     * Class responsible for running the IMDb search task
+     * when the user types in the title field. 
+     * 
+     * @author Johan
+     */
     private class AutoCompleteWatcher implements TextWatcher {
 
 		public void afterTextChanged(Editable arg0) {
@@ -253,12 +258,19 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
 		public void onTextChanged(CharSequence s, int arg1, int arg2, int arg3) {
 			
 			if(this.shouldAutoComplete(s.toString())) {
+				// Cancel any running tasks and execute a new one
 				asyncTask.cancel(true);
 				asyncTask = new IMDBSearchTask();
 				asyncTask.execute(s.toString());
 			}
 		}
 		
+		/**
+		 * Decides whether to run a new search task or not.
+		 * 
+		 * @param s The input query
+		 * @return True if auto complete should fire, otherwise false
+		 */
 		private boolean shouldAutoComplete(String s) {
 			return 	s.length() > 3 && 
 					asyncTask.getStatus() != AsyncTask.Status.RUNNING;
