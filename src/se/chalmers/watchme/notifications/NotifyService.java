@@ -72,8 +72,8 @@ public class NotifyService extends Service {
 	@TargetApi(16)
 	private void showNotification(Movie movie) {
 		CharSequence title = "Movie released";
-		CharSequence text = movie.getTitle() + " is released!";
-		int icon = R.drawable.ic_dialog_alert;
+		CharSequence text = "'"+movie.getTitle() + "' is released!";
+		int icon = R.drawable.ic_popup_reminder;
 		
 		// The intent to launch an activity if the user presses this notification
 		PendingIntent pending = PendingIntent.getActivity(this, 0, new Intent(this, MainActivity.class), 0);
