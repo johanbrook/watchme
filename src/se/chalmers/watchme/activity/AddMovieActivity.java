@@ -7,11 +7,11 @@ import org.json.JSONObject;
 
 import se.chalmers.watchme.R;
 import se.chalmers.watchme.database.DatabaseHandler;
-import se.chalmers.watchme.imdb.IMDBHandler;
 import se.chalmers.watchme.model.Movie;
 import se.chalmers.watchme.ui.DatePickerFragment;
 import se.chalmers.watchme.ui.DatePickerFragment.DatePickerListener;
 import se.chalmers.watchme.utils.DateConverter;
+import se.chalmers.watchme.net.IMDBHandler;
 import se.chalmers.watchme.notifications.NotificationClient;
 import android.os.AsyncTask;
 import android.os.Bundle;

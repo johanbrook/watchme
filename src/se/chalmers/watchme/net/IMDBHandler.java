@@ -1,31 +1,49 @@
 /**
 *	IMDBHandler.java
 *
+*	Class responsible for making requests to the IMDb API.
+*
 *	@author Johan
 */
 
-package se.chalmers.watchme.imdb;
+package se.chalmers.watchme.net;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
-import se.chalmers.watchme.http.HttpRetriever;
 
 public class IMDBHandler {
 	
+	/** The TMDb API url */
 	public static final String API_URL = "http://api.themoviedb.org/2.1/";
-	public static final String SEARCH_METHOD = "Movie.search/";
-	public static final String LANGUAGE = "en/";
-	public static final String JSON_FORMAT = "json/";
 	
+	/** The API search method, i.e. Movie search, Person search, etc. */
+	private static final String SEARCH_METHOD = "Movie.search/";
+	/** Specify language */
+	private static final String LANGUAGE = "en/";
+	/** Return format */
+	private static final String JSON_FORMAT = "json/";
+	
+	/** The TMDb API key */
 	private static final String API_KEY = "6af2e4697c90e9c6e4a8f2434eb3c5fe";
 	
+	// Initialize the HTTP handler
 	private HttpRetriever http = new HttpRetriever();
 	
+	/**
+	 * Build a URL for searching the API from a query.
+	 * 
+	 * <p><strong>Format:</strong></p>
+	 * 
+	 * <pre>
+	 * <code>http://api.themoviedb.org/2.1/Movie.search/en/json/APIKEY/query</code>
+	 * </pre>
+	 * 
+	 * @param query The query, i.e. a movie title
+	 * @return A String with the complete request url
+	 */
 	private String buildURL(String query) {
 		StringBuilder s = new StringBuilder();
 		
@@ -44,8 +62,14 @@ public class IMDBHandler {
 		return s.toString();
 	}
 	
+	/**
+	 * Searching the API for a movie.
+	 * 
+	 * @param title The movie title
+	 * @return A JSONArray with the movies as JSONObjects on success. Otherwise null
+	 */
 	public JSONArray searchForMovieTitle(String title) {
-		final String url = buildURL(title);
+		final String url = this.buildURL(title);
 		String response = this.http.get(url);
 		JSONArray movies = null;
 		

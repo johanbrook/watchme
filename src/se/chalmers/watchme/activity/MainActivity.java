@@ -2,8 +2,8 @@ package se.chalmers.watchme.activity;
 
 import se.chalmers.watchme.R;
 import se.chalmers.watchme.database.DatabaseHandler;
-import se.chalmers.watchme.http.HttpRetriever;
 import se.chalmers.watchme.model.Movie;
+import se.chalmers.watchme.net.HttpRetriever;
 import android.os.Bundle;
 import android.app.AlertDialog;
 import android.app.ListActivity;
