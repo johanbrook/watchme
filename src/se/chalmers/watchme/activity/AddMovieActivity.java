@@ -8,9 +8,11 @@ import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import se.chalmers.watchme.R;
-import se.chalmers.watchme.database.DatabaseHandler;
+import se.chalmers.watchme.database.MoviesTable;
+import se.chalmers.watchme.database.WatchMeContentProvider;
 import se.chalmers.watchme.model.Movie;
+import se.chalmers.watchme.R;
+import android.net.Uri;
 import se.chalmers.watchme.model.Tag;
 import se.chalmers.watchme.ui.DatePickerFragment;
 import se.chalmers.watchme.ui.DatePickerFragment.DatePickerListener;
@@ -20,6 +22,10 @@ import se.chalmers.watchme.notifications.NotificationClient;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.text.Editable;
@@ -50,9 +56,6 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
 	
 	// The handler to interface with the notification system and scheduler
 	private NotificationClient notifications = new NotificationClient(this);
-	
-	// The database handler
-	private DatabaseHandler db = new DatabaseHandler(this);
 	
 	// The IMDB API handler
 	private IMDBHandler imdb = new IMDBHandler();
@@ -146,7 +149,13 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
 		
 		Movie movie = new Movie(movieTitle, releaseDate, rating, movieNote);
 		
-		db.addMovie(movie);
+		ContentValues values = new ContentValues();
+	    values.put(MoviesTable.COLUMN_TITLE, movie.getTitle()); // Contact Name
+	    values.put(MoviesTable.COLUMN_RATING, movie.getRating()); // Contact Phone Number
+	    values.put(MoviesTable.COLUMN_NOTE, movie.getNote());
+	    
+	    Uri uri = WatchMeContentProvider.CONTENT_URI;
+		getContentResolver().insert(uri, values);
 		
 		Intent home = new Intent(this, MainActivity.class);
 		setResult(RESULT_OK, home);

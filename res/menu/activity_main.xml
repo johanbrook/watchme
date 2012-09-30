@@ -3,5 +3,7 @@
         android:title="@string/menu_settings"
         android:orderInCategory="100"
         android:showAsAction="never" />
-    <item android:id="@+id/menu_add_movie" android:title="@string/add_movie_button" android:showAsAction="ifRoom|withText"></item>
+    <item android:id="@+id/menu_add_movie" 
+        android:title="@string/add_movie_button" 
+        android:showAsAction="ifRoom|withText"></item>
 </menu>
