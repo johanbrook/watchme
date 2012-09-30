@@ -1,6 +1,9 @@
 package se.chalmers.watchme.activity;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 import se.chalmers.watchme.R;
 import se.chalmers.watchme.R.id;
@@ -8,6 +11,7 @@ import se.chalmers.watchme.R.layout;
 import se.chalmers.watchme.R.menu;
 import se.chalmers.watchme.database.DatabaseHandler;
 import se.chalmers.watchme.model.Movie;
+import se.chalmers.watchme.model.Tag;
 import se.chalmers.watchme.ui.DatePickerFragment;
 import se.chalmers.watchme.ui.DatePickerFragment.DatePickerListener;
 import se.chalmers.watchme.utils.DateConverter;
@@ -27,6 +31,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.LinearLayout;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
@@ -36,6 +42,7 @@ import android.support.v4.app.NavUtils;
 public class AddMovieActivity extends FragmentActivity implements DatePickerListener {
 	
 	private TextView dateField;
+	private TextView tagField;
 	private TextView noteField;
 	
 	private TextView titleField;
@@ -62,6 +69,7 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
         dateField.setText(DateConverter.toSimpleDate(this.releaseDate));
         
         this.titleField = (TextView) findViewById(R.id.title_field);
+        this.tagField = (TextView) findViewById(R.id.tag_field);
         this.noteField = (TextView) findViewById(R.id.note_field);
         
         this.db = new DatabaseHandler(this);
@@ -79,7 +87,6 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
          */
         this.titleField.addTextChangedListener(new TextWatcher() {
         	
-        	
         	public void onTextChanged(CharSequence s, int start, int before, int count) {
             	if(s.toString().equals("")) {
             		addButton.setEnabled(false);
@@ -95,9 +102,11 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
 			public void beforeTextChanged(CharSequence s, int start, int count,
 					int after) {
 				// Empty. Needs to be here
+				
 			}
 
         });
+        
     }
     
     /**
@@ -114,10 +123,32 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
     	String movieTitle = this.titleField.getText().toString();
     	String movieNote = this.noteField.getText().toString();
     	
-    	Movie movie = new Movie(movieTitle);
-    	movie.setNote(movieNote);
-    	movie.setDate(this.releaseDate);
-    	
+    	// TODO Better suited list for tags?
+		List<Tag> newTags = new ArrayList<Tag>();
+		
+		/* 
+		 * Split the text input into separate strings input at
+		 * commas (",") from tag-field
+		 */
+		String [] tagStrings = tagField.getText().toString().split(",");
+		
+		for(String tagString : tagStrings) {
+			
+			/* Remove whitespaces from the beginning and end of each
+			 * string to allow for multi-word tags.
+			 */
+			newTags.add(new Tag(tagString.trim()));
+		}
+		
+		/*
+		 * Extract the rating from the ratingBar and convert it to
+		 * an integer
+		 */
+		RatingBar ratingBar = (RatingBar) findViewById(R.id.rating_bar); 
+		int rating = (int) ratingBar.getRating();
+		
+		Movie movie = new Movie(movieTitle, releaseDate, rating, movieNote);
+		
 		db.addMovie(movie);
 		
 		Intent home = new Intent(this, MainActivity.class);
