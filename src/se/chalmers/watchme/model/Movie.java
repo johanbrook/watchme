@@ -43,8 +43,10 @@ public class Movie implements Serializable {
 		this.note = note;
 		this.releaseDate = releaseDate;
 		
-		// Set the time of day to 00.00.00
-		this.releaseDate.set(Calendar.YEAR, Calendar.MONTH, Calendar.DAY_OF_MONTH,
+		// Set the time of day to 00.00.00 to allow for easier testing
+		this.releaseDate.set(releaseDate.get(Calendar.YEAR),
+				releaseDate.get(Calendar.MONTH),
+				releaseDate.get(Calendar.DAY_OF_MONTH),
 				0, 0, 0);
 		
 		tags = new LinkedList<Tag>();
@@ -57,6 +59,15 @@ public class Movie implements Serializable {
 	 */
 	public void addTag(Tag tag) {
 		tags.add(tag);
+	}
+	
+	/**
+	 * Appends a list of tags to the existing list of tags
+	 * 
+	 * @param tags The list of tags to be added
+	 */
+	public void addTags(List<Tag> tags){
+		this.tags.addAll(tags);
 	}
 	
 	/**
