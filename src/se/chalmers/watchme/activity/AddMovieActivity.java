@@ -4,7 +4,6 @@ import se.chalmers.watchme.R;
 import se.chalmers.watchme.R.id;
 import se.chalmers.watchme.R.layout;
 import se.chalmers.watchme.R.menu;
-import se.chalmers.watchme.database.DatabaseHandler;
 import se.chalmers.watchme.database.MoviesTable;
 import se.chalmers.watchme.database.WatchMeContentProvider;
 import se.chalmers.watchme.model.Movie;
@@ -33,7 +32,6 @@ public class AddMovieActivity extends Activity {
 	private TextView textField;
 	private Button addButton;
 	private final Context context = this;
-	private DatabaseHandler db;
 
     @SuppressLint("NewApi")
 	@Override
@@ -44,8 +42,6 @@ public class AddMovieActivity extends Activity {
         
         this.addButton = (Button) findViewById(R.id.add_movie_button);
         this.textField = (TextView) findViewById(R.id.movie_name_field);
-        
-        //db = new DatabaseHandler(this);
         
         this.addButton.setEnabled(false);
         
