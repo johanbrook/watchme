@@ -5,12 +5,16 @@ import se.chalmers.watchme.R.id;
 import se.chalmers.watchme.R.layout;
 import se.chalmers.watchme.R.menu;
 import se.chalmers.watchme.database.DatabaseHandler;
+import se.chalmers.watchme.database.MoviesTable;
+import se.chalmers.watchme.database.WatchMeContentProvider;
 import se.chalmers.watchme.model.Movie;
+import android.net.Uri;
 import android.os.Bundle;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.text.Editable;
@@ -41,7 +45,7 @@ public class AddMovieActivity extends Activity {
         this.addButton = (Button) findViewById(R.id.add_movie_button);
         this.textField = (TextView) findViewById(R.id.movie_name_field);
         
-        db = new DatabaseHandler(this);
+        //db = new DatabaseHandler(this);
         
         this.addButton.setEnabled(false);
         
@@ -53,7 +57,14 @@ public class AddMovieActivity extends Activity {
 			
 			public void onClick(View v) {
 				Movie movie = new Movie(textField.getText().toString());
-				db.addMovie(movie);
+				//db.addMovie(movie);
+				ContentValues values = new ContentValues();
+			    values.put(MoviesTable.COLUMN_TITLE, movie.getTitle()); // Contact Name
+			    values.put(MoviesTable.COLUMN_RATING, movie.getRating()); // Contact Phone Number
+			    values.put(MoviesTable.COLUMN_NOTE, movie.getNote());
+			    
+			    Uri uri = WatchMeContentProvider.CONTENT_URI;
+				getContentResolver().insert(uri, values);
 				
 				Intent home = new Intent(context, MainActivity.class);
 				setResult(RESULT_OK, home);
@@ -79,12 +90,12 @@ public class AddMovieActivity extends Activity {
 			public void afterTextChanged(Editable arg0) {
 				//TODO Added throw statement since methods never used. Is this
 				// the right way to do it? / Mattias
-				throw new UnsupportedOperationException();		
+				//throw new UnsupportedOperationException();		
 			}
 
 			public void beforeTextChanged(CharSequence s, int start, int count,
 					int after) {
-				throw new UnsupportedOperationException();
+				//throw new UnsupportedOperationException();
 			}
 
         });

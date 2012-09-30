@@ -22,6 +22,7 @@ public class MoviesTable {
 			+ " TEXT" + ")";
 
 	public static void onCreate(SQLiteDatabase db) {
+		System.out.println("--- CREATED TABLE: MOVIES ---");
 		db.execSQL(CREATE_MOVIES_TABLE);
 	}
 

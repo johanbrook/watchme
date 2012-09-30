@@ -35,8 +35,6 @@ public class WatchMeContentProvider extends ContentProvider {
 		    sUriMatcher.addURI(AUTHORITY, BASE_PATH + "/#", MOVIES_ID);
 		  };
 	
-	
-	
 	@Override
 	public int delete(Uri uri, String selection, String[] selectionArgs) {
 		SQLiteDatabase sqlDB = db.getWritableDatabase();
@@ -86,6 +84,8 @@ public class WatchMeContentProvider extends ContentProvider {
 	@Override
 	public boolean onCreate() {
 		db = new DatabaseHelper(getContext());
+		System.out.println("--- CREATED DB IN CONTENT PROVIDER ---");
+		//db.onUpgrade(db.getReadableDatabase(), 0, 0);
 		return true;
 	}
 

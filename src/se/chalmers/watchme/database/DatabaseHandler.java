@@ -10,6 +10,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.net.Uri;
 
 
 /**
@@ -26,17 +27,18 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String TABLE_TAGS = "tags";
  
     // The Columns names in the table Movies
-    private static final String KEY_MOVIE_ID = "id";
+    private static final String KEY_MOVIE_ID = "_id";
     private static final String KEY_TITLE = "title";
     private static final String KEY_RATING = "rating";
     private static final String KEY_NOTE = "note";
     
     // The Columns names in the table Tags
-    private static final String KEY_TAG_ID = "id";
+    private static final String KEY_TAG_ID = "_id";
     private static final String KEY_NAME = "name";
  
     public DatabaseHandler(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        
     }
 	
 	@Override
@@ -83,6 +85,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 	 * @return the Movie asked for.
 	 */
 	public Movie getMovie(int id) {
+		Uri uri = WatchMeContentProvider.CONTENT_URI;
+		
 		SQLiteDatabase db = this.getReadableDatabase();
 
 		Cursor cursor = db.query(TABLE_MOVIES, new String[] { KEY_MOVIE_ID,
@@ -101,8 +105,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 	 * @return All Movies stored in the database.
 	 */
 	public List<Movie> getAllMovies() {
+		
 		List<Movie> allMovies = new LinkedList<Movie>();
-
+		/*
 		String selectQuery = "SELECT * FROM " + TABLE_MOVIES;
 
 		SQLiteDatabase db = this.getWritableDatabase();
@@ -117,7 +122,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 				allMovies.add(movie);
 			} while (cursor.moveToNext());
 		}
-		
+		*/
 		return allMovies;
 	}
 	

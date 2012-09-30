@@ -28,7 +28,7 @@
                 android:value="se.chalmers.watchme.MainActivity" />
         </activity>
         <provider
-            android:name="se.chalmers.watchme.database.providers.WatchMeContentProvider"
+            android:name="se.chalmers.watchme.database.WatchMeContentProvider"
             android:authorities="se.chalmers.watchme.database.providers.WatchMeContentProvider" >
         </provider>
 
