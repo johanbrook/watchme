@@ -150,9 +150,10 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
 		
 		Movie movie = new Movie(movieTitle, releaseDate, rating, movieNote);
 		
+		// Insert into database
 		ContentValues values = new ContentValues();
-	    values.put(MoviesTable.COLUMN_TITLE, movie.getTitle()); // Contact Name
-	    values.put(MoviesTable.COLUMN_RATING, movie.getRating()); // Contact Phone Number
+	    values.put(MoviesTable.COLUMN_TITLE, movie.getTitle());
+	    values.put(MoviesTable.COLUMN_RATING, movie.getRating());
 	    values.put(MoviesTable.COLUMN_NOTE, movie.getNote());
 	    
 	    Uri uri = WatchMeContentProvider.CONTENT_URI;
@@ -208,7 +209,6 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
     
     // @Override is not allowed in Java 1.5 for inherited interface methods
     public void setDate(Calendar pickedDate) {
-		
 		this.releaseDate = pickedDate;
 
 		dateField.setText(DateConverter.toSimpleDate(this.releaseDate));

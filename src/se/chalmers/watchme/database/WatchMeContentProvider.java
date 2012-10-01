@@ -8,8 +8,13 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
-import android.text.TextUtils;
 
+/**
+ * The Content Provider for the WatchMe application.
+ * 
+ * @author lisastenberg
+ *
+ */
 public class WatchMeContentProvider extends ContentProvider {
 	
 	private DatabaseHelper db;
