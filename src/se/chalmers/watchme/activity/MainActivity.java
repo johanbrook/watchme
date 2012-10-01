@@ -22,7 +22,7 @@ import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
 
-public class MainActivity extends ListActivity implements LoaderManager.LoaderCallbacks<Cursor>{
+public class MainActivity extends ListActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 	
 	public static final int ADD_MOVIE_REQUEST = 1;
 	private Uri uri = WatchMeContentProvider.CONTENT_URI;
