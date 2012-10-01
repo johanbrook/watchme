@@ -25,7 +25,7 @@ import android.widget.Toast;
 public class MainActivity extends ListActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 	
 	public static final int ADD_MOVIE_REQUEST = 1;
-	private Uri uri = WatchMeContentProvider.CONTENT_URI;
+	private Uri uri = WatchMeContentProvider.CONTENT_URI_MOVIES;
 	private SimpleCursorAdapter adapter;
 
     @Override

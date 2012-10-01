@@ -21,13 +21,18 @@ public class WatchMeContentProvider extends ContentProvider {
 	
 	public static final String AUTHORITY = "se.chalmers.watchme.database.providers.WatchMeContentProvider";
 	
-	private static final String BASE_PATH = "wathme";
+	private static final String BASE_PATH_MOVIES = "movies";
+	private static final String BASE_PATH_TAGS = "tags";
 	
 	private static final int MOVIES = 10;
 	private static final int MOVIES_ID = 20;
+	private static final int TAGS = 30;
+	private static final int TAGS_ID = 40;
 	
-	public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY
-	        + "/" + BASE_PATH);
+	public static final Uri CONTENT_URI_MOVIES = Uri.parse("content://" + AUTHORITY
+	        + "/" + BASE_PATH_MOVIES);
+	public static final Uri CONTENT_URI_TAGS = Uri.parse("content://" + AUTHORITY
+	        + "/" + BASE_PATH_TAGS);
 	
 	public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE
 	        + "/watchme";
@@ -36,8 +41,10 @@ public class WatchMeContentProvider extends ContentProvider {
 	
 	private static final UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 	  static {
-		    sUriMatcher.addURI(AUTHORITY, BASE_PATH, MOVIES);
-		    sUriMatcher.addURI(AUTHORITY, BASE_PATH + "/#", MOVIES_ID);
+		    sUriMatcher.addURI(AUTHORITY, BASE_PATH_MOVIES, MOVIES);
+		    sUriMatcher.addURI(AUTHORITY, BASE_PATH_MOVIES + "/#", MOVIES_ID);
+		    sUriMatcher.addURI(AUTHORITY, BASE_PATH_TAGS, TAGS);
+		    sUriMatcher.addURI(AUTHORITY, BASE_PATH_TAGS, TAGS_ID);
 		  };
 	
 	@Override
@@ -83,7 +90,7 @@ public class WatchMeContentProvider extends ContentProvider {
 		//Called as a courtesy
 		getContext().getContentResolver().notifyChange(uri, null);
 		
-	    return Uri.parse(BASE_PATH + "/" + id);
+	    return Uri.parse(BASE_PATH_MOVIES + "/" + id);
 	}
 
 	@Override
