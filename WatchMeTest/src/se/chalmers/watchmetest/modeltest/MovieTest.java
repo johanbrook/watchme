@@ -1,5 +1,7 @@
 package se.chalmers.watchmetest.modeltest;
 
+import java.util.Calendar;
+
 import se.chalmers.watchme.model.Movie;
 import se.chalmers.watchme.model.Tag;
 import android.test.AndroidTestCase;
@@ -54,7 +56,7 @@ public class MovieTest extends AndroidTestCase {
 	}
 	
 	public void testGetNote() {
-		Movie batman = new Movie("batman", 1, "note");
+		Movie batman = new Movie("batman", Calendar.getInstance(), 1, "note");
 		assertTrue(batman.getNote().equals("note"));
 	}
 	
@@ -64,12 +66,12 @@ public class MovieTest extends AndroidTestCase {
 		assertTrue(batman.getNote().equals("note"));
 	}
 	
-	public void testGetRaiting() {
-		Movie batman = new Movie("batman", 5, "note");
+	public void testGetRating() {
+		Movie batman = new Movie("batman", Calendar.getInstance(), 5, "note");
 		assertTrue(batman.getRating() == 5);
 	}
 	
-	public void testSetRaiting() {
+	public void testSetRating() {
 		Movie batman = new Movie("batman");
 		batman.setRating(8);
 		assertTrue(batman.getRating() == 8);

@@ -1,6 +1,6 @@
 package se.chalmers.watchmetest.httptest;
 
-import se.chalmers.watchme.http.HttpRetriever;
+import se.chalmers.watchme.net.HttpRetriever;
 import android.test.AndroidTestCase;
 import android.test.suitebuilder.annotation.SmallTest;
 
