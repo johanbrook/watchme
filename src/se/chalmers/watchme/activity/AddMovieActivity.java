@@ -17,6 +17,7 @@ import se.chalmers.watchme.model.Tag;
 import se.chalmers.watchme.ui.DatePickerFragment;
 import se.chalmers.watchme.ui.DatePickerFragment.DatePickerListener;
 import se.chalmers.watchme.utils.DateConverter;
+import se.chalmers.watchme.utils.MovieHelper;
 import se.chalmers.watchme.net.IMDBHandler;
 import se.chalmers.watchme.notifications.NotificationClient;
 import android.os.AsyncTask;
@@ -238,7 +239,7 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
 		protected JSONArray doInBackground(String... params) {
 			return imdb.searchForMovieTitle(params[0]);
 		}
-		
+
 		@Override
 		protected void onPostExecute(final JSONArray results) {
 			if(results != null) {
@@ -250,7 +251,8 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
 				for(int i = 0; i < results.length(); i++) {
 					JSONObject o = results.optJSONObject(i);
 					
-					autoCompleteAdapter.add(o.optString("original_name"));
+					String format = o.optString("original_name") + " ("+ MovieHelper.parseYearFromDate(o.optString("released")) +")";
+					autoCompleteAdapter.add(format);
 					autoCompleteAdapter.notifyDataSetChanged();
 				}
 			}
