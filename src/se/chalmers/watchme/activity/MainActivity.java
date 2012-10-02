@@ -23,7 +23,7 @@ public class MainActivity extends ListActivity {
 	
 	public static final int ADD_MOVIE_REQUEST = 1;
 	
-	private ArrayAdapter<Movie> moviesAdapter;
+	private MovieItemAdapter moviesAdapter;
 	private DatabaseHandler db;
 	
 

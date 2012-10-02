@@ -1,6 +1,9 @@
 package se.chalmers.watchme.utils;
 
+import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
+
 import se.chalmers.watchme.R;
 import se.chalmers.watchme.model.Movie;
 import android.content.Context;
@@ -55,9 +58,30 @@ public class MovieItemAdapter extends ArrayAdapter<Movie> {
                 title.setText(movie.getTitle());
             }
 
-            if(date != null) {
-            	date.setText("" + movie.getDate().toString());
-            }
+            //TODO: Refactor ugly code
+            //TODO: Change to API level 9 for use of 
+            //movie.getDate().getDisplayName(...) (not possilble now).
+            //Nicer code and no deprecated methods will be used.
+			if (date != null) {
+				StringBuilder res = new StringBuilder();
+				
+				int dateNr = movie.getDate().getTime().getDate();
+				if (dateNr < 10) {
+					res.append("0" + dateNr  + " / ");
+				} else {
+					res.append("" + dateNr  + " / ");
+				}
+				
+				int monthNr = movie.getDate().getTime().getMonth() + 1;
+				if (monthNr < 10) {
+					res.append("0" + monthNr  + " / ");
+				} else {
+					res.append("" + monthNr  + " / ");
+				}
+				
+				res.append(movie.getDate().getTime().getYear() + 1900);
+				date.setText(res);		
+			}
             
             if (raiting != null) {
             	raiting.setText("" + movie.getRating());
