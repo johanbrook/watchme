@@ -51,18 +51,28 @@ public class WatchMeContentProvider extends ContentProvider {
 	public int delete(Uri uri, String selection, String[] selectionArgs) {
 		SQLiteDatabase sqlDB = db.getWritableDatabase();
 		
+		int deletedRows;
 		switch (sUriMatcher.match(uri)) {
 		case MOVIES:
 			//Nothing need to be added to the selection
+			deletedRows = sqlDB.delete(MoviesTable.TABLE_MOVIES, selection, selectionArgs);
 			break;
 		case MOVIES_ID:
 			//TODO: Need to check if selection is null?
 			selection = selection + MoviesTable.COLUMN_MOVIE_ID + " = " + uri.getLastPathSegment();
+			deletedRows = sqlDB.delete(MoviesTable.TABLE_MOVIES, selection, selectionArgs);
+			break;
+		case TAGS:
+			deletedRows = sqlDB.delete(TagsTable.TABLE_TAGS, selection, selectionArgs);
+			break;
+		case TAGS_ID:
+			//TODO: Need to check if selection is null?
+			selection = selection + TagsTable.COLUMN_TAG_ID + " = " + uri.getLastPathSegment();
+			deletedRows = sqlDB.delete(TagsTable.TABLE_TAGS, selection, selectionArgs);
 			break;
 		default:
 			throw new IllegalArgumentException("Unknown URI " + uri);
 		}
-		int deletedRows = sqlDB.delete(MoviesTable.TABLE_MOVIES, selection, selectionArgs);
 		
 		//Called as a courtesy
 		getContext().getContentResolver().notifyChange(uri, null);
@@ -83,6 +93,9 @@ public class WatchMeContentProvider extends ContentProvider {
 		case MOVIES:
 			id = sqlDB.insert(MoviesTable.TABLE_MOVIES, null, values);
 			break;
+		case TAGS:
+			id = sqlDB.insert(TagsTable.TABLE_TAGS, null, values);
+			break;
 		default:
 			throw new IllegalArgumentException("Unknown URI" + uri);
 		}
@@ -97,7 +110,6 @@ public class WatchMeContentProvider extends ContentProvider {
 	public boolean onCreate() {
 		db = new DatabaseHelper(getContext());
 		System.out.println("--- CREATED DB IN CONTENT PROVIDER ---");
-		//db.onUpgrade(db.getReadableDatabase(), 0, 0);
 		return true;
 	}
 
@@ -115,6 +127,13 @@ public class WatchMeContentProvider extends ContentProvider {
 	    	selection = selection + MoviesTable.COLUMN_MOVIE_ID + " = " + uri.getLastPathSegment();
 	    	queryBuilder.setTables(MoviesTable.TABLE_MOVIES);
 	        break;
+	    case TAGS:
+	    	queryBuilder.setTables(TagsTable.TABLE_TAGS);
+	    	break;
+	    case TAGS_ID:
+	    	selection = selection + TagsTable.COLUMN_TAG_ID + " = " + uri.getLastPathSegment();
+	    	queryBuilder.setTables(TagsTable.TABLE_TAGS);
+	        break;   
 	    default:
 	        throw new IllegalArgumentException("Unknown URI");
 	    }
@@ -129,17 +148,28 @@ public class WatchMeContentProvider extends ContentProvider {
 			String[] selectionArgs) {
 		SQLiteDatabase sqlDB = db.getWritableDatabase();
 		
+		int updatedRows;
 		switch (sUriMatcher.match(uri)) {
 		case MOVIES:
-			//Nothing need to be added to selection
+			// Nothing need to be added to selection
+			updatedRows = sqlDB.update(MoviesTable.TABLE_MOVIES, values, selection, selectionArgs);
 			break;
 		case MOVIES_ID:
 			selection = selection + MoviesTable.COLUMN_MOVIE_ID + " = " + uri.getLastPathSegment();
+			updatedRows = sqlDB.update(MoviesTable.TABLE_MOVIES, values, selection, selectionArgs);
 			break;
+		case TAGS:
+			// TODO: Unnecessary case?
+			// Nothing need to be added to selection
+			updatedRows = sqlDB.update(TagsTable.TABLE_TAGS, values, selection, selectionArgs);
+			break;
+		case TAGS_ID:
+			selection = selection + TagsTable.COLUMN_TAG_ID + " = " + uri.getLastPathSegment();
+			updatedRows = sqlDB.update(TagsTable.TABLE_TAGS, values, selection, selectionArgs);
+			break;	
 		default:
 			throw new IllegalArgumentException("Unknown URI " + uri);
 		}
-		int updatedRows = sqlDB.update(MoviesTable.TABLE_MOVIES, values, selection, selectionArgs);
 		
 		//Called as a courtesy
 		getContext().getContentResolver().notifyChange(uri, null);
