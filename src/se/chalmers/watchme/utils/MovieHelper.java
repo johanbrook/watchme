@@ -8,6 +8,11 @@
 
 package se.chalmers.watchme.utils;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.json.JSONArray;
+
 public class MovieHelper {
 	
 	/**
@@ -26,4 +31,14 @@ public class MovieHelper {
 		return (index != -1) ? longDate.substring(0, index) : longDate; 
 	}
 	
+	
+	@SuppressWarnings("unchecked")
+	public static <T> List<T> jsonArrayToList(JSONArray json) {
+		List<T> list = new ArrayList<T>();
+		for(int i = 0; i < json.length(); i++) {
+			list.add((T) json.opt(i));
+		}
+		
+		return list;
+	}
 }
