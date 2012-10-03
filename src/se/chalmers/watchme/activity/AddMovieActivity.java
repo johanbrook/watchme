@@ -84,7 +84,7 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
         initUIControls();
         
         this.asyncTask = new IMDBSearchTask();
-        this.autoCompleteAdapter = new ArrayAdapter<String>(this, R.layout.list_item);
+        this.autoCompleteAdapter = new ArrayAdapter<String>(this, R.layout.auto_complete_item);
         
         this.notifications.connectToService();
         
@@ -247,9 +247,10 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
 		protected void onPostExecute(final JSONArray results) {
 			if(results != null) {
 				// Re-initialize the adapter for the auto complete box
-				autoCompleteAdapter = new ArrayAdapter<String>(getBaseContext(), R.layout.list_item);
-				((AutoCompleteTextView) titleField).setAdapter(autoCompleteAdapter);
-
+				//autoCompleteAdapter = new ArrayAdapter<String>(getBaseContext(), R.layout.auto_complete_item);
+				//((AutoCompleteTextView) titleField).setAdapter(autoCompleteAdapter);
+				autoCompleteAdapter.clear();
+				
 				// Convert results to regular List and sort by rating (desc)
 				List<JSONObject> res = MovieHelper.jsonArrayToList(results);
 				Collections.sort(res, Collections.reverseOrder(new Comparator<JSONObject>() {
