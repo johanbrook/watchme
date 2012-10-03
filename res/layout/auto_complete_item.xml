@@ -1,9 +1,20 @@
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/auto_complete_item"
-    android:layout_width="match_parent"
-	android:paddingTop="8dip"
+    android:paddingTop="8dip"
 	android:paddingBottom="8dip"
 	android:paddingLeft="4dip"
 	android:paddingRight="4dip"
-    android:layout_height="match_parent" >
-</TextView>
+   	android:layout_height="match_parent"
+   	android:layout_width="match_parent">
+
+    <TextView android:id="@+id/autocomplete_title"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:singleLine="true" />
+
+ 	<TextView android:id="@+id/autocomplete_year"
+      android:layout_width="match_parent" 
+      android:layout_height="match_parent"
+      android:singleLine="true"/> 
+        
+</LinearLayout>

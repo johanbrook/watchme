@@ -68,7 +68,7 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
 	private IMDBSearchTask asyncTask;
 	
 	// The list adapter for the auto complete box
-	private ArrayAdapter<String> autoCompleteAdapter;
+	private ArrayAdapter<JSONObject> autoCompleteAdapter;
 	
 	private Calendar releaseDate;
 
@@ -84,7 +84,7 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
         initUIControls();
         
         this.asyncTask = new IMDBSearchTask();
-        this.autoCompleteAdapter = new ArrayAdapter<String>(this, R.layout.auto_complete_item);
+        this.autoCompleteAdapter = new AutoCompleteAdapter(this, R.layout.auto_complete_item, new ArrayList<JSONObject>());
         
         this.notifications.connectToService();
         
@@ -246,27 +246,21 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
 		@Override
 		protected void onPostExecute(final JSONArray results) {
 			if(results != null) {
+				// Convert results to regular List
+				List<JSONObject> res = MovieHelper.jsonArrayToList(results);
+				
 				// Re-initialize the adapter for the auto complete box
 				//autoCompleteAdapter = new ArrayAdapter<String>(getBaseContext(), R.layout.auto_complete_item);
-				//((AutoCompleteTextView) titleField).setAdapter(autoCompleteAdapter);
-				autoCompleteAdapter.clear();
+				autoCompleteAdapter = new AutoCompleteAdapter(getBaseContext(), R.layout.auto_complete_item, res);
+				((AutoCompleteTextView) titleField).setAdapter(autoCompleteAdapter);
 				
-				// Convert results to regular List and sort by rating (desc)
-				List<JSONObject> res = MovieHelper.jsonArrayToList(results);
-				Collections.sort(res, Collections.reverseOrder(new Comparator<JSONObject>() {
-
-					public int compare(JSONObject lhs, JSONObject rhs) {
-						return Double.compare(lhs.optDouble("rating"), rhs.optDouble("rating"));
-					}
-					
-				}));
 				
 				// Parse the JSON objects and add to adapter
 				for(JSONObject o : res) {
-					String format = o.optString("original_name") + " ("+ MovieHelper.parseYearFromDate(o.optString("released")) +")";
-					autoCompleteAdapter.add(format);
-					autoCompleteAdapter.notifyDataSetChanged();
+					autoCompleteAdapter.add(o);
 				}
+				
+				autoCompleteAdapter.notifyDataSetChanged();
 			}
 		}
     	
