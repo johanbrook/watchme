@@ -36,6 +36,9 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
         Thread.currentThread().setContextClassLoader(this.getClassLoader());
         
         //TODO Add MoviesTable.COLUMN_DATE and android.R.id.date when implemented in database
+        //TODO Exception when uncommenting MoviesTable.COLUMN_RATING:
+        // IllegalArgumentException: column 'raiting' does not exist.
+        // why?
         String[] from = new String[] { MoviesTable.COLUMN_MOVIE_ID, MoviesTable.COLUMN_TITLE, /* MoviesTable.COLUMN_RATING*/ /*, MoviesTable.COLUMN_DATE*/ };
         int[] to = new int[] { 0 , R.id.title /*, R.id.raiting */ /*, R.id.date */  };
 
