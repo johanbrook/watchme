@@ -38,6 +38,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -87,12 +89,6 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
         this.autoCompleteAdapter = new AutoCompleteAdapter(this, R.layout.auto_complete_item);
         
         this.notifications.connectToService();
-        
-        // Disable add movie button on init
-        this.addButton = (Button) findViewById(R.id.add_movie_button);
-        this.addButton.setEnabled(false);
-        
-        this.titleField.setAdapter(this.autoCompleteAdapter);
     }
     
     /**
@@ -110,6 +106,12 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
         // Add listeners to the title field
         this.titleField.addTextChangedListener(new AddButtonToggler());
         this.titleField.addTextChangedListener(new AutoCompleteWatcher());
+        this.titleField.setOnItemClickListener(new AutoCompleteClickListener());
+        this.titleField.setAdapter(this.autoCompleteAdapter);
+        
+        // Disable add movie button on init
+        this.addButton = (Button) findViewById(R.id.add_movie_button);
+        this.addButton.setEnabled(false);
     }
     
     
@@ -258,6 +260,8 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
 				// Parse the JSON objects and add to adapter
 				for(JSONObject o : res) {
 					Movie movie = new Movie(o.optString("original_name"));
+					// Don't forget the IMDB ID as we need it later in the 
+					// click listener
 					movie.setImdbID(o.optString("imdb_id"));
 					autoCompleteAdapter.add(movie);
 				}
@@ -326,4 +330,22 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
 		}
     	
     }
+    
+    /**
+     * Class responsible for listening to click events in the auto complete
+     * dropdown box. 
+     * 
+     * @author Johan
+     */
+    private class AutoCompleteClickListener implements OnItemClickListener {
+
+		public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+			Log.i("Custom", "Clicked: "+ autoCompleteAdapter.getItem(position).getImdbID());
+			
+			//TODO Here we have access to the IMDb ID of the selected movie from the list
+			// Now do something with it :)
+		}
+    	
+    }
+    
 }

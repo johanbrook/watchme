@@ -29,10 +29,12 @@ import android.widget.TextView;
 
 public class AutoCompleteAdapter extends ArrayAdapter<Movie> {
 
-	private LayoutInflater inflater = LayoutInflater.from(getContext());
+	private LayoutInflater inflater;
 	
 	public AutoCompleteAdapter(Context context, int textViewResourceId) {
 		super(context, textViewResourceId);
+		
+		this.inflater = LayoutInflater.from(getContext());
 	}
 	
 	
@@ -55,7 +57,7 @@ public class AutoCompleteAdapter extends ArrayAdapter<Movie> {
 		Movie suggestion = this.getItem(position);
 		
 		if(convertView == null) {
-			convertView = inflater.inflate(R.layout.auto_complete_item, null);
+			convertView = this.inflater.inflate(R.layout.auto_complete_item, null);
 			holder = new ViewHolder();
 			holder.title = (TextView) convertView.findViewById(R.id.autocomplete_title);
 			holder.year = (TextView) convertView.findViewById(R.id.autocomplete_year);
