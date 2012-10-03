@@ -5,6 +5,7 @@ import se.chalmers.watchme.database.MoviesTable;
 import se.chalmers.watchme.database.WatchMeContentProvider;
 import se.chalmers.watchme.model.Movie;
 import android.net.Uri;
+
 import android.os.Bundle;
 import android.app.AlertDialog;
 import android.app.ListActivity;
@@ -34,11 +35,12 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
         setContentView(R.layout.activity_main);
         Thread.currentThread().setContextClassLoader(this.getClassLoader());
         
-        String[] from = new String[] { MoviesTable.COLUMN_MOVIE_ID, MoviesTable.COLUMN_TITLE };
-        int[] to = new int[] { 0 , android.R.id.text1 };
-        
+        //TODO Add MoviesTable.COLUMN_DATE and android.R.id.date when implemented in database
+        String[] from = new String[] { MoviesTable.COLUMN_MOVIE_ID, MoviesTable.COLUMN_TITLE, /* MoviesTable.COLUMN_RATING*/ /*, MoviesTable.COLUMN_DATE*/ };
+        int[] to = new int[] { 0 , R.id.title /*, R.id.raiting */ /*, R.id.date */  };
+
         getLoaderManager().initLoader(0, null, this);
-        adapter = new SimpleCursorAdapter(this, R.layout.rowlayout , null, from, to, 0);
+        adapter = new SimpleCursorAdapter(this, R.layout.list_item_movie , null, from, to, 0);
         setListAdapter(adapter);
 		
         this.getListView().setOnItemLongClickListener(new OnDeleteListener());
