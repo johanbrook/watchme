@@ -51,12 +51,11 @@ public class AutoCompleteAdapter extends ArrayAdapter<Movie> {
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		
-		Log.i("Custom", "GET_VIEW");
-		
 		ViewHolder holder;
 		Movie suggestion = this.getItem(position);
 		
 		if(convertView == null) {
+			Log.i("Custom", "INFLATE");
 			convertView = this.inflater.inflate(R.layout.auto_complete_item, null);
 			holder = new ViewHolder();
 			holder.title = (TextView) convertView.findViewById(R.id.autocomplete_title);
@@ -64,6 +63,7 @@ public class AutoCompleteAdapter extends ArrayAdapter<Movie> {
 			convertView.setTag(holder);
 		}
 		else {
+			Log.i("Custom", "GET TAG");
 			holder = (ViewHolder) convertView.getTag();
 		}
 		
