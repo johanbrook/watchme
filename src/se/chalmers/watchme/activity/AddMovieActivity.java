@@ -159,7 +159,7 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
 	    values.put(MoviesTable.COLUMN_RATING, movie.getRating());
 	    values.put(MoviesTable.COLUMN_NOTE, movie.getNote());
 	    
-	    Uri uri = WatchMeContentProvider.CONTENT_URI;
+	    Uri uri = WatchMeContentProvider.CONTENT_URI_MOVIES;
 		getContentResolver().insert(uri, values);
 		
 		Intent home = new Intent(this, MainActivity.class);

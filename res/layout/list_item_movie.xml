@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+   android:layout_height="fill_parent"
+   android:layout_width="fill_parent" 
+   android:paddingBottom="5dp"
+   android:paddingTop="5dp" 
+   android:paddingLeft="5dp"
+   android:paddingRight="5dp">
+
+    <ImageView
+       android:id="@+id/poster"
+       android:layout_width="50dp"
+       android:layout_height="50dp"
+       android:scaleType="fitXY"
+       android:layout_marginRight="6dp"
+       android:src="@drawable/batman" />
+    
+    <LinearLayout
+       android:orientation="vertical"
+       android:layout_width="0dip"
+       android:layout_weight="1"
+       android:layout_height="fill_parent">
+      
+    	<TextView android:id="@+id/title"
+    	    android:textSize="20sp"
+    	    android:textStyle="bold"
+      		android:layout_width="wrap_content"
+     		android:layout_height="wrap_content"
+     		android:singleLine="true" />
+    	
+    	<LinearLayout 
+    	    android:orientation="horizontal"
+    	    android:layout_width="fill_parent"
+    	    android:layout_height="50dp">
+
+            <TextView
+                android:id="@+id/date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="50dp"
+                android:singleLine="true"
+                android:textColor="#0088CC" />
+
+            <TextView
+                android:id="@+id/raiting"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:singleLine="true" />
+        
+        </LinearLayout>
+    
+    </LinearLayout>
+        
+</LinearLayout>
