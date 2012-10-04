@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -21,6 +22,7 @@ import android.widget.Toast;
 public class MainActivity extends ListActivity {
 	
 	public static final int ADD_MOVIE_REQUEST = 1;
+	public static final String MOVIE_DETAILS = "se.chalmers.watchme.DETAILS";
 	
 	private ArrayAdapter<Movie> moviesAdapter;
 	private DatabaseHandler db;
@@ -36,6 +38,7 @@ public class MainActivity extends ListActivity {
         this.moviesAdapter = new ArrayAdapter<Movie>(this, android.R.layout.simple_list_item_1, this.db.getAllMovies());
         setListAdapter(this.moviesAdapter);
 		
+        this.getListView().setOnItemClickListener(new OnDetailsListener());
         this.getListView().setOnItemLongClickListener(new OnDeleteListener());
     }
     
@@ -69,6 +72,30 @@ public class MainActivity extends ListActivity {
         startActivityForResult(intent, ADD_MOVIE_REQUEST);
         
         return true;
+    }
+    
+    /**
+     * Listener for when the user clicks an item in the list
+     * 
+     * The movie object in the list is used to fill a new activity with data
+     * 
+     * @author Robin
+     */
+    private class OnDetailsListener implements OnItemClickListener {
+
+		public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
+				long arg3) {
+			
+			final Movie movie = (Movie) getListView().getItemAtPosition(arg2);
+			Intent intent = new Intent(MainActivity.this, MovieDetailsActivity.class);
+			
+			intent.putExtra(MOVIE_DETAILS, movie.getId());
+			
+			startActivity(intent);
+			
+		}
+    	
+    	
     }
     
     /**
