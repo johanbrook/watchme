@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
     
-    <se.chalmers.watchme.ui.MovieAutoCompleteTextView
+    <AutoCompleteTextView
         android:id="@+id/title_field"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -18,7 +18,7 @@
         
         <requestFocus />
         
-	</se.chalmers.watchme.ui.MovieAutoCompleteTextView>
+	</AutoCompleteTextView>
     
     <TextView
         android:id="@+id/rating_label"

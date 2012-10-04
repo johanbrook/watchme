@@ -68,6 +68,29 @@ public class AutoCompleteAdapter extends ArrayAdapter<JSONObject> implements Fil
 		Log.i("Custom", "GET FILTER");
 		
 		return new Filter() {
+
+			/*
+			 * Override this method in order to populate the auto complete field
+			 * with the actual movie name when selecting a suggestion from the list,
+			 * instead of the default toString implementation.
+			 * 
+			 * @see android.widget.Filter#convertResultToString(java.lang.Object)
+			 */
+			@Override
+			public CharSequence convertResultToString(Object result) {
+				if(result instanceof JSONObject) {
+					return ((JSONObject) result).optString(Movie.JSON_KEY_NAME);
+				}
+				
+				return super.convertResultToString(result);
+			}
+			
+			/*
+			 * The actual filtering, where the call to the API is made. The method
+			 * is called in a worker thread apart from the UI thread, so we're okay.
+			 * 
+			 * @see android.widget.Filter#performFiltering(java.lang.CharSequence)
+			 */
 			@Override
 			protected FilterResults performFiltering(CharSequence constraint) {
 				
@@ -82,6 +105,11 @@ public class AutoCompleteAdapter extends ArrayAdapter<JSONObject> implements Fil
 				return results;
 			}
 
+			/*
+			 * Update the list.
+			 * 
+			 * @see android.widget.Filter#publishResults(java.lang.CharSequence, android.widget.Filter.FilterResults)
+			 */
 			@Override
 			protected void publishResults(CharSequence constraint, FilterResults results) {
 				if(results != null && results.count > 0) {
@@ -100,7 +128,7 @@ public class AutoCompleteAdapter extends ArrayAdapter<JSONObject> implements Fil
 	public View getView(int position, View convertView, ViewGroup parent) {
 		
 		/**
-		 * Performance tweaks in getView:
+		 * Performance tweaks in overriden getView:
 		 * 
 		 * Re-use the "trash view" convertView instead of always inflating
 		 * a new view from XML. Only inflate if convertView is null.
