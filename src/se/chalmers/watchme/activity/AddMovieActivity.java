@@ -38,11 +38,14 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.support.v4.app.DialogFragment;
@@ -55,7 +58,8 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
 	private TextView dateField;
 	private TextView tagField;
 	private TextView noteField;
-	private TextView titleField;
+	private AutoCompleteTextView titleField;
+	private ProgressBar bar;
 	private Button addButton;
 	
 	// The handler to interface with the notification system and scheduler
@@ -68,7 +72,7 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
 	private IMDBSearchTask asyncTask;
 	
 	// The list adapter for the auto complete box
-	private ArrayAdapter<String> autoCompleteAdapter;
+	private ArrayAdapter<Movie> autoCompleteAdapter;
 	
 	private Calendar releaseDate;
 
@@ -84,15 +88,9 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
         initUIControls();
         
         this.asyncTask = new IMDBSearchTask();
-        this.autoCompleteAdapter = new ArrayAdapter<String>(this, R.layout.auto_complete_item);
+        this.autoCompleteAdapter = new AutoCompleteAdapter(this, R.layout.auto_complete_item);
         
         this.notifications.connectToService();
-        
-        // Disable add movie button on init
-        this.addButton = (Button) findViewById(R.id.add_movie_button);
-        this.addButton.setEnabled(false);
-        
-        ((AutoCompleteTextView) this.titleField).setAdapter(this.autoCompleteAdapter);
     }
     
     /**
@@ -103,13 +101,23 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
         this.dateField = (TextView) findViewById(R.id.release_date_label);
         this.dateField.setText(DateConverter.toSimpleDate(this.releaseDate));
         
-        this.titleField = (TextView) findViewById(R.id.title_field);
+        this.titleField = (AutoCompleteTextView) findViewById(R.id.title_field);
         this.noteField = (TextView) findViewById(R.id.note_field);
         this.tagField = (TextView) findViewById(R.id.tag_field);
+        
+        // The progress bar when fetching IMDb movies
+        this.bar = (ProgressBar) findViewById(R.id.title_progress);
+        this.bar.setVisibility(View.INVISIBLE);
         
         // Add listeners to the title field
         this.titleField.addTextChangedListener(new AddButtonToggler());
         this.titleField.addTextChangedListener(new AutoCompleteWatcher());
+        this.titleField.setOnItemClickListener(new AutoCompleteClickListener());
+        this.titleField.setAdapter(this.autoCompleteAdapter);
+        
+        // Disable add movie button on init
+        this.addButton = (Button) findViewById(R.id.add_movie_button);
+        this.addButton.setEnabled(false);
     }
     
     
@@ -234,6 +242,12 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
      * @author Johan
      */
     private class IMDBSearchTask extends AsyncTask<String, Void, JSONArray> {
+    	
+    	
+    	@Override
+    	public void onPreExecute() {
+    		bar.setVisibility(View.VISIBLE);
+    	}
 
     	/**
     	 * Run a background task searching for movies with a title
@@ -245,28 +259,27 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
 
 		@Override
 		protected void onPostExecute(final JSONArray results) {
+			
 			if(results != null) {
-				// Re-initialize the adapter for the auto complete box
-				//autoCompleteAdapter = new ArrayAdapter<String>(getBaseContext(), R.layout.auto_complete_item);
-				//((AutoCompleteTextView) titleField).setAdapter(autoCompleteAdapter);
-				autoCompleteAdapter.clear();
-				
-				// Convert results to regular List and sort by rating (desc)
+				// Convert results to regular List
 				List<JSONObject> res = MovieHelper.jsonArrayToList(results);
-				Collections.sort(res, Collections.reverseOrder(new Comparator<JSONObject>() {
-
-					public int compare(JSONObject lhs, JSONObject rhs) {
-						return Double.compare(lhs.optDouble("rating"), rhs.optDouble("rating"));
-					}
-					
-				}));
+				
+				// Re-initialize the adapter for the auto complete box
+				autoCompleteAdapter = new AutoCompleteAdapter(getBaseContext(), R.layout.auto_complete_item);
+				titleField.setAdapter(autoCompleteAdapter);
+				
 				
 				// Parse the JSON objects and add to adapter
 				for(JSONObject o : res) {
-					String format = o.optString("original_name") + " ("+ MovieHelper.parseYearFromDate(o.optString("released")) +")";
-					autoCompleteAdapter.add(format);
-					autoCompleteAdapter.notifyDataSetChanged();
+					Movie movie = new Movie(o.optString("original_name"));
+					// Don't forget the IMDB ID as we need it later in the 
+					// click listener
+					movie.setImdbID(o.optString("imdb_id"));
+					autoCompleteAdapter.add(movie);
 				}
+				
+				autoCompleteAdapter.notifyDataSetChanged();
+				bar.setVisibility(View.INVISIBLE);
 			}
 		}
     	
@@ -330,4 +343,22 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
 		}
     	
     }
+    
+    /**
+     * Class responsible for listening to click events in the auto complete
+     * dropdown box. 
+     * 
+     * @author Johan
+     */
+    private class AutoCompleteClickListener implements OnItemClickListener {
+
+		public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+			Log.i("Custom", "Clicked: "+ autoCompleteAdapter.getItem(position).getImdbID());
+			
+			//TODO Here we have access to the IMDb ID of the selected movie from the list
+			// Now do something with it :)
+		}
+    	
+    }
+    
 }
