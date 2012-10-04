@@ -3,6 +3,9 @@ package se.chalmers.watchme.activity;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.json.JSONArray;
@@ -17,6 +20,7 @@ import se.chalmers.watchme.model.Tag;
 import se.chalmers.watchme.ui.DatePickerFragment;
 import se.chalmers.watchme.ui.DatePickerFragment.DatePickerListener;
 import se.chalmers.watchme.utils.DateConverter;
+import se.chalmers.watchme.utils.MovieHelper;
 import se.chalmers.watchme.net.IMDBHandler;
 import se.chalmers.watchme.notifications.NotificationClient;
 import android.os.AsyncTask;
@@ -238,7 +242,7 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
 		protected JSONArray doInBackground(String... params) {
 			return imdb.searchForMovieTitle(params[0]);
 		}
-		
+
 		@Override
 		protected void onPostExecute(final JSONArray results) {
 			if(results != null) {
@@ -246,11 +250,20 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
 				autoCompleteAdapter = new ArrayAdapter<String>(getBaseContext(), R.layout.list_item);
 				((AutoCompleteTextView) titleField).setAdapter(autoCompleteAdapter);
 
-				// Parse the JSON objects and add to adapter
-				for(int i = 0; i < results.length(); i++) {
-					JSONObject o = results.optJSONObject(i);
+				// Convert results to regular List and sort by rating (desc)
+				List<JSONObject> res = MovieHelper.jsonArrayToList(results);
+				Collections.sort(res, Collections.reverseOrder(new Comparator<JSONObject>() {
+
+					public int compare(JSONObject lhs, JSONObject rhs) {
+						return Double.compare(lhs.optDouble("rating"), rhs.optDouble("rating"));
+					}
 					
-					autoCompleteAdapter.add(o.optString("original_name"));
+				}));
+				
+				// Parse the JSON objects and add to adapter
+				for(JSONObject o : res) {
+					String format = o.optString("original_name") + " ("+ MovieHelper.parseYearFromDate(o.optString("released")) +")";
+					autoCompleteAdapter.add(format);
 					autoCompleteAdapter.notifyDataSetChanged();
 				}
 			}
