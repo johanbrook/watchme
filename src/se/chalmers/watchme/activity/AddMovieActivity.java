@@ -59,7 +59,7 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
 	private TextView tagField;
 	private TextView noteField;
 	private AutoCompleteTextView titleField;
-	private ProgressBar bar;
+	private ProgressBar progressSpinner;
 	private Button addButton;
 	
 	// The handler to interface with the notification system and scheduler
@@ -106,8 +106,8 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
         this.tagField = (TextView) findViewById(R.id.tag_field);
         
         // The progress bar when fetching IMDb movies
-        this.bar = (ProgressBar) findViewById(R.id.title_progress);
-        this.bar.setVisibility(View.INVISIBLE);
+        this.progressSpinner = (ProgressBar) findViewById(R.id.title_progress);
+        this.progressSpinner.setVisibility(View.INVISIBLE);
         
         // Add listeners to the title field
         this.titleField.addTextChangedListener(new AddButtonToggler());
@@ -243,10 +243,10 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
      */
     private class IMDBSearchTask extends AsyncTask<String, Void, JSONArray> {
     	
-    	
     	@Override
     	public void onPreExecute() {
-    		bar.setVisibility(View.VISIBLE);
+    		// Show progress spinner near title field
+    		progressSpinner.setVisibility(View.VISIBLE);
     	}
 
     	/**
@@ -279,7 +279,7 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
 				}
 				
 				autoCompleteAdapter.notifyDataSetChanged();
-				bar.setVisibility(View.INVISIBLE);
+				progressSpinner.setVisibility(View.INVISIBLE);
 			}
 		}
     	

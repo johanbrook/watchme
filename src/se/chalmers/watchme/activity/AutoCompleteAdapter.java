@@ -1,6 +1,11 @@
 /**
 *	AutoCompleteAdapter.java
 *
+*	Custom Array adapter for auto complete dropdowns.
+*
+*	Includes custom view drawing with objects of the type Movie instead
+*	of plain Strings.	
+*
 *	@author Johan Brook
 *	@copyright (c) 2012 Johan Brook
 *	@license MIT
@@ -8,16 +13,9 @@
 
 package se.chalmers.watchme.activity;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-
-import org.json.JSONObject;
-
 import se.chalmers.watchme.R;
 import se.chalmers.watchme.model.Movie;
 import se.chalmers.watchme.utils.DateConverter;
-import se.chalmers.watchme.utils.MovieHelper;
 
 import android.content.Context;
 import android.util.Log;
@@ -38,18 +36,19 @@ public class AutoCompleteAdapter extends ArrayAdapter<Movie> {
 	}
 	
 	
-	private void sortItemsByRating(List<JSONObject> res) {
-		Collections.sort(res, Collections.reverseOrder(new Comparator<JSONObject>() {
-
-			public int compare(JSONObject lhs, JSONObject rhs) {
-				return Double.compare(lhs.optDouble("rating"), rhs.optDouble("rating"));
-			}
-			
-		}));
-	}
-	
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
+		
+		/**
+		 * Performance tweaks in getView:
+		 * 
+		 * Re-use the "trash view" convertView instead of always inflating
+		 * a new view from XML. Only inflate if convertView is null.
+		 * 
+		 * Also make use of a ViewHolder to cache references to subviews. A 
+		 * reference to a ViewHolder is created if a new view is inflated,
+		 * otherwise we just use the attached ViewHolder of the old view.
+		 */
 		
 		ViewHolder holder;
 		Movie suggestion = this.getItem(position);
@@ -73,6 +72,11 @@ public class AutoCompleteAdapter extends ArrayAdapter<Movie> {
 		return convertView;
 	}
 	
+	/**
+	 * A ViewHolder with a title, year and position fields. 
+	 * 
+	 * @author Johan
+	 */
 	static class ViewHolder {
 		TextView title;
 		TextView year;
