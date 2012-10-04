@@ -92,8 +92,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
 		Movie movie = new Movie(cursor.getString(1),
 				DateConverter.toCalendar(cursor.getString(2)),
-				Integer.parseInt(cursor.getString(1)),
-				cursor.getString(3));
+				Integer.parseInt(cursor.getString(3)),
+				cursor.getString(4));
+		
 		movie.setId(Long.parseLong(cursor.getString(0)));
 		return movie;
 	}
