@@ -12,6 +12,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.json.JSONArray;
+import org.json.JSONObject;
+
+import se.chalmers.watchme.R;
+import se.chalmers.watchme.activity.AutoCompleteAdapter;
+import se.chalmers.watchme.model.Movie;
 
 public class MovieHelper {
 	
@@ -37,6 +42,32 @@ public class MovieHelper {
 		List<T> list = new ArrayList<T>();
 		for(int i = 0; i < json.length(); i++) {
 			list.add((T) json.opt(i));
+		}
+		
+		return list;
+	}
+	
+	/**
+	 * Convert a JSONArray of Movies to a list of Movies
+	 * 
+	 * <p>Each Movie object is initialized with the attribute
+	 * <code>original_name</code> from the input array. The 
+	 * attribute <code>imdb_id</code> is also set on the movie.</p>
+	 * 
+	 * @param input The JSONArray of movies as JSONObjects
+	 * @return A List of Movies
+	 */
+	public static List<Movie> jsonArrayToMovieList(JSONArray input) {
+		List<Movie> list = new ArrayList<Movie>();
+		
+		// Parse the JSON objects and add to list
+		for(int i = 0; i < input.length(); i++) {
+			JSONObject o = input.optJSONObject(i);
+			
+			Movie movie = new Movie(o.optString("original_name"));
+			// Don't forget the IMDB ID
+			movie.setImdbID(o.optString("imdb_id"));
+			list.add(movie);
 		}
 		
 		return list;

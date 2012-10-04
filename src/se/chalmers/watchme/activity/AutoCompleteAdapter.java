@@ -13,9 +13,17 @@
 
 package se.chalmers.watchme.activity;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import se.chalmers.watchme.R;
 import se.chalmers.watchme.model.Movie;
+import se.chalmers.watchme.net.MovieSource;
 import se.chalmers.watchme.utils.DateConverter;
+import se.chalmers.watchme.utils.MovieHelper;
 
 import android.content.Context;
 import android.util.Log;
@@ -23,18 +31,77 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.TextView;
 
-public class AutoCompleteAdapter extends ArrayAdapter<Movie> {
+public class AutoCompleteAdapter extends ArrayAdapter<Movie> implements Filterable {
 
 	private LayoutInflater inflater;
+	private MovieSource source;
+	private List<Movie> movies;
 	
-	public AutoCompleteAdapter(Context context, int textViewResourceId) {
+	/**
+	 * Create a new AutoCompleteAdapter.
+	 * 
+	 * <p>Custom filtering of movie suggestions from IMDb.</p>
+	 * 
+	 * @param context The context
+	 * @param textViewResourceId The view ID
+	 * @param source The data source to fetch movies from
+	 */
+	public AutoCompleteAdapter(Context context, int textViewResourceId, MovieSource source) {
 		super(context, textViewResourceId);
 		
+		this.source = source;
+		this.movies = new ArrayList<Movie>();
 		this.inflater = LayoutInflater.from(getContext());
 	}
 	
+	@Override
+	public int getCount() {
+		return this.movies.size();
+	}
+	
+	@Override
+	public Movie getItem(int position) {
+		return this.movies.get(position);
+	}
+	
+	@Override
+	public Filter getFilter() {
+		
+		Log.i("Custom", "GET FILTER");
+		
+		return new Filter() {
+			@Override
+			protected FilterResults performFiltering(CharSequence constraint) {
+				
+				FilterResults results = new FilterResults();
+				if(constraint != null) {
+					JSONArray json = source.getMoviesByTitle(constraint.toString());
+					List<Movie> movies = MovieHelper.jsonArrayToMovieList(json);
+					
+					results.values = movies;
+					results.count = movies.size();
+				}
+				
+				return results;
+			}
+
+			@Override
+			protected void publishResults(CharSequence constraint, FilterResults results) {
+				if(results != null && results.count > 0) {
+					movies = (List<Movie>) results.values;
+					notifyDataSetChanged();
+				}
+				else {
+					notifyDataSetInvalidated();
+				}
+			}
+			
+		};
+	}
 	
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {

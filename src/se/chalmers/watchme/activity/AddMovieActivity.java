@@ -65,12 +65,6 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
 	// The handler to interface with the notification system and scheduler
 	private NotificationClient notifications = new NotificationClient(this);
 	
-	// The IMDB API handler
-	private IMDBHandler imdb = new IMDBHandler();
-	
-	// The async IMDb search task
-	private IMDBSearchTask asyncTask;
-	
 	// The list adapter for the auto complete box
 	private ArrayAdapter<Movie> autoCompleteAdapter;
 	
@@ -84,11 +78,9 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
         getActionBar().setDisplayHomeAsUpEnabled(true);
         
         this.releaseDate = Calendar.getInstance();
+        this.autoCompleteAdapter = new AutoCompleteAdapter(this, R.layout.auto_complete_item, new IMDBHandler());
         
         initUIControls();
-        
-        this.asyncTask = new IMDBSearchTask();
-        this.autoCompleteAdapter = new AutoCompleteAdapter(this, R.layout.auto_complete_item);
         
         this.notifications.connectToService();
     }
@@ -111,8 +103,8 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
         
         // Add listeners to the title field
         this.titleField.addTextChangedListener(new AddButtonToggler());
-        this.titleField.addTextChangedListener(new AutoCompleteWatcher());
         this.titleField.setOnItemClickListener(new AutoCompleteClickListener());
+        
         this.titleField.setAdapter(this.autoCompleteAdapter);
         
         // Disable add movie button on init
@@ -235,55 +227,6 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
         		"datePicker");
 	}
 
-    /**
-     * Class responsible for running an asynchronous task fetching
-     * IMDb search results.  
-     * 
-     * @author Johan
-     */
-    private class IMDBSearchTask extends AsyncTask<String, Void, JSONArray> {
-    	
-    	@Override
-    	public void onPreExecute() {
-    		// Show progress spinner near title field
-    		progressSpinner.setVisibility(View.VISIBLE);
-    	}
-
-    	/**
-    	 * Run a background task searching for movies with a title
-    	 */
-		@Override
-		protected JSONArray doInBackground(String... params) {
-			return imdb.searchForMovieTitle(params[0]);
-		}
-
-		@Override
-		protected void onPostExecute(final JSONArray results) {
-			
-			if(results != null) {
-				// Convert results to regular List
-				List<JSONObject> res = MovieHelper.jsonArrayToList(results);
-				
-				// Re-initialize the adapter for the auto complete box
-				autoCompleteAdapter = new AutoCompleteAdapter(getBaseContext(), R.layout.auto_complete_item);
-				titleField.setAdapter(autoCompleteAdapter);
-				
-				
-				// Parse the JSON objects and add to adapter
-				for(JSONObject o : res) {
-					Movie movie = new Movie(o.optString("original_name"));
-					// Don't forget the IMDB ID as we need it later in the 
-					// click listener
-					movie.setImdbID(o.optString("imdb_id"));
-					autoCompleteAdapter.add(movie);
-				}
-				
-				autoCompleteAdapter.notifyDataSetChanged();
-				progressSpinner.setVisibility(View.INVISIBLE);
-			}
-		}
-    	
-    }
     
     private class AddButtonToggler implements TextWatcher {
         	
@@ -306,43 +249,6 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
 
     }
     
-    /**
-     * Class responsible for running the IMDb search task
-     * when the user types in the title field. 
-     * 
-     * @author Johan
-     */
-    private class AutoCompleteWatcher implements TextWatcher {
-
-		public void afterTextChanged(Editable arg0) {
-		}
-
-		public void beforeTextChanged(CharSequence arg0, int arg1, int arg2,
-				int arg3) {
-		}
-
-		public void onTextChanged(CharSequence s, int arg1, int arg2, int arg3) {
-			
-			if(this.shouldAutoComplete(s.toString())) {
-				// Cancel any running tasks and execute a new one
-				asyncTask.cancel(true);
-				asyncTask = new IMDBSearchTask();
-				asyncTask.execute(s.toString());
-			}
-		}
-		
-		/**
-		 * Decides whether to run a new search task or not.
-		 * 
-		 * @param s The input query
-		 * @return True if auto complete should fire, otherwise false
-		 */
-		private boolean shouldAutoComplete(String s) {
-			return 	s.length() > 3 && 
-					asyncTask.getStatus() != AsyncTask.Status.RUNNING;
-		}
-    	
-    }
     
     /**
      * Class responsible for listening to click events in the auto complete
