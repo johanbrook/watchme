@@ -64,9 +64,9 @@ public class MovieHelper {
 		for(int i = 0; i < input.length(); i++) {
 			JSONObject o = input.optJSONObject(i);
 			
-			Movie movie = new Movie(o.optString("original_name"));
+			Movie movie = new Movie(o.optString(Movie.JSON_KEY_NAME));
 			// Don't forget the IMDB ID
-			movie.setImdbID(o.optString("imdb_id"));
+			movie.setImdbID(o.optString(Movie.JSON_KEY_ID));
 			list.add(movie);
 		}
 		

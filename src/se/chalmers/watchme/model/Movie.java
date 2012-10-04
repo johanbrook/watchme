@@ -16,6 +16,19 @@ import java.util.List;
 
 public class Movie implements Serializable {
 	
+	/**
+	 * The JSON key for a movie's title
+	 */
+	public static final String JSON_KEY_NAME = "original_name";
+	/**
+	 * The JSON key for a movie's IMDB ID
+	 */
+	public static final String JSON_KEY_ID = "imdb_id";
+	/**
+	 * The JSON key for a movie's release date
+	 */
+	public static final String JSON_KEY_DATE = "released";
+	
 	private String title, note;
 	private String imdbID;
 	private int rating;

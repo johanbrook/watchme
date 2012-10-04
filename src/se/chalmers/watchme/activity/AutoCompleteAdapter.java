@@ -13,17 +13,12 @@
 
 package se.chalmers.watchme.activity;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import se.chalmers.watchme.R;
 import se.chalmers.watchme.model.Movie;
 import se.chalmers.watchme.net.MovieSource;
-import se.chalmers.watchme.utils.DateConverter;
-import se.chalmers.watchme.utils.MovieHelper;
 
 import android.content.Context;
 import android.util.Log;
@@ -131,8 +126,8 @@ public class AutoCompleteAdapter extends ArrayAdapter<JSONObject> implements Fil
 			holder = (ViewHolder) convertView.getTag();
 		}
 		
-		holder.title.setText(suggestion.optString("original_name"));
-		holder.year.setText(suggestion.optString("released"));
+		holder.title.setText(suggestion.optString(Movie.JSON_KEY_NAME));
+		holder.year.setText(suggestion.optString(Movie.JSON_KEY_DATE));
 		
 		return convertView;
 	}

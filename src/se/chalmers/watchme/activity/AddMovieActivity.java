@@ -260,7 +260,7 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
 
 		public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 			JSONObject json = autoCompleteAdapter.getItem(position);
-			Log.i("Custom", "Clicked: "+ json.optString("imdb_id"));
+			Log.i("Custom", "Clicked: "+ json.optString(Movie.JSON_KEY_ID));
 			
 			//TODO Here we have access to the IMDb ID of the selected movie from the list
 			// Now do something with it :)

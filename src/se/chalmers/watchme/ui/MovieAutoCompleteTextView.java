@@ -17,6 +17,8 @@ package se.chalmers.watchme.ui;
 
 import org.json.JSONObject;
 
+import se.chalmers.watchme.model.Movie;
+
 import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.AutoCompleteTextView;
@@ -45,7 +47,7 @@ public class MovieAutoCompleteTextView extends AutoCompleteTextView {
 	protected CharSequence convertSelectionToString(Object selectedItem) {
 		
 		if(selectedItem instanceof JSONObject) {
-			return ((JSONObject) selectedItem).optString("original_name");
+			return ((JSONObject) selectedItem).optString(Movie.JSON_KEY_NAME);
 		}
 		else {
 			return super.convertSelectionToString(selectedItem);
