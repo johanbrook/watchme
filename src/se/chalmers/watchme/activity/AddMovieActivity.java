@@ -45,6 +45,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.support.v4.app.DialogFragment;
@@ -58,6 +59,7 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
 	private TextView tagField;
 	private TextView noteField;
 	private AutoCompleteTextView titleField;
+	private ProgressBar bar;
 	private Button addButton;
 	
 	// The handler to interface with the notification system and scheduler
@@ -102,6 +104,10 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
         this.titleField = (AutoCompleteTextView) findViewById(R.id.title_field);
         this.noteField = (TextView) findViewById(R.id.note_field);
         this.tagField = (TextView) findViewById(R.id.tag_field);
+        
+        // The progress bar when fetching IMDb movies
+        this.bar = (ProgressBar) findViewById(R.id.title_progress);
+        this.bar.setVisibility(View.INVISIBLE);
         
         // Add listeners to the title field
         this.titleField.addTextChangedListener(new AddButtonToggler());
@@ -236,6 +242,12 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
      * @author Johan
      */
     private class IMDBSearchTask extends AsyncTask<String, Void, JSONArray> {
+    	
+    	
+    	@Override
+    	public void onPreExecute() {
+    		bar.setVisibility(View.VISIBLE);
+    	}
 
     	/**
     	 * Run a background task searching for movies with a title
@@ -247,12 +259,12 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
 
 		@Override
 		protected void onPostExecute(final JSONArray results) {
+			
 			if(results != null) {
 				// Convert results to regular List
 				List<JSONObject> res = MovieHelper.jsonArrayToList(results);
 				
 				// Re-initialize the adapter for the auto complete box
-				//autoCompleteAdapter = new ArrayAdapter<String>(getBaseContext(), R.layout.auto_complete_item);
 				autoCompleteAdapter = new AutoCompleteAdapter(getBaseContext(), R.layout.auto_complete_item);
 				titleField.setAdapter(autoCompleteAdapter);
 				
@@ -267,6 +279,7 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
 				}
 				
 				autoCompleteAdapter.notifyDataSetChanged();
+				bar.setVisibility(View.INVISIBLE);
 			}
 		}
     	
