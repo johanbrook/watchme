@@ -35,11 +35,11 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
 
-public class AutoCompleteAdapter extends ArrayAdapter<Movie> implements Filterable {
+public class AutoCompleteAdapter extends ArrayAdapter<JSONObject> implements Filterable {
 
 	private LayoutInflater inflater;
 	private MovieSource source;
-	private List<Movie> movies;
+	private JSONArray movies;
 	
 	/**
 	 * Create a new AutoCompleteAdapter.
@@ -54,18 +54,17 @@ public class AutoCompleteAdapter extends ArrayAdapter<Movie> implements Filterab
 		super(context, textViewResourceId);
 		
 		this.source = source;
-		this.movies = new ArrayList<Movie>();
 		this.inflater = LayoutInflater.from(getContext());
 	}
 	
 	@Override
 	public int getCount() {
-		return this.movies.size();
+		return this.movies.length();
 	}
 	
 	@Override
-	public Movie getItem(int position) {
-		return this.movies.get(position);
+	public JSONObject getItem(int position) {
+		return this.movies.optJSONObject(position);
 	}
 	
 	@Override
@@ -80,10 +79,9 @@ public class AutoCompleteAdapter extends ArrayAdapter<Movie> implements Filterab
 				FilterResults results = new FilterResults();
 				if(constraint != null) {
 					JSONArray json = source.getMoviesByTitle(constraint.toString());
-					List<Movie> movies = MovieHelper.jsonArrayToMovieList(json);
 					
-					results.values = movies;
-					results.count = movies.size();
+					results.values = json;
+					results.count = json.length();
 				}
 				
 				return results;
@@ -92,7 +90,7 @@ public class AutoCompleteAdapter extends ArrayAdapter<Movie> implements Filterab
 			@Override
 			protected void publishResults(CharSequence constraint, FilterResults results) {
 				if(results != null && results.count > 0) {
-					movies = (List<Movie>) results.values;
+					movies = (JSONArray) results.values;
 					notifyDataSetChanged();
 				}
 				else {
@@ -118,7 +116,7 @@ public class AutoCompleteAdapter extends ArrayAdapter<Movie> implements Filterab
 		 */
 		
 		ViewHolder holder;
-		Movie suggestion = this.getItem(position);
+		JSONObject suggestion = this.getItem(position);
 		
 		if(convertView == null) {
 			Log.i("Custom", "INFLATE");
@@ -133,8 +131,8 @@ public class AutoCompleteAdapter extends ArrayAdapter<Movie> implements Filterab
 			holder = (ViewHolder) convertView.getTag();
 		}
 		
-		holder.title.setText(suggestion.getTitle());
-		holder.year.setText(DateConverter.toSimpleDate(suggestion.getDate()));
+		holder.title.setText(suggestion.optString("original_name"));
+		holder.year.setText(suggestion.optString("released"));
 		
 		return convertView;
 	}

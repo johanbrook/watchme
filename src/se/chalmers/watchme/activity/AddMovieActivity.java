@@ -66,7 +66,7 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
 	private NotificationClient notifications = new NotificationClient(this);
 	
 	// The list adapter for the auto complete box
-	private ArrayAdapter<Movie> autoCompleteAdapter;
+	private ArrayAdapter<JSONObject> autoCompleteAdapter;
 	
 	private Calendar releaseDate;
 
@@ -259,7 +259,8 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
     private class AutoCompleteClickListener implements OnItemClickListener {
 
 		public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-			Log.i("Custom", "Clicked: "+ autoCompleteAdapter.getItem(position).getImdbID());
+			JSONObject json = autoCompleteAdapter.getItem(position);
+			Log.i("Custom", "Clicked: "+ json.optString("imdb_id"));
 			
 			//TODO Here we have access to the IMDb ID of the selected movie from the list
 			// Now do something with it :)
