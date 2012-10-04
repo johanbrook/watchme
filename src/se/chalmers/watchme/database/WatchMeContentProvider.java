@@ -23,16 +23,20 @@ public class WatchMeContentProvider extends ContentProvider {
 	
 	private static final String BASE_PATH_MOVIES = "movies";
 	private static final String BASE_PATH_TAGS = "tags";
+	private static final String BASE_PATH_HAS_TAG = "hastag";
 	
 	private static final int MOVIES = 10;
 	private static final int MOVIES_ID = 20;
 	private static final int TAGS = 30;
 	private static final int TAGS_ID = 40;
+	private static final int HAS_TAG = 50;
 	
 	public static final Uri CONTENT_URI_MOVIES = Uri.parse("content://" + AUTHORITY
 	        + "/" + BASE_PATH_MOVIES);
 	public static final Uri CONTENT_URI_TAGS = Uri.parse("content://" + AUTHORITY
 	        + "/" + BASE_PATH_TAGS);
+	public static final Uri CONTENT_URI_HAS_TAG = Uri.parse("content://" + AUTHORITY
+	        + "/" + BASE_PATH_HAS_TAG);
 	
 	public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE
 	        + "/watchme";
@@ -45,6 +49,7 @@ public class WatchMeContentProvider extends ContentProvider {
 		    sUriMatcher.addURI(AUTHORITY, BASE_PATH_MOVIES + "/#", MOVIES_ID);
 		    sUriMatcher.addURI(AUTHORITY, BASE_PATH_TAGS, TAGS);
 		    sUriMatcher.addURI(AUTHORITY, BASE_PATH_TAGS, TAGS_ID);
+		    sUriMatcher.addURI(AUTHORITY, BASE_PATH_HAS_TAG, HAS_TAG);
 		  };
 	
 	@Override
@@ -92,6 +97,10 @@ public class WatchMeContentProvider extends ContentProvider {
 		switch(sUriMatcher.match(uri)) {
 		case MOVIES:
 			id = sqlDB.insert(MoviesTable.TABLE_MOVIES, null, values);
+			break;
+		case HAS_TAG:
+			// TODO: Check if the Tag exists. If it doesn't exist. insert into database 
+			id = sqlDB.insert(HasTagTable.TABLE_HAS_TAG, null, values);
 			break;
 		case TAGS:
 			id = sqlDB.insert(TagsTable.TABLE_TAGS, null, values);
