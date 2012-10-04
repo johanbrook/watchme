@@ -1,8 +1,13 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:isScrollContainer="true" >
+    android:layout_height="match_parent" >
+
+
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="10dp" >
     
     <RelativeLayout
         android:id="@+id/top_detail_area"
@@ -16,7 +21,8 @@
 	        android:layout_marginTop="5dp"
 	        android:layout_marginLeft="5dp"
 	        android:adjustViewBounds="true"
-	        android:src="@drawable/ic_launcher" />
+	        android:src="@drawable/ic_launcher"
+	        android:contentDescription="@string/details_poster_description" />
 	
 	    <TextView
 	        android:id="@+id/releaseDate"
@@ -36,7 +42,7 @@
 	        android:layout_below="@+id/releaseDate"
 	        android:layout_marginLeft="10dp"
 	        android:layout_marginTop="5dp"
-	        android:hint="@string/genres_label"
+	        android:hint="@string/details_genres_label"
 	        android:textAppearance="?android:attr/textAppearanceSmall" />
 	    
 	    <TextView
@@ -47,7 +53,7 @@
 	        android:layout_below="@+id/genres"
 	        android:layout_marginLeft="10dp"
 	        android:layout_marginTop="5dp"
-	        android:hint="@string/duration_label"
+	        android:hint="@string/details_duration_label"
 	        android:textAppearance="?android:attr/textAppearanceSmall" />
 	
 	    <Button
@@ -58,16 +64,18 @@
 	        android:layout_below="@+id/duration"
 	        android:layout_marginLeft="10dp"
 	        android:layout_marginTop="5dp"
-	        android:text="@string/imdb_button"
+	        android:text="@string/details_imdb_button"
 	        style="?android:attr/buttonStyleSmall" />
 	    
 	</RelativeLayout>
 
     <LinearLayout
+        android:id="@+id/rating_area"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/top_detail_area"
-        android:layout_marginTop="20dp" >
+        android:layout_marginTop="20dp"
+        android:baselineAligned="false" >
 	    
         <LinearLayout
 	        android:layout_width="wrap_content"
@@ -82,7 +90,7 @@
 		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
 		        android:layout_marginTop="5dp"
-		        android:hint="@string/my_rating_label"
+		        android:hint="@string/details_my_rating_label"
 		        android:textAppearance="?android:attr/textAppearanceSmall" />
 	
 	        <RatingBar
@@ -108,7 +116,7 @@
 		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
 		        android:layout_marginTop="5dp"
-		        android:hint="@string/imdb_rating_label"
+		        android:hint="@string/details_imdb_rating_label"
 		        android:textAppearance="?android:attr/textAppearanceSmall" />
     
 	        <TextView
@@ -116,11 +124,89 @@
 		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
 		        android:layout_marginTop="5dp"
-		        android:hint="@string/imdb_rating_number_label"
+		        android:hint="@string/details_imdb_rating_value"
 		        android:textAppearance="?android:attr/textAppearanceSmall" />
 	        
 	    </LinearLayout>
 	    
     </LinearLayout>
 
+    <EditText
+     	android:id="@+id/tag_field"
+        android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_below="@+id/rating_area"
+        android:ems="8"
+	    android:layout_marginLeft="10dip"
+	    android:layout_marginRight="10dip"
+        android:hint="@string/details_tag_area_hint"
+        android:layout_marginTop="30dp"
+	    android:gravity="top"
+	    android:singleLine="false"
+	    android:lines="3"
+	    android:background="@drawable/tagfield" />
+    
+    <EditText
+     	android:id="@+id/note_field"
+        android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_below="@+id/tag_field"
+        android:ems="8"
+	    android:layout_marginLeft="10dip"
+	    android:layout_marginRight="10dip"
+        android:hint="@string/details_note_area_hint"
+        android:layout_marginTop="20dp"
+	    android:gravity="top"
+	    android:singleLine="false"
+	    android:lines="5"
+		android:background="@drawable/notefield" />
+    
+    <TextView
+        android:id="@+id/plot_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/note_field"
+        android:layout_marginTop="20dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="10dp"
+        android:hint="@string/details_plot_title_hint"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+    
+    <TextView
+        android:id="@+id/plot_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/plot_title"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="5dp"
+        android:hint="@string/details_plot_content_hint"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+    
+    <TextView
+        android:id="@+id/cast_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/plot_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="10dp"
+        android:hint="@string/details_cast_title_hint"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+    
+    <!-- A ScrollView is not allowed here -->
+    <TextView
+        android:id="@+id/cast_list"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/cast_title"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="10dp"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:hint="@string/details_cast_list" />
+
 </RelativeLayout>
+
+</ScrollView>

@@ -38,7 +38,7 @@
         </activity>
         <activity
             android:name=".activity.MovieDetailsActivity"
-            android:label="@string/title_activity_movie_details" >
+            android:label="@string/details_activity_title" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="se.chalmers.watchme.activity.MainActivity" />
