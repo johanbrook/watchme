@@ -30,5 +30,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		MoviesTable.onUpgrade(db, oldVersion, newVersion);
 		TagsTable.onUpgrade(db, oldVersion, newVersion);
 		HasTagTable.onUpgrade(db, oldVersion, newVersion);
+		System.out.println("--- UPDATED DATABASE ---");
 	}
 }

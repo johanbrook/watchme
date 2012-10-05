@@ -15,11 +15,12 @@ public class MoviesTable {
 	public static final String COLUMN_TITLE = "title";
 	public static final String COLUMN_RATING = "rating";
 	public static final String COLUMN_NOTE = "note";
+	public static final String COLUMN_DATE = "releasedate";
 
 	private static final String CREATE_MOVIES_TABLE = "CREATE TABLE "
 			+ TABLE_MOVIES + "(" + COLUMN_MOVIE_ID + " INTEGER PRIMARY KEY,"
 			+ COLUMN_TITLE + " TEXT," + COLUMN_RATING + " INTEGER," + COLUMN_NOTE
-			+ " TEXT" + ")";
+			+ " TEXT," + COLUMN_DATE + " INTEGER" + ")";
 
 	public static void onCreate(SQLiteDatabase db) {
 		db.execSQL(CREATE_MOVIES_TABLE);
