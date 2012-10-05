@@ -82,6 +82,26 @@ public class WatchMeContentProvider extends ContentProvider {
 			deletedRows = sqlDB.delete(TagsTable.TABLE_TAGS, selection, 
 					selectionArgs);
 			break;
+		case HAS_TAG:
+			deletedRows = sqlDB.delete(HasTagTable.TABLE_HAS_TAG, selection, 
+					selectionArgs);
+			/*
+			 * tagSelection[0] is supposed to contain 
+			 * "movieid = <movieid> AND"
+			 * 
+			 * tagSelection[1] is supposed to contain: " = <tagId>"
+			 */
+			String tagSelection = selection.split(HasTagTable.COLUMN_TAG_ID)[1];
+			
+			Cursor tagCursor = sqlDB.query(HasTagTable.TABLE_HAS_TAG, null, 
+					HasTagTable.COLUMN_TAG_ID + tagSelection, null, 
+					null, null, null);
+			if(!tagCursor.moveToFirst()) {
+				//If the tag isn't connected to any Movie, delete it.
+				sqlDB.delete(TagsTable.TABLE_TAGS, TagsTable.COLUMN_TAG_ID +
+						tagSelection, null);
+			}
+			break;
 		default:
 			throw new IllegalArgumentException("Unknown URI " + uri);
 		}
