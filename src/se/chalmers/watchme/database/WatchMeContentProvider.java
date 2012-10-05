@@ -131,6 +131,7 @@ public class WatchMeContentProvider extends ContentProvider {
 				ContentValues tagValues = new ContentValues();
 				tagValues.put(TagsTable.COLUMN_NAME, tagName);
 		        tagId = sqlDB.insert(TagsTable.TABLE_TAGS, null, tagValues); 
+		        // TODO insert(URI_TAGS, tagValues) instead?
 			}
 			
 			// TODO cursor.close()?

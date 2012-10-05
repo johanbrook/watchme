@@ -145,7 +145,7 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
 	    movieValues.put(MoviesTable.COLUMN_TITLE, movie.getTitle());
 	    movieValues.put(MoviesTable.COLUMN_RATING, movie.getRating());
 	    movieValues.put(MoviesTable.COLUMN_NOTE, movie.getNote());
-	    movieValues.put(MoviesTable.COLUMN_DATE, String.valueOf(movie.getDate()));
+	    movieValues.put(MoviesTable.COLUMN_DATE, movie.getDate().getTimeInMillis());
 	    
 		Uri uri_movie_id = getContentResolver().insert(uri_movies, movieValues);
 		int movieId = Integer.parseInt(uri_movie_id.getLastPathSegment());
