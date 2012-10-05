@@ -103,24 +103,37 @@ public class WatchMeContentProvider extends ContentProvider {
 		long id = 0;
 		switch(sUriMatcher.match(uri)) {
 		case MOVIES:
-			id = sqlDB.insert(MoviesTable.TABLE_MOVIES, null, values);
+			// TODO It should not be possible to add the same movie twice
+			String movieTitle = values.getAsString(MoviesTable.COLUMN_TITLE);
+			Cursor movieCursor = sqlDB.query(MoviesTable.TABLE_MOVIES, null, 
+					MoviesTable.COLUMN_TITLE + " = \"" + 
+			movieTitle + "\"", null, null, null, null);
+			
+			if(movieCursor.moveToFirst()) {
+				// If the Movie already exist. Get the Id. 
+				//id = Long.parseLong(movieCursor.getString(0));
+			} else {
+				id = sqlDB.insert(MoviesTable.TABLE_MOVIES, null, values);
+			}
 			break;
 		case HAS_TAG: 
 			// Check if the Tag exists. If it doesn't exist. insert into database
 			String tagName = values.getAsString(TagsTable.COLUMN_NAME);
-			Cursor cursor = sqlDB.query(TagsTable.TABLE_TAGS, null, 
+			Cursor tagCursor = sqlDB.query(TagsTable.TABLE_TAGS, null, 
 					TagsTable.COLUMN_NAME + " = \"" + 
 			tagName + "\"", null, null, null, null);
 			
 			long tagId;
-			if(cursor.moveToFirst()) {
+			if(tagCursor.moveToFirst()) {
 				// If the Tag already exist. Get the Id. 
-				tagId = Long.parseLong(cursor.getString(0));
+				tagId = Long.parseLong(tagCursor.getString(0));
 			} else {
 				ContentValues tagValues = new ContentValues();
 				tagValues.put(TagsTable.COLUMN_NAME, tagName);
 		        tagId = sqlDB.insert(TagsTable.TABLE_TAGS, null, tagValues); 
 			}
+			
+			// TODO cursor.close()?
 			
 			String sql = "INSERT INTO " + HasTagTable.TABLE_HAS_TAG + " VALUES(" + 
 			values.getAsLong(MoviesTable.COLUMN_MOVIE_ID) + ", " + tagId + ")";
@@ -130,6 +143,10 @@ public class WatchMeContentProvider extends ContentProvider {
 			id = values.getAsLong(MoviesTable.COLUMN_MOVIE_ID) + tagId;
 			break;
 		case TAGS:
+			/*
+			 *  TODO Unnecessary? A Tag will never be inserted by itself,
+			 *  instead whey will be inserted by the case: HAS_TAG
+			 */
 			id = sqlDB.insert(TagsTable.TABLE_TAGS, null, values);
 			break;
 		default:
