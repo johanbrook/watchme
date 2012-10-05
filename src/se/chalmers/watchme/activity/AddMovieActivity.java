@@ -159,28 +159,25 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
 		 * commas (",") from tag-field
 		 */
 		String [] tagStrings = tagField.getText().toString().split(",");
+		ContentValues tagValues;
 		Tag tag;
 		
-		
-		ContentValues tagValues;
-		
 		for(String tagString : tagStrings) {
-			tagValues = new ContentValues();
-			
-			/* Remove whitespaces from the beginning and end of each
-			 * string to allow for multi-word tags.
-			 */
-			tag = new Tag(tagString.trim());
-			
-			tagValues.put(MoviesTable.COLUMN_MOVIE_ID, movieId);
-			// TODO Slug or name?
-			tagValues.put(TagsTable.COLUMN_NAME, tag.getSlug());
-			
-			getContentResolver().insert(uri_has_tags, tagValues);
-			
-			newTags.add(tag);
-			
-			
+			if (!tagString.equals("")) {
+				tagValues = new ContentValues();
+
+				/*
+				 * Remove whitespaces from the beginning and end of each string
+				 * to allow for multi-word tags.
+				 */
+				tag = new Tag(tagString.trim());
+				
+				tagValues.put(MoviesTable.COLUMN_MOVIE_ID, movieId);
+				tagValues.put(TagsTable.COLUMN_NAME, tag.getSlug());
+				getContentResolver().insert(uri_has_tags, tagValues);
+
+				newTags.add(tag);
+			}
 		}
 		
 		Intent home = new Intent(this, MainActivity.class);
