@@ -22,11 +22,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	public void onCreate(SQLiteDatabase db) {
 		MoviesTable.onCreate(db);
         TagsTable.onCreate(db);
+        HasTagTable.onCreate(db);
 	}
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 		MoviesTable.onUpgrade(db, oldVersion, newVersion);
 		TagsTable.onUpgrade(db, oldVersion, newVersion);
+		HasTagTable.onUpgrade(db, oldVersion, newVersion);
 	}
 }

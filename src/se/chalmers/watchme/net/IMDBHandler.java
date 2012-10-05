@@ -14,7 +14,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 
-public class IMDBHandler {
+public class IMDBHandler implements MovieSource {
 	
 	/** The TMDb API url */
 	public static final String API_URL = "http://api.themoviedb.org/2.1/";
@@ -68,7 +68,7 @@ public class IMDBHandler {
 	 * @param title The movie title
 	 * @return A JSONArray with the movies as JSONObjects on success. Otherwise null
 	 */
-	public JSONArray searchForMovieTitle(String title) {
+	public JSONArray getMoviesByTitle(String title) {
 		final String url = this.buildURL(title);
 		String response = this.http.get(url);
 		JSONArray movies = null;
@@ -82,6 +82,5 @@ public class IMDBHandler {
 		
 		return movies;
 	}
-	
-	
+
 }
