@@ -12,6 +12,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import se.chalmers.watchme.database.MoviesTable;
+import se.chalmers.watchme.database.TagsTable;
 import se.chalmers.watchme.database.WatchMeContentProvider;
 import se.chalmers.watchme.model.Movie;
 import se.chalmers.watchme.R;
@@ -69,6 +70,9 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
 	private ArrayAdapter<JSONObject> autoCompleteAdapter;
 	
 	private Calendar releaseDate;
+	
+	private Uri uri_movies = WatchMeContentProvider.CONTENT_URI_MOVIES;
+	private Uri uri_has_tags = WatchMeContentProvider.CONTENT_URI_HAS_TAG;
 
     @SuppressLint("NewApi")
 	@Override
@@ -127,23 +131,6 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
     	String movieTitle = this.titleField.getText().toString();
     	String movieNote = this.noteField.getText().toString();
     	
-    	// TODO Better suited list for tags?
-		List<Tag> newTags = new ArrayList<Tag>();
-		
-		/* 
-		 * Split the text input into separate strings input at
-		 * commas (",") from tag-field
-		 */
-		String [] tagStrings = tagField.getText().toString().split(",");
-		
-		for(String tagString : tagStrings) {
-			
-			/* Remove whitespaces from the beginning and end of each
-			 * string to allow for multi-word tags.
-			 */
-			newTags.add(new Tag(tagString.trim()));
-		}
-		
 		/*
 		 * Extract the rating from the ratingBar and convert it to
 		 * an integer
@@ -154,13 +141,47 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
 		Movie movie = new Movie(movieTitle, releaseDate, rating, movieNote);
 		
 		// Insert into database
-		ContentValues values = new ContentValues();
-	    values.put(MoviesTable.COLUMN_TITLE, movie.getTitle());
-	    values.put(MoviesTable.COLUMN_RATING, movie.getRating());
-	    values.put(MoviesTable.COLUMN_NOTE, movie.getNote());
+		ContentValues movieValues = new ContentValues();
+	    movieValues.put(MoviesTable.COLUMN_TITLE, movie.getTitle());
+	    movieValues.put(MoviesTable.COLUMN_RATING, movie.getRating());
+	    movieValues.put(MoviesTable.COLUMN_NOTE, movie.getNote());
+	    movieValues.put(MoviesTable.COLUMN_DATE, String.valueOf(movie.getDate()));
 	    
-	    Uri uri = WatchMeContentProvider.CONTENT_URI_MOVIES;
-		getContentResolver().insert(uri, values);
+		Uri uri_movie_id = getContentResolver().insert(uri_movies, movieValues);
+		int movieId = Integer.parseInt(uri_movie_id.getLastPathSegment());
+    	
+    	// TODO Better suited list for tags?
+    	// TODO Do we really need the list?
+		List<Tag> newTags = new ArrayList<Tag>();
+		
+		/* 
+		 * Split the text input into separate strings input at
+		 * commas (",") from tag-field
+		 */
+		String [] tagStrings = tagField.getText().toString().split(",");
+		Tag tag;
+		
+		
+		ContentValues tagValues;
+		
+		for(String tagString : tagStrings) {
+			tagValues = new ContentValues();
+			
+			/* Remove whitespaces from the beginning and end of each
+			 * string to allow for multi-word tags.
+			 */
+			tag = new Tag(tagString.trim());
+			
+			tagValues.put(MoviesTable.COLUMN_MOVIE_ID, movieId);
+			// TODO Slug or name?
+			tagValues.put(TagsTable.COLUMN_NAME, tag.getSlug());
+			
+			getContentResolver().insert(uri_has_tags, tagValues);
+			
+			newTags.add(tag);
+			
+			
+		}
 		
 		Intent home = new Intent(this, MainActivity.class);
 		setResult(RESULT_OK, home);
