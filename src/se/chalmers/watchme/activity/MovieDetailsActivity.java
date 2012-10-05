@@ -42,7 +42,7 @@ public class MovieDetailsActivity extends Activity {
         }
         
         String title = getIntent().getStringExtra(MainActivity.MOVIE_DETAILS_TITLE);
-        int rating = getIntent().getIntExtra(MainActivity.MOVIE_DETAILS_ID, -1);
+        int rating = getIntent().getIntExtra(MainActivity.MOVIE_DETAILS_RATING, -1);
         String note = getIntent().getStringExtra(MainActivity.MOVIE_DETAILS_NOTE);
         
         
