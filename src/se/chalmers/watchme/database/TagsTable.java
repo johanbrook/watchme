@@ -24,7 +24,7 @@ public class TagsTable {
 
 	public static void onUpgrade(SQLiteDatabase db, int oldVersion,
 			int newVersion) {
-		Log.w(MoviesTable.class.getName(), "Upgrading database from version "
+		Log.w(TagsTable.class.getName(), "Upgrading database from version "
 				+ oldVersion + " to " + newVersion
 				+ ", which will destroy all old data");
 		db.execSQL("DROP TABLE IF EXISTS " + TABLE_TAGS);

@@ -21,6 +21,7 @@ public class HasTagTable {
 			+ TABLE_HAS_TAG + "(" + 
 			COLUMN_MOVIE_ID + " INTEGER," + 
 			COLUMN_TAG_ID + " INTEGER," + 
+			"PRIMARY KEY(" + COLUMN_MOVIE_ID + ", " + COLUMN_TAG_ID + "), " + 
 			"FOREIGN KEY(" + COLUMN_MOVIE_ID + ") REFERENCES " + 
 			MoviesTable.TABLE_MOVIES + "(" + MoviesTable.COLUMN_MOVIE_ID + ")," +
 			"FOREIGN KEY(" + COLUMN_TAG_ID + ") REFERENCES " + 
@@ -33,7 +34,7 @@ public class HasTagTable {
 
 	public static void onUpgrade(SQLiteDatabase db, int oldVersion,
 			int newVersion) {
-		Log.w(MoviesTable.class.getName(), "Upgrading database from version "
+		Log.w(HasTagTable.class.getName(), "Upgrading database from version "
 				+ oldVersion + " to " + newVersion
 				+ ", which will destroy all old data");
 		db.execSQL("DROP TABLE IF EXISTS " + TABLE_HAS_TAG);
