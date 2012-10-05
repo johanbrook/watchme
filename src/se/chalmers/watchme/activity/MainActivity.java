@@ -3,6 +3,15 @@ package se.chalmers.watchme.activity;
 import java.util.ArrayList;
 import se.chalmers.watchme.R;
 import se.chalmers.watchme.model.Movie;
+import android.net.Uri;
+
+import android.os.Bundle;
+import android.annotation.TargetApi;
+import android.app.AlertDialog;
+import android.app.ListActivity;
+import android.app.LoaderManager;
+import android.content.CursorLoader;
+import android.content.DialogInterface;
 import se.chalmers.watchme.ui.MovieListFragment;
 import se.chalmers.watchme.ui.TagListFragment;
 import android.app.ActionBar;
@@ -16,10 +25,22 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
+import android.widget.SimpleCursorAdapter;
+import android.widget.Toast;
 
 public class MainActivity extends FragmentActivity {
 	
 	public static final int ADD_MOVIE_REQUEST = 1;
+	
+	public static final String MOVIE_DETAILS_ID = "se.chalmers.watchme.DETAILS_ID";
+	public static final String MOVIE_DETAILS_TITLE = "se.chalmers.watchme.DETAILS_TITLE";
+	public static final String MOVIE_DETAILS_RATING = "se.chalmers.watchme.DETAILS_RATING";
+	public static final String MOVIE_DETAILS_NOTE = "se.chalmers.watchme.DETAILS_NOTE";
+	
 	private ViewPager viewPager;
 	private TabsAdapter tabsAdapter;
 
@@ -44,6 +65,7 @@ public class MainActivity extends FragmentActivity {
 		if (savedInstanceState != null) {
 			actionBar.setSelectedNavigationItem(savedInstanceState.getInt("tab", 0));
 		}	
+
     }
     
     /**
@@ -87,9 +109,6 @@ public class MainActivity extends FragmentActivity {
 	
     //TODO: stolen from http://developer.android.com/reference/android/support/v4/view/ViewPager.html
     //need license or something?
-    /**
-     * Helper class that implements management of tabs with the help of a ViewPager
-     */
 	public static class TabsAdapter extends FragmentPagerAdapter implements ActionBar.TabListener, ViewPager.OnPageChangeListener {
 		private final Context context;
 		private final ActionBar actionBar;

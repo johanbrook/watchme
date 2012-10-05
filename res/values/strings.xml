@@ -12,10 +12,23 @@
     <string name="input_note_hint">Personal note</string>
     <string name="release_date_button">Pick</string>
     <string name="release_date_hint">Release date</string>
-    <string name="input_tag_hint">Tags</string>
     <string name="rating_hint">How badly do you want to see this movie?</string>
+    <string name="input_tag_hint">Add tags</string>
+    <string name="details_genres_label">Genres not found</string>
+    <string name="details_duration_label">Duration not found</string>
+    <string name="details_imdb_button">IMdb</string>
+    <string name="details_my_rating_label">My rating:</string>
+    <string name="details_imdb_rating_label">IMDb\'s rating:</string>
+    <string name="details_imdb_rating_value">Rating not found</string>
+    <string name="details_poster_description">Movie poster</string>
+    <string name="details_tag_area_hint">No tags added</string>
+    <string name="details_note_area_hint">No personal note added</string>
+    <string name="details_plot_title_hint">Plot</string>
+    <string name="details_plot_content_hint">No plot found</string>
+    <string name="details_cast_title_hint">Cast</string>
+    <string name="details_cast_list">No cast found</string>
+    <string name="details_activity_title">Movie Details</string>
     <string name="tab_movies">Movies</string>
     <string name="tab_tags">Tags</string>
-    
 
 </resources>
