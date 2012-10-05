@@ -1,52 +1,49 @@
 package se.chalmers.watchme.activity;
 
+import java.util.ArrayList;
 import se.chalmers.watchme.R;
-import se.chalmers.watchme.database.MoviesTable;
-import se.chalmers.watchme.database.WatchMeContentProvider;
 import se.chalmers.watchme.model.Movie;
-import android.net.Uri;
-
-import android.os.Bundle;
-import android.app.AlertDialog;
-import android.app.ListActivity;
-import android.app.LoaderManager;
-import android.content.CursorLoader;
-import android.content.DialogInterface;
+import se.chalmers.watchme.ui.MovieListFragment;
+import se.chalmers.watchme.ui.TagListFragment;
+import android.app.ActionBar;
+import android.app.ActionBar.Tab;
+import android.content.Context;
 import android.content.Intent;
-import android.content.Loader;
-import android.database.Cursor;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemLongClickListener;
-import android.widget.SimpleCursorAdapter;
-import android.widget.Toast;
 
-public class MainActivity extends ListActivity implements LoaderManager.LoaderCallbacks<Cursor> {
+public class MainActivity extends FragmentActivity {
 	
 	public static final int ADD_MOVIE_REQUEST = 1;
-	private Uri uri = WatchMeContentProvider.CONTENT_URI_MOVIES;
-	private SimpleCursorAdapter adapter;
+	private ViewPager viewPager;
+	private TabsAdapter tabsAdapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        Thread.currentThread().setContextClassLoader(this.getClassLoader());
         
-        //TODO Add MoviesTable.COLUMN_DATE and android.R.id.date when implemented in database
-        //TODO Exception when uncommenting MoviesTable.COLUMN_RATING:
-        // IllegalArgumentException: column 'raiting' does not exist.
-        // why?
-        String[] from = new String[] { MoviesTable.COLUMN_MOVIE_ID, MoviesTable.COLUMN_TITLE, /* MoviesTable.COLUMN_RATING*/ /*, MoviesTable.COLUMN_DATE*/ };
-        int[] to = new int[] { 0 , R.id.title /*, R.id.raiting */ /*, R.id.date */  };
-
-        getLoaderManager().initLoader(0, null, this);
-        adapter = new SimpleCursorAdapter(this, R.layout.list_item_movie , null, from, to, 0);
-        setListAdapter(adapter);
+        //setup view pager
+        this.viewPager = new ViewPager(this);
+        this.viewPager.setId(R.id.vPager);
+        setContentView(viewPager);
+        
+        //setup actionbar
+        final ActionBar actionBar = getActionBar();
+		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+		actionBar.setDisplayOptions(0, ActionBar.DISPLAY_SHOW_TITLE);
 		
-        this.getListView().setOnItemLongClickListener(new OnDeleteListener());
+		//setup tabs
+		tabsAdapter = new TabsAdapter(this, viewPager);
+		tabsAdapter.addTab(actionBar.newTab().setText(R.string.tab_movies), MovieListFragment.class, null);
+		tabsAdapter.addTab(actionBar.newTab().setText(R.string.tab_tags), TagListFragment.class, null);
+		if (savedInstanceState != null) {
+			actionBar.setSelectedNavigationItem(savedInstanceState.getInt("tab", 0));
+		}	
     }
     
     /**
@@ -81,61 +78,85 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
         
         return true;
     }
-    
+        
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt("tab", getActionBar().getSelectedNavigationIndex());
+    }
+	
+    //TODO: stolen from http://developer.android.com/reference/android/support/v4/view/ViewPager.html
+    //need license or something?
     /**
-     * The listener for when the user does a long-tap on an item in the list.
-     * 
-     * The Movie object in the list is removed if the user confirms that he wants to remove the Movie.
-     * 
-     * @author Johan
+     * Helper class that implements management of tabs with the help of a ViewPager
      */
-    private class OnDeleteListener implements OnItemLongClickListener {
-    	public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+	public static class TabsAdapter extends FragmentPagerAdapter implements ActionBar.TabListener, ViewPager.OnPageChangeListener {
+		private final Context context;
+		private final ActionBar actionBar;
+		private final ViewPager viewPager;
+		private final ArrayList<TabInfo> tabs = new ArrayList<TabInfo>();
 
-			final long movieId = id;
-			
-			String[] projection = { MoviesTable.COLUMN_TITLE };
-			Cursor movieCursor = getContentResolver().query(uri, projection, "_id = " + movieId, null, null);
-			
-			if (movieCursor != null) {
-		        movieCursor.moveToFirst();
+		static final class TabInfo {
+			private final Class<?> clss;
+			private final Bundle args;
+
+			TabInfo(Class<?> clss, Bundle args) {
+				this.clss = clss;
+				this.args = args;
 			}
-			
-			final String movieTitle = movieCursor.getString(0);
-			
-            AlertDialog.Builder alertbox = new AlertDialog.Builder(MainActivity.this);
-            alertbox.setMessage("Are you sure you want to delete the movie \"" + movieTitle + "\"?");           
-            alertbox.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface arg0, int arg1) {
-                	getContentResolver().delete(uri, "_id = " + movieId , null);
-                    Toast.makeText(getApplicationContext(), "\"" + movieTitle + "\" was deleted" , Toast.LENGTH_SHORT).show();
-                }
-            });
-            alertbox.setNeutralButton("Cancel", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface arg0, int arg1) {
-                    
-                }
-            });
-            
-            alertbox.show();
-			return true;
-		}    	
-	}
+		}
 
-	public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
-		String[] projection = { MoviesTable.COLUMN_MOVIE_ID, MoviesTable.COLUMN_TITLE };
-	    CursorLoader cursorLoader = new CursorLoader(this,
-	        uri, projection, null, null, null);
-	    return cursorLoader;
-	}
+		public TabsAdapter(FragmentActivity activity, ViewPager pager) {
+			super(activity.getSupportFragmentManager());
+			this.context = activity;
+			this.actionBar = activity.getActionBar();
+			this.viewPager = pager;
+			this.viewPager.setAdapter(this);
+			this.viewPager.setOnPageChangeListener(this);
+		}
 
-	public void onLoadFinished(Loader<Cursor> arg0, Cursor arg1) {
-		adapter.swapCursor(arg1);		
-	}
+		public void addTab(ActionBar.Tab tab, Class<?> clss, Bundle args) {
+			TabInfo info = new TabInfo(clss, args);
+			tab.setTag(info);
+			tab.setTabListener(this);
+			this.tabs.add(info);
+			this.actionBar.addTab(tab);
+			notifyDataSetChanged();
+		}
 
-	public void onLoaderReset(Loader<Cursor> arg0) {
-		// data is not available anymore, delete reference
-	    adapter.swapCursor(null);
-		
+		public void onPageScrollStateChanged(int state) { 
+		}
+
+		public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) { }
+
+		public void onPageSelected(int position) {
+			this.actionBar.setSelectedNavigationItem(position);
+		}
+
+		public void onTabReselected(Tab tab, android.app.FragmentTransaction ft) { }
+
+		public void onTabSelected(Tab tab, android.app.FragmentTransaction ft) {
+			Object tag = tab.getTag();
+			for (int i = 0 ; i < this.tabs.size(); i++) {
+				if (this.tabs.get(i) == tag) {
+					this.viewPager.setCurrentItem(i);
+				}
+			}
+		}
+
+		public void onTabUnselected(Tab tab, android.app.FragmentTransaction ft) { }
+
+		@Override
+		public Fragment getItem(int position) {
+			TabInfo info = this.tabs.get(position);
+			return Fragment.instantiate(this.context, info.clss.getName(), info.args);
+		}
+
+		@Override
+		public int getCount() {
+			return this.tabs.size();
+		}
+
+
 	}
 }

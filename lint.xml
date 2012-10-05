@@ -2,5 +2,7 @@
 <lint>
     <issue id="NewApi">
         <ignore path="src/se/chalmers/watchme/activity/MainActivity.java" />
+        <ignore path="src/se/chalmers/watchme/ui/MovieListFragment.java" />
+        <ignore path="src/se/chalmers/watchme/ui/TagListFragment.java" />
     </issue>
 </lint>
