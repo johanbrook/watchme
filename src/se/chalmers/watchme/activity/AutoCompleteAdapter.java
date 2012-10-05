@@ -154,8 +154,10 @@ public class AutoCompleteAdapter extends ArrayAdapter<JSONObject> implements Fil
 			holder = (ViewHolder) convertView.getTag();
 		}
 		
-		holder.title.setText(suggestion.optString(Movie.JSON_KEY_NAME));
-		holder.year.setText(suggestion.optString(Movie.JSON_KEY_DATE));
+		if(suggestion != null) {
+			holder.title.setText(suggestion.optString(Movie.JSON_KEY_NAME));
+			holder.year.setText(suggestion.optString(Movie.JSON_KEY_DATE));
+		}
 		
 		return convertView;
 	}
