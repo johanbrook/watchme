@@ -1,11 +1,14 @@
 package se.chalmers.watchme.ui;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+
 import se.chalmers.watchme.R;
-import se.chalmers.watchme.activity.MainActivity;
 import se.chalmers.watchme.activity.MovieDetailsActivity;
 import se.chalmers.watchme.database.MoviesTable;
 import se.chalmers.watchme.database.WatchMeContentProvider;
 import se.chalmers.watchme.model.Movie;
+import se.chalmers.watchme.utils.DateConverter;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.LoaderManager;
@@ -17,14 +20,17 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
+import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.SimpleCursorAdapter;
-import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
+import android.widget.SimpleCursorAdapter;
+import android.widget.SimpleCursorAdapter.ViewBinder;
+import android.widget.TextView;
+import android.widget.Toast;
 
 // TODO Important! API level required does not match with what is used
 @TargetApi(11)
@@ -42,17 +48,39 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
 	public void onActivityCreated(Bundle b) {
 		super.onActivityCreated(b);
 		Thread.currentThread().setContextClassLoader(getActivity().getClassLoader());
-		 
-		//TODO Add MoviesTable.COLUMN_DATE and android.R.id.date when implemented in database
-		//TODO Exception when uncommenting MoviesTable.COLUMN_RATING:
-		// IllegalArgumentException: column 'raiting' does not exist.
-		// why?
+
 		String[] from = new String[] { MoviesTable.COLUMN_MOVIE_ID, MoviesTable.COLUMN_TITLE,  MoviesTable.COLUMN_RATING , MoviesTable.COLUMN_DATE };
 		int[] to = new int[] { 0 , R.id.title, R.id.raiting, R.id.date };
 		
 		getActivity().getLoaderManager().initLoader(0, null, this);
 		adapter = new SimpleCursorAdapter(getActivity(), R.layout.list_item_movie , null, from, to, 0);
-	    setListAdapter(adapter);
+		
+		/**
+		 * Convert date text from millis to dd/mm/yyyy format
+		 */
+		//TODO: Refactor?
+		//TODO: Put converting code in utils.DateConverter?
+		adapter.setViewBinder(new ViewBinder() {
+			
+			public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
+				if (columnIndex == 3) {
+					String date = cursor.getString(columnIndex);
+					TextView textView = (TextView) view;
+					
+					SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+					Calendar calendar = Calendar.getInstance();
+					calendar.setTimeInMillis(Long.parseLong(date));
+					String simpleDate = formatter.format(calendar.getTime());
+					
+					textView.setText("Date: " + simpleDate);
+					return true;
+				}
+				
+				return false;
+			}
+		});
+		
+		setListAdapter(adapter);
 	    
         this.getListView().setOnItemClickListener(new OnDetailsListener());
 	    this.getListView().setOnItemLongClickListener(new OnDeleteListener());
