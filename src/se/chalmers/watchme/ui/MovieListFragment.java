@@ -47,8 +47,8 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
 		//TODO Exception when uncommenting MoviesTable.COLUMN_RATING:
 		// IllegalArgumentException: column 'raiting' does not exist.
 		// why?
-		String[] from = new String[] { MoviesTable.COLUMN_MOVIE_ID, MoviesTable.COLUMN_TITLE, /* MoviesTable.COLUMN_RATING*/ /*, MoviesTable.COLUMN_DATE*/ };
-		int[] to = new int[] { 0 , R.id.title /*, R.id.raiting */ /*, R.id.date */  };
+		String[] from = new String[] { MoviesTable.COLUMN_MOVIE_ID, MoviesTable.COLUMN_TITLE,  MoviesTable.COLUMN_RATING , MoviesTable.COLUMN_DATE };
+		int[] to = new int[] { 0 , R.id.title, R.id.raiting, R.id.date };
 		
 		getActivity().getLoaderManager().initLoader(0, null, this);
 		adapter = new SimpleCursorAdapter(getActivity(), R.layout.list_item_movie , null, from, to, 0);
@@ -65,7 +65,7 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
 	}
 	
 	public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
-		String[] projection = { MoviesTable.COLUMN_MOVIE_ID, MoviesTable.COLUMN_TITLE };
+		String[] projection = { MoviesTable.COLUMN_MOVIE_ID, MoviesTable.COLUMN_TITLE, MoviesTable.COLUMN_RATING, MoviesTable.COLUMN_DATE };
 	    CursorLoader cursorLoader = new CursorLoader(getActivity(),
 	        uri, projection, null, null, null);
 	    return cursorLoader;
