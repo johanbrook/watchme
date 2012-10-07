@@ -3,11 +3,14 @@ package se.chalmers.watchme.activity;
 import se.chalmers.watchme.R;
 import se.chalmers.watchme.R.layout;
 import se.chalmers.watchme.R.menu;
+import se.chalmers.watchme.database.WatchMeContentProvider;
 import se.chalmers.watchme.model.Movie;
 import se.chalmers.watchme.model.Tag;
+import android.net.Uri;
 import android.os.Bundle;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.database.Cursor;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -20,8 +23,10 @@ import android.support.v4.app.NavUtils;
 @TargetApi(11)
 public class MovieDetailsActivity extends Activity {
 	
-	private TextView noteField;
+	private TextView noteField, tagField;
 	private RatingBar ratingBar;
+	
+	private Uri uri_has_tags = WatchMeContentProvider.CONTENT_URI_HAS_TAG;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -29,14 +34,14 @@ public class MovieDetailsActivity extends Activity {
         
         // TODO Why does getMovie return a long from Movie object but database returns int?
         // Get the movie id. Is set to -1 if no value is returned
-        long  movieID = getIntent().getLongExtra(MainActivity.MOVIE_DETAILS_ID, -1);
+        long  movieId = getIntent().getLongExtra(MainActivity.MOVIE_DETAILS_ID, -1);
         
          
         /*
          * If no movie id was received earlier then finish this activity before
          * anything else is done
          */
-        if(movieID == -1) {
+        if(movieId == -1) {
         	// TODO Why does this cause a crash?
         	finish();
         }
@@ -56,6 +61,22 @@ public class MovieDetailsActivity extends Activity {
         
         noteField = (TextView) findViewById(R.id.note_field);
         ratingBar = (RatingBar) findViewById(R.id.my_rating_bar);
+        
+        tagField = (TextView) findViewById(R.id.tag_field);
+        
+        Cursor tagCursor = getContentResolver().query(uri_has_tags, null,
+				"_id = " + movieId, null, null);
+		
+        String tags = "";
+		if (tagCursor != null) {
+	        tagCursor.moveToFirst();
+	        tags = tagCursor.getString(3);
+	        while(tagCursor.moveToNext()) {
+	        	tags = tags + ", " + tagCursor.getString(3);
+	        }
+		}
+		
+		tagField.setText(tags);
         
         /*
         
