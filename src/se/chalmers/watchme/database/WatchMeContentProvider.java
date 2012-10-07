@@ -209,7 +209,18 @@ public class WatchMeContentProvider extends ContentProvider {
 	    	selection = selection + TagsTable.COLUMN_TAG_ID + " = " 
 	    			+ uri.getLastPathSegment();
 	    	queryBuilder.setTables(TagsTable.TABLE_TAGS);
-	        break;   
+	        break;  
+		case HAS_TAG:
+			/*
+			 * selection should contain "movieid = <movieid>"
+			 */
+			String tables = HasTagTable.TABLE_HAS_TAG + " LEFT OUTER JOIN " + 
+					TagsTable.TABLE_TAGS + " ON " + 
+					HasTagTable.TABLE_HAS_TAG + "." + HasTagTable.COLUMN_TAG_ID +
+					" = " + 
+					TagsTable.TABLE_TAGS + "." + TagsTable.COLUMN_TAG_ID;
+			queryBuilder.setTables(tables);
+			break;
 	    default:
 	        throw new IllegalArgumentException("Unknown URI");
 	    }
@@ -247,7 +258,7 @@ public class WatchMeContentProvider extends ContentProvider {
 					+ uri.getLastPathSegment();
 			updatedRows = sqlDB.update(TagsTable.TABLE_TAGS, values, selection, 
 					selectionArgs);
-			break;	
+			break;
 		default:
 			throw new IllegalArgumentException("Unknown URI " + uri);
 		}
