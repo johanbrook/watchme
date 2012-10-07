@@ -13,14 +13,14 @@ public class DateConverter {
 	
 	/**
 	 * Recieves a calendar instance and returns a String with simple
-	 * date format(MM/dd/yyyy)
+	 * date format(dd-MM-yyyy)
 	 * 
 	 * @param calendar The calendar object to be used to create the string
-	 * @returns A simple string representing a date in the format: MM/dd/yyyy
+	 * @returns A simple string representing a date in the format: dd-MM-yyyy
 	 */
 	public static String toSimpleDate(Calendar calendar) {
 		
-		SimpleDateFormat simpleDate = new SimpleDateFormat("MM/dd/yyyy");
+		SimpleDateFormat simpleDate = new SimpleDateFormat("dd-MM-yyyy");
 		String simpleDateString = simpleDate.format(calendar.getTime());
 		
 		return simpleDateString;
