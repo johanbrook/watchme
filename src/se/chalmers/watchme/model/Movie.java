@@ -15,7 +15,22 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class Movie implements Serializable {
+	
+	/**
+	 * The JSON key for a movie's title
+	 */
+	public static final String JSON_KEY_NAME = "original_name";
+	/**
+	 * The JSON key for a movie's IMDB ID
+	 */
+	public static final String JSON_KEY_ID = "imdb_id";
+	/**
+	 * The JSON key for a movie's release date
+	 */
+	public static final String JSON_KEY_DATE = "released";
+	
 	private String title, note;
+	private String imdbID;
 	private int rating;
 	private long id;
 	private Calendar releaseDate;
@@ -42,6 +57,8 @@ public class Movie implements Serializable {
 		this.rating = rating;
 		this.note = note;
 		this.releaseDate = releaseDate;
+		
+		this.imdbID = null;
 		
 		// Set the time of day to 00.00.00 to allow for easier testing
 		this.releaseDate.set(releaseDate.get(Calendar.YEAR),
@@ -154,6 +171,24 @@ public class Movie implements Serializable {
 	 */
 	public void setDate(Calendar releaseDate) {
 		this.releaseDate = releaseDate;
+	}
+	
+	/**
+	 * Get the IMDb id of this movie.
+	 * 
+	 * @return The IMDB id
+	 */
+	public String getImdbID() {
+		return this.imdbID;
+	}
+	
+	/**
+	 * Set the IMDb id.
+	 * 
+	 * @param id The IMDb id
+	 */
+	public void setImdbID(String id) {
+		this.imdbID = id;
 	}
 	
 	@Override

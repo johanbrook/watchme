@@ -8,49 +8,103 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
-import android.text.TextUtils;
 
+/**
+ * The Content Provider for the WatchMe application.
+ * 
+ * @author lisastenberg
+ *
+ */
 public class WatchMeContentProvider extends ContentProvider {
 	
 	private DatabaseHelper db;
 	
-	public static final String AUTHORITY = "se.chalmers.watchme.database.providers.WatchMeContentProvider";
+	public static final String AUTHORITY = "se.chalmers.watchme.database." +
+			"providers.WatchMeContentProvider";
 	
-	private static final String BASE_PATH = "wathme";
+	private static final String BASE_PATH_MOVIES = "movies";
+	private static final String BASE_PATH_TAGS = "tags";
+	private static final String BASE_PATH_HAS_TAG = "hastag";
 	
 	private static final int MOVIES = 10;
 	private static final int MOVIES_ID = 20;
+	private static final int TAGS = 30;
+	private static final int TAGS_ID = 40;
+	private static final int HAS_TAG = 50;
 	
-	public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY
-	        + "/" + BASE_PATH);
+	public static final Uri CONTENT_URI_MOVIES = Uri.parse("content://" 
+			+ AUTHORITY + "/" + BASE_PATH_MOVIES);
+	public static final Uri CONTENT_URI_TAGS = Uri.parse("content://" 
+			+ AUTHORITY + "/" + BASE_PATH_TAGS);
+	public static final Uri CONTENT_URI_HAS_TAG = Uri.parse("content://" 
+			+ AUTHORITY + "/" + BASE_PATH_HAS_TAG);
 	
-	public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE
-	        + "/watchme";
-	public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE
-	        + "/watchme";
+	public static final String CONTENT_ITEM_TYPE = 
+			ContentResolver.CURSOR_ITEM_BASE_TYPE + "/watchme";
+	public static final String CONTENT_TYPE = 
+			ContentResolver.CURSOR_DIR_BASE_TYPE + "/watchme";
 	
 	private static final UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 	  static {
-		    sUriMatcher.addURI(AUTHORITY, BASE_PATH, MOVIES);
-		    sUriMatcher.addURI(AUTHORITY, BASE_PATH + "/#", MOVIES_ID);
+		    sUriMatcher.addURI(AUTHORITY, BASE_PATH_MOVIES, MOVIES);
+		    sUriMatcher.addURI(AUTHORITY, BASE_PATH_MOVIES + "/#", MOVIES_ID);
+		    sUriMatcher.addURI(AUTHORITY, BASE_PATH_TAGS, TAGS);
+		    sUriMatcher.addURI(AUTHORITY, BASE_PATH_TAGS, TAGS_ID);
+		    sUriMatcher.addURI(AUTHORITY, BASE_PATH_HAS_TAG, HAS_TAG);
 		  };
 	
 	@Override
 	public int delete(Uri uri, String selection, String[] selectionArgs) {
 		SQLiteDatabase sqlDB = db.getWritableDatabase();
 		
+		int deletedRows;
 		switch (sUriMatcher.match(uri)) {
 		case MOVIES:
 			//Nothing need to be added to the selection
+			deletedRows = sqlDB.delete(MoviesTable.TABLE_MOVIES, selection, 
+					selectionArgs);
 			break;
 		case MOVIES_ID:
 			//TODO: Need to check if selection is null?
-			selection = selection + MoviesTable.COLUMN_MOVIE_ID + " = " + uri.getLastPathSegment();
+			selection = selection + MoviesTable.COLUMN_MOVIE_ID + " = " 
+			+ uri.getLastPathSegment();
+			deletedRows = sqlDB.delete(MoviesTable.TABLE_MOVIES, selection, 
+					selectionArgs);
+			break;
+		case TAGS:
+			deletedRows = sqlDB.delete(TagsTable.TABLE_TAGS, selection, 
+					selectionArgs);
+			break;
+		case TAGS_ID:
+			//TODO: Need to check if selection is null?
+			selection = selection + TagsTable.COLUMN_TAG_ID + " = " + 
+			uri.getLastPathSegment();
+			deletedRows = sqlDB.delete(TagsTable.TABLE_TAGS, selection, 
+					selectionArgs);
+			break;
+		case HAS_TAG:
+			deletedRows = sqlDB.delete(HasTagTable.TABLE_HAS_TAG, selection, 
+					selectionArgs);
+			/*
+			 * tagSelection[0] is supposed to contain 
+			 * "movieid = <movieid> AND"
+			 * 
+			 * tagSelection[1] is supposed to contain: " = <tagId>"
+			 */
+			String tagSelection = selection.split(HasTagTable.COLUMN_TAG_ID)[1];
+			
+			Cursor tagCursor = sqlDB.query(HasTagTable.TABLE_HAS_TAG, null, 
+					HasTagTable.COLUMN_TAG_ID + tagSelection, null, 
+					null, null, null);
+			if(!tagCursor.moveToFirst()) {
+				//If the tag isn't connected to any Movie, delete it.
+				sqlDB.delete(TagsTable.TABLE_TAGS, TagsTable.COLUMN_TAG_ID +
+						tagSelection, null);
+			}
 			break;
 		default:
 			throw new IllegalArgumentException("Unknown URI " + uri);
 		}
-		int deletedRows = sqlDB.delete(MoviesTable.TABLE_MOVIES, selection, selectionArgs);
 		
 		//Called as a courtesy
 		getContext().getContentResolver().notifyChange(uri, null);
@@ -69,7 +123,52 @@ public class WatchMeContentProvider extends ContentProvider {
 		long id = 0;
 		switch(sUriMatcher.match(uri)) {
 		case MOVIES:
-			id = sqlDB.insert(MoviesTable.TABLE_MOVIES, null, values);
+			// TODO It should not be possible to add the same movie twice
+			String movieTitle = values.getAsString(MoviesTable.COLUMN_TITLE);
+			Cursor movieCursor = sqlDB.query(MoviesTable.TABLE_MOVIES, null, 
+					MoviesTable.COLUMN_TITLE + " = \"" + 
+			movieTitle + "\"", null, null, null, null);
+			
+			if(movieCursor.moveToFirst()) {
+				// If the Movie already exist. Get the Id. 
+				//id = Long.parseLong(movieCursor.getString(0));
+			} else {
+				id = sqlDB.insert(MoviesTable.TABLE_MOVIES, null, values);
+			}
+			break;
+		case HAS_TAG: 
+			// Check if the Tag exists. If it doesn't exist. insert into database
+			String tagName = values.getAsString(TagsTable.COLUMN_NAME);
+			Cursor tagCursor = sqlDB.query(TagsTable.TABLE_TAGS, null, 
+					TagsTable.COLUMN_NAME + " = \"" + 
+			tagName + "\"", null, null, null, null);
+			
+			long tagId;
+			if(tagCursor.moveToFirst()) {
+				// If the Tag already exist. Get the Id. 
+				tagId = Long.parseLong(tagCursor.getString(0));
+			} else {
+				ContentValues tagValues = new ContentValues();
+				tagValues.put(TagsTable.COLUMN_NAME, tagName);
+		        tagId = sqlDB.insert(TagsTable.TABLE_TAGS, null, tagValues); 
+		        // TODO insert(URI_TAGS, tagValues) instead?
+			}
+			
+			// TODO cursor.close()?
+			
+			String sql = "INSERT INTO " + HasTagTable.TABLE_HAS_TAG + " VALUES(" + 
+			values.getAsLong(MoviesTable.COLUMN_MOVIE_ID) + ", " + tagId + ")";
+			sqlDB.execSQL(sql);
+			
+			// TODO: FIX THIS SMELLY CODE
+			id = values.getAsLong(MoviesTable.COLUMN_MOVIE_ID) + tagId;
+			break;
+		case TAGS:
+			/*
+			 *  TODO Unnecessary? A Tag will never be inserted by itself,
+			 *  instead whey will be inserted by the case: HAS_TAG
+			 */
+			id = sqlDB.insert(TagsTable.TABLE_TAGS, null, values);
 			break;
 		default:
 			throw new IllegalArgumentException("Unknown URI" + uri);
@@ -78,14 +177,13 @@ public class WatchMeContentProvider extends ContentProvider {
 		//Called as a courtesy
 		getContext().getContentResolver().notifyChange(uri, null);
 		
-	    return Uri.parse(BASE_PATH + "/" + id);
+	    return Uri.parse(BASE_PATH_MOVIES + "/" + id);
 	}
 
 	@Override
 	public boolean onCreate() {
 		db = new DatabaseHelper(getContext());
 		System.out.println("--- CREATED DB IN CONTENT PROVIDER ---");
-		//db.onUpgrade(db.getReadableDatabase(), 0, 0);
 		return true;
 	}
 
@@ -100,9 +198,18 @@ public class WatchMeContentProvider extends ContentProvider {
 	    	queryBuilder.setTables(MoviesTable.TABLE_MOVIES);
 	    	break;
 	    case MOVIES_ID:
-	    	selection = selection + MoviesTable.COLUMN_MOVIE_ID + " = " + uri.getLastPathSegment();
+	    	selection = selection + MoviesTable.COLUMN_MOVIE_ID + " = " 
+	    			+ uri.getLastPathSegment();
 	    	queryBuilder.setTables(MoviesTable.TABLE_MOVIES);
 	        break;
+	    case TAGS:
+	    	queryBuilder.setTables(TagsTable.TABLE_TAGS);
+	    	break;
+	    case TAGS_ID:
+	    	selection = selection + TagsTable.COLUMN_TAG_ID + " = " 
+	    			+ uri.getLastPathSegment();
+	    	queryBuilder.setTables(TagsTable.TABLE_TAGS);
+	        break;   
 	    default:
 	        throw new IllegalArgumentException("Unknown URI");
 	    }
@@ -117,17 +224,33 @@ public class WatchMeContentProvider extends ContentProvider {
 			String[] selectionArgs) {
 		SQLiteDatabase sqlDB = db.getWritableDatabase();
 		
+		int updatedRows;
 		switch (sUriMatcher.match(uri)) {
 		case MOVIES:
-			//Nothing need to be added to selection
+			// Nothing need to be added to selection
+			updatedRows = sqlDB.update(MoviesTable.TABLE_MOVIES, values, 
+					selection, selectionArgs);
 			break;
 		case MOVIES_ID:
-			selection = selection + MoviesTable.COLUMN_MOVIE_ID + " = " + uri.getLastPathSegment();
+			selection = selection + MoviesTable.COLUMN_MOVIE_ID + " = " 
+					+ uri.getLastPathSegment();
+			updatedRows = sqlDB.update(MoviesTable.TABLE_MOVIES, values, 
+					selection, selectionArgs);
 			break;
+		case TAGS:
+			// Nothing need to be added to selection
+			updatedRows = sqlDB.update(TagsTable.TABLE_TAGS, values, selection, 
+					selectionArgs);
+			break;
+		case TAGS_ID:
+			selection = selection + TagsTable.COLUMN_TAG_ID + " = " 
+					+ uri.getLastPathSegment();
+			updatedRows = sqlDB.update(TagsTable.TABLE_TAGS, values, selection, 
+					selectionArgs);
+			break;	
 		default:
 			throw new IllegalArgumentException("Unknown URI " + uri);
 		}
-		int updatedRows = sqlDB.update(MoviesTable.TABLE_MOVIES, values, selection, selectionArgs);
 		
 		//Called as a courtesy
 		getContext().getContentResolver().notifyChange(uri, null);

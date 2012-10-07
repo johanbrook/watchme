@@ -3,19 +3,21 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
     
-    <AutoCompleteTextView 
-    	android:id="@+id/title_field"
-    	android:layout_width="wrap_content"
+    <AutoCompleteTextView
+        android:id="@+id/title_field"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/tag_field"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
+        android:layout_alignRight="@+id/rating_bar"
         android:layout_marginTop="20dp"
-        android:gravity="center"
         android:ems="10"
-        android:inputType="textCapWords" 
-        android:hint="@string/input_movie_hint" >
+        android:gravity="center"
+        android:hint="@string/input_movie_hint"
+        android:inputType="textCapWords" >
         
         <requestFocus />
+        
 	</AutoCompleteTextView>
     
     <TextView
@@ -102,5 +104,14 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="10dp"
         android:text="@string/add_movie_button" />
+
+    <ProgressBar
+        android:id="@+id/title_progress"
+        style="@android:style/Widget.ProgressBar.Small.Inverse"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/title_field"
+        android:layout_alignTop="@+id/title_field"
+        android:layout_toRightOf="@+id/rating_label" />
 
 </RelativeLayout>
