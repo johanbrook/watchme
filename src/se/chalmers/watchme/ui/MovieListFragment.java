@@ -56,23 +56,20 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
 		adapter = new SimpleCursorAdapter(getActivity(), R.layout.list_item_movie , null, from, to, 0);
 		
 		/**
-		 * Convert date text from millis to dd/mm/yyyy format
+		 * Convert date text from millis to dd-mm-yyyy format
 		 */
 		//TODO: Refactor?
-		//TODO: Put converting code in utils.DateConverter?
 		adapter.setViewBinder(new ViewBinder() {
 			
 			public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
 				if (columnIndex == 3) {
 					String date = cursor.getString(columnIndex);
 					TextView textView = (TextView) view;
+					Calendar cal = Calendar.getInstance();
+					cal.setTimeInMillis(Long.parseLong(date));
+					String formattedDate = DateConverter.toSimpleDate(cal);
 					
-					SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-					Calendar calendar = Calendar.getInstance();
-					calendar.setTimeInMillis(Long.parseLong(date));
-					String simpleDate = formatter.format(calendar.getTime());
-					
-					textView.setText("Date: " + simpleDate);
+					textView.setText(formattedDate);
 					return true;
 				}
 				
