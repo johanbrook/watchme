@@ -128,7 +128,10 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
 			movie.setId(movieId);
 			movie.setRating(movieCursor.getInt(2));
 			movie.setNote(movieCursor.getString(3));
-			movie.setImdbID(movieCursor.getString(4));
+			Calendar c = Calendar.getInstance();
+			c.setTimeInMillis(Long.parseLong(movieCursor.getString(4)));
+			movie.setDate(c);
+			movie.setImdbID(movieCursor.getString(5));
 			
 			//final Movie movie = (Movie) getListView().getItemAtPosition(arg2);
 			Intent intent = new Intent(getActivity(), MovieDetailsActivity.class);
