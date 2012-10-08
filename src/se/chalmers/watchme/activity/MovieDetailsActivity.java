@@ -1,15 +1,11 @@
 package se.chalmers.watchme.activity;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import se.chalmers.watchme.R;
-import se.chalmers.watchme.R.layout;
-import se.chalmers.watchme.R.menu;
 import se.chalmers.watchme.database.WatchMeContentProvider;
 import se.chalmers.watchme.model.Movie;
-import se.chalmers.watchme.model.Tag;
 import se.chalmers.watchme.net.IMDBHandler;
 import se.chalmers.watchme.net.MovieSource;
 import android.net.Uri;
@@ -17,8 +13,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.database.Cursor;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.RatingBar;
@@ -149,6 +145,18 @@ public class MovieDetailsActivity extends Activity {
     
     private class IMDBTask extends AsyncTask<Integer, Void, JSONObject> {
 
+    	private ProgressDialog dialog;
+    	
+    	public IMDBTask() {
+    		this.dialog = new ProgressDialog(MovieDetailsActivity.this);
+    	}
+    	
+    	@Override
+    	protected void onPreExecute() {
+    		this.dialog.setMessage("Loading from IMDb ...");
+    		this.dialog.show();
+    	}
+    	
 		@Override
 		protected JSONObject doInBackground(Integer... params) {
 			JSONObject response = imdb.getMovieById(params[0]);
@@ -157,7 +165,11 @@ public class MovieDetailsActivity extends Activity {
 		}
     	
 		@Override
-		public void onPostExecute(JSONObject res) {
+		protected void onPostExecute(JSONObject res) {
+			if(this.dialog.isShowing()) {
+				this.dialog.dismiss();
+			}
+			
 			if(res != null) {
 				populateFieldsFromJSON(res);
 			}
