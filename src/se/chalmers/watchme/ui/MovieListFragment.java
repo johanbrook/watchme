@@ -21,6 +21,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -131,6 +132,7 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
 			movie.setId(movieId);
 			movie.setRating(movieCursor.getInt(2));
 			movie.setNote(movieCursor.getString(3));
+			Log.i("Custom", movieCursor.getColumnNames().toString());
 			
 			//final Movie movie = (Movie) getListView().getItemAtPosition(arg2);
 			Intent intent = new Intent(getActivity(), MovieDetailsActivity.class);
