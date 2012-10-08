@@ -20,7 +20,7 @@ import android.net.Uri;
 import se.chalmers.watchme.model.Tag;
 import se.chalmers.watchme.ui.DatePickerFragment;
 import se.chalmers.watchme.ui.DatePickerFragment.DatePickerListener;
-import se.chalmers.watchme.utils.DateConverter;
+import se.chalmers.watchme.utils.DateTimeUtils;
 import se.chalmers.watchme.utils.MovieHelper;
 import se.chalmers.watchme.net.IMDBHandler;
 import se.chalmers.watchme.notifications.NotificationClient;
@@ -95,7 +95,7 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
     private void initUIControls() {
     	 //TODO Use the XML-value although it is overwritten here?
         this.dateField = (TextView) findViewById(R.id.release_date_label);
-        this.dateField.setText(DateConverter.toSimpleDate(this.releaseDate));
+        this.dateField.setText(DateTimeUtils.toSimpleDate(this.releaseDate));
         
         this.titleField = (AutoCompleteTextView) findViewById(R.id.title_field);
         this.noteField = (TextView) findViewById(R.id.note_field);
@@ -200,7 +200,7 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
      */
     private void setNotification(Movie movie) {
     	this.notifications.setMovieNotification(movie);
-    	Toast.makeText(this, "Notification set for " + DateConverter.toSimpleDate(movie.getDate()), Toast.LENGTH_LONG).show();
+    	Toast.makeText(this, "Notification set for " + DateTimeUtils.toSimpleDate(movie.getDate()), Toast.LENGTH_LONG).show();
     }
     
     
@@ -237,7 +237,7 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
     public void setDate(Calendar pickedDate) {
 		this.releaseDate = pickedDate;
 
-		dateField.setText(DateConverter.toSimpleDate(this.releaseDate));
+		dateField.setText(DateTimeUtils.toSimpleDate(this.releaseDate));
 		
 	}
     

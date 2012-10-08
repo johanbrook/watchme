@@ -8,7 +8,7 @@ import se.chalmers.watchme.activity.MovieDetailsActivity;
 import se.chalmers.watchme.database.MoviesTable;
 import se.chalmers.watchme.database.WatchMeContentProvider;
 import se.chalmers.watchme.model.Movie;
-import se.chalmers.watchme.utils.DateConverter;
+import se.chalmers.watchme.utils.DateTimeUtils;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.LoaderManager;
@@ -64,7 +64,7 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
 					TextView textView = (TextView) view;
 					Calendar cal = Calendar.getInstance();
 					cal.setTimeInMillis(Long.parseLong(date));
-					String formattedDate = DateConverter.toSimpleDate(cal);
+					String formattedDate = DateTimeUtils.toSimpleDate(cal);
 					
 					textView.setText(formattedDate);
 					return true;

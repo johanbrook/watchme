@@ -9,7 +9,7 @@ import java.util.Calendar;
 /**
  * A utility class for converting date's to common formats
  */
-public class DateConverter {
+public class DateTimeUtils {
 	
 	/**
 	 * Recieves a calendar instance and returns a String with simple
