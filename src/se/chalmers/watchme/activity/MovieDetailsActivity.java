@@ -1,5 +1,12 @@
 package se.chalmers.watchme.activity;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
+import java.util.Date;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -8,6 +15,7 @@ import se.chalmers.watchme.database.WatchMeContentProvider;
 import se.chalmers.watchme.model.Movie;
 import se.chalmers.watchme.net.IMDBHandler;
 import se.chalmers.watchme.net.MovieSource;
+import se.chalmers.watchme.utils.DateTimeUtils;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -15,8 +23,12 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,11 +40,6 @@ import android.support.v4.app.NavUtils;
 public class MovieDetailsActivity extends Activity {
 	
 	private Movie movie;
-	
-	private TextView noteField;
-	private TextView tagField;
-	private RatingBar ratingBar;
-	
 	private MovieSource imdb;
 	
 	private Uri uri_has_tags = WatchMeContentProvider.CONTENT_URI_HAS_TAG;
@@ -57,23 +64,22 @@ public class MovieDetailsActivity extends Activity {
         
         new IMDBTask().execute(new Integer[] {this.movie.getApiID()});
         
-        initUIControls();
         populateFieldsFromMovie(this.movie);
         
     }
     
-    private void initUIControls() {
-    	this.noteField = (TextView) findViewById(R.id.note_field);
-        this.ratingBar = (RatingBar) findViewById(R.id.my_rating_bar);
-        this.tagField = (TextView) findViewById(R.id.tag_field);
-	}
-
 	
     public void populateFieldsFromMovie(Movie m) {
 		setTitle(m.getTitle());
 		
+		TextView noteField = (TextView) findViewById(R.id.note_field);
+        RatingBar ratingBar = (RatingBar) findViewById(R.id.my_rating_bar);
+        TextView tagField = (TextView) findViewById(R.id.tag_field);
+        TextView releaseDate = (TextView) findViewById(R.id.releaseDate);
+		
     	noteField.setText(m.getNote());
         ratingBar.setRating(m.getRating());
+        releaseDate.setText(DateTimeUtils.toSimpleDate(m.getDate()));
         
         Cursor tagCursor = getContentResolver().query(uri_has_tags, null,
 				"_id = " + m.getId(), null, null);
@@ -99,6 +105,8 @@ public class MovieDetailsActivity extends Activity {
     	TextView rating = (TextView) findViewById(R.id.imdb_rating_number_label);
     	TextView plot = (TextView) findViewById(R.id.plot_content);
     	TextView cast = (TextView) findViewById(R.id.cast_list);
+    	TextView duration = (TextView) findViewById(R.id.duration);
+    	TextView genres = (TextView) findViewById(R.id.genres);
     	
     	double imdbRating = json.optDouble("rating");
     	if(!Double.isNaN(imdbRating)) {
@@ -108,6 +116,25 @@ public class MovieDetailsActivity extends Activity {
     	String imdbPlot = json.optString("overview");
     	if(!imdbPlot.isEmpty()) {
     		plot.setText(imdbPlot);
+    	}
+    	
+    	int runtime = json.optInt("runtime");
+    	if(runtime != 0) {
+    		duration.setText(DateTimeUtils.minutesToHuman(runtime));
+    	}
+    	
+    	JSONArray posters = json.optJSONArray("posters");
+    	
+    	if(posters != null && posters.length() > 0) {
+    		String url = null;
+    		
+    		for(int i = 0; i < posters.length(); i++) {
+    			JSONObject image = posters.optJSONObject(i).optJSONObject("image");
+    			if(image.optString("size").equals("mid")) {
+    				new ImageDownloadTask().execute(new String[] {image.optString("url")});
+    				break;
+    			}
+    		}
     	}
     	
     	JSONArray imdbCast = json.optJSONArray("cast");
@@ -142,6 +169,36 @@ public class MovieDetailsActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
+    
+    private class ImageDownloadTask extends AsyncTask<String, Void, Bitmap> {
+
+		@Override
+		protected Bitmap doInBackground(String... params) {
+			InputStream in = null;
+			try {
+				in = (InputStream) new URL(params[0]).getContent();
+			} catch (MalformedURLException e) {
+				Log.e(getClass().getSimpleName(), "Bad URL format for poster");
+				e.printStackTrace();
+			} catch (IOException e) {
+				Log.e(getClass().getSimpleName(), "Error encoding image from URL");
+				e.printStackTrace();
+			}
+			
+			return BitmapFactory.decodeStream(in);
+		}
+		
+		@Override
+		protected void onPostExecute(Bitmap bm) {
+			if(bm != null) {
+				ImageView poster = (ImageView) findViewById(R.id.poster);
+				poster.setImageBitmap(bm);
+				
+			}
+		}
+    	
+    }
+    
     
     private class IMDBTask extends AsyncTask<Integer, Void, JSONObject> {
 
