@@ -48,7 +48,7 @@ public class DateTimeUtils {
 	 */
 	
 	/**
-	 * Recieves a String in the format "MM/dd/yyyy" and returns a Calendar object
+	 * Receives a String in the format "MM/dd/yyyy" and returns a Calendar object
 	 * 
 	 * @param string The string to convert to a Calendar object
 	 * @returns Calendar object set to the recieved date

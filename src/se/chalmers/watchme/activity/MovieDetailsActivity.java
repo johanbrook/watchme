@@ -62,13 +62,19 @@ public class MovieDetailsActivity extends Activity {
         	finish();
         }
         
+        // Kick off the fetch for IMDb info
         new IMDBTask().execute(new Integer[] {this.movie.getApiID()});
         
+        // Populate various view fields from the Movie object
         populateFieldsFromMovie(this.movie);
         
     }
     
-	
+	/**
+	 * Populate various view fields with data from a Movie.
+	 * 
+	 * @param m The movie to fill the fields with
+	 */
     public void populateFieldsFromMovie(Movie m) {
 		setTitle(m.getTitle());
 		
@@ -126,7 +132,6 @@ public class MovieDetailsActivity extends Activity {
     	JSONArray posters = json.optJSONArray("posters");
     	
     	if(posters != null && posters.length() > 0) {
-    		String url = null;
     		
     		for(int i = 0; i < posters.length(); i++) {
     			JSONObject image = posters.optJSONObject(i).optJSONObject("image");
@@ -170,6 +175,12 @@ public class MovieDetailsActivity extends Activity {
     }
 
     
+    /**
+     * Async task for downloading the movie's poster.
+     * 
+     * @author Johan
+     *
+     */
     private class ImageDownloadTask extends AsyncTask<String, Void, Bitmap> {
 
 		@Override
@@ -193,13 +204,19 @@ public class MovieDetailsActivity extends Activity {
 			if(bm != null) {
 				ImageView poster = (ImageView) findViewById(R.id.poster);
 				poster.setImageBitmap(bm);
-				
 			}
 		}
     	
     }
     
-    
+    /**
+     * The IMDb info fetch task.
+     * 
+     *  <p>This async task calls the IMDb API in order to fetch and
+     *  show detailed JSON data from a single movie ID.</p>
+     * 
+     * @author Johan
+     */
     private class IMDBTask extends AsyncTask<Integer, Void, JSONObject> {
 
     	private ProgressDialog dialog;
@@ -227,6 +244,7 @@ public class MovieDetailsActivity extends Activity {
 				this.dialog.dismiss();
 			}
 			
+			// Update the UI with the JSON data
 			if(res != null) {
 				populateFieldsFromJSON(res);
 			}
