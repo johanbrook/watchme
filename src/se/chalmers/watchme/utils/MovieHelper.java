@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import se.chalmers.watchme.R;
@@ -47,6 +48,8 @@ public class MovieHelper {
 		return list;
 	}
 	
+	
+	
 	/**
 	 * Convert a JSONArray of Movies to a list of Movies
 	 * 
@@ -65,8 +68,8 @@ public class MovieHelper {
 			JSONObject o = input.optJSONObject(i);
 			
 			Movie movie = new Movie(o.optString(Movie.JSON_KEY_NAME));
-			// Don't forget the IMDB ID
-			movie.setImdbID(o.optString(Movie.JSON_KEY_ID));
+			// Don't forget the ID
+			movie.setApiID(o.optInt(Movie.JSON_KEY_ID));
 			list.add(movie);
 		}
 		
