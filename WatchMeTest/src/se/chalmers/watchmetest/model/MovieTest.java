@@ -1,10 +1,11 @@
-package se.chalmers.watchmetest.modeltest;
+package se.chalmers.watchmetest.model;
 
 import java.util.Calendar;
 
+import junit.framework.TestCase;
+
 import se.chalmers.watchme.model.Movie;
 import se.chalmers.watchme.model.Tag;
-import android.test.AndroidTestCase;
 
 /**
  * This class tests methods in se.chalmers.watchme.model.Movie
@@ -12,25 +13,22 @@ import android.test.AndroidTestCase;
  *
  */
 
-public class MovieTest extends AndroidTestCase {
+public class MovieTest extends TestCase {
 	
-	public MovieTest() {
-		super();
-	}
+	private Movie batman;
 	
 	public void setUp() throws Exception {
 		super.setUp();
+		this.batman = new Movie("batman");
 	}
 	
 	public void testAddTag() {
-		Movie batman = new Movie("batman");
 		Tag action = new Tag("action");
 		batman.addTag(action);
 		assertTrue(batman.getTags().contains(action));
 	}
 	
 	public void testRemoveTag() {
-		Movie batman = new Movie("batman");
 		Tag action = new Tag("action");
 		batman.addTag(action);
 		batman.removeTag(action);
@@ -38,58 +36,44 @@ public class MovieTest extends AndroidTestCase {
 	}
 	
 	public void testGetTags() {
-		Movie batman = new Movie("batman");
 		Tag action = new Tag("action");
 		batman.addTag(action);
 		assertTrue(batman.getTags().size() == 1);
 	}
 	
 	public void testGetId() {
-		Movie batman = new Movie("batman");
 		batman.setId(1);
 		assertTrue(batman.getId() == 1);
 	}
 	
 	public void testGetTitle() {
-		Movie batman = new Movie("batman");
 		assertTrue(batman.getTitle().equals("batman"));
 	}
 	
 	public void testGetNote() {
-		Movie batman = new Movie("batman", Calendar.getInstance(), 1, "note");
-		assertTrue(batman.getNote().equals("note"));
+		Movie superman = new Movie("superman", Calendar.getInstance(), 1, "note");
+		assertTrue(superman.getNote().equals("note"));
 	}
 	
 	public void testSetNote() {
-		Movie batman = new Movie("batman");
 		batman.setNote("note");
 		assertTrue(batman.getNote().equals("note"));
 	}
 	
 	public void testGetRating() {
-		Movie batman = new Movie("batman", Calendar.getInstance(), 5, "note");
-		assertTrue(batman.getRating() == 5);
+		Movie superman = new Movie("superman", Calendar.getInstance(), 5, "note");
+		assertTrue(superman.getRating() == 5);
 	}
 	
 	public void testSetRating() {
-		Movie batman = new Movie("batman");
 		batman.setRating(8);
 		assertTrue(batman.getRating() == 8);
 	}
 	
 	public void testEquals() {
-		Movie batman = new Movie("batman");
 		Movie compareObject = null; 
 		assertFalse(batman.equals(compareObject));
 		
-		/*
-		 * Test that Movie is not equal to possible subclasses
-		 */
-		class ActionMovie extends Movie {
-			public ActionMovie(String title) {
-				super(title);
-			}			
-		}		
 		compareObject = new ActionMovie("batman");
 		assertFalse(batman.equals(compareObject));
 		
@@ -99,5 +83,14 @@ public class MovieTest extends AndroidTestCase {
 		compareObject = new Movie("batman");
 		assertTrue(batman.equals(compareObject));
 		
+	}
+	
+	/*
+	 * Test that Movie is not equal to possible subclasses
+	 */
+	private class ActionMovie extends Movie {
+		public ActionMovie(String title) {
+			super(title);
+		}			
 	}
 }

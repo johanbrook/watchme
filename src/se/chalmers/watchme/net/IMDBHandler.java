@@ -71,6 +71,16 @@ public class IMDBHandler implements MovieSource {
 	public JSONArray getMoviesByTitle(String title) {
 		final String url = this.buildURL(title);
 		String response = this.http.get(url);
+		
+		/*
+		 * Since the API service doesn't use sane HTTP status codes for
+		 * things such as non-existing movies, we have to compare to a 
+		 * static string .. 
+		 */
+		if(response.indexOf("Nothing found") != -1) {
+			return null;
+		}
+		
 		JSONArray movies = null;
 		
 		try{

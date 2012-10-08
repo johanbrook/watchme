@@ -1,8 +1,7 @@
-package se.chalmers.watchmetest.modeltest;
+package se.chalmers.watchmetest.model;
 
-import se.chalmers.watchme.model.Movie;
+import junit.framework.TestCase;
 import se.chalmers.watchme.model.Tag;
-import android.test.AndroidTestCase;
 
 /**
  * This class tests methods in se.chalmers.watchme.model.Tag
@@ -10,7 +9,7 @@ import android.test.AndroidTestCase;
  *
  */
 
-public class TagTest extends AndroidTestCase {
+public class TagTest extends TestCase {
 		
 	public TagTest() {
 		super();
