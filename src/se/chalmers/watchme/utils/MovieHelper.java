@@ -10,12 +10,8 @@ package se.chalmers.watchme.utils;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
-
-import se.chalmers.watchme.R;
-import se.chalmers.watchme.activity.AutoCompleteAdapter;
 import se.chalmers.watchme.model.Movie;
 
 public class MovieHelper {
@@ -36,7 +32,12 @@ public class MovieHelper {
 		return (index != -1) ? longDate.substring(0, index) : longDate; 
 	}
 	
-	
+	/**
+	 * Convert a JSONArray to a List
+	 * 
+	 * @param json The JSONArray to convert
+	 * @return A List with the generic types specified
+	 */
 	@SuppressWarnings("unchecked")
 	public static <T> List<T> jsonArrayToList(JSONArray json) {
 		List<T> list = new ArrayList<T>();
