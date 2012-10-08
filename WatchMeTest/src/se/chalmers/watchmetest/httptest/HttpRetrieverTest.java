@@ -1,7 +1,7 @@
 package se.chalmers.watchmetest.httptest;
 
+import junit.framework.TestCase;
 import se.chalmers.watchme.net.HttpRetriever;
-import android.test.AndroidTestCase;
 import android.test.suitebuilder.annotation.SmallTest;
 
 /**
@@ -10,7 +10,7 @@ import android.test.suitebuilder.annotation.SmallTest;
  *	@author Johan
  */
 
-public class HttpRetrieverTest extends AndroidTestCase {
+public class HttpRetrieverTest extends TestCase {
 	
 	private HttpRetriever http;
 	
