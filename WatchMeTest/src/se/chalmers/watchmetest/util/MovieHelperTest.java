@@ -6,7 +6,7 @@
  *	@license MIT
  */
 
-package se.chalmers.watchmetest.utiltest;
+package se.chalmers.watchmetest.util;
 
 import junit.framework.TestCase;
 import se.chalmers.watchme.utils.MovieHelper;

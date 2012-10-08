@@ -1,4 +1,4 @@
-package se.chalmers.watchmetest.modeltest;
+package se.chalmers.watchmetest.model;
 
 import junit.framework.TestCase;
 import se.chalmers.watchme.model.Tag;

@@ -1,8 +1,7 @@
-package se.chalmers.watchmetest.httptest;
+package se.chalmers.watchmetest.net;
 
 import junit.framework.TestCase;
 import se.chalmers.watchme.net.HttpRetriever;
-import android.test.suitebuilder.annotation.SmallTest;
 
 /**
  *	HttpRetrieverTest.java
@@ -18,11 +17,15 @@ public class HttpRetrieverTest extends TestCase {
 		http = new HttpRetriever();
 	}
 	
-	
-	@SmallTest
 	public void testGetURL() {
 		String response = http.get("http://google.com");
 		
 		assertNotNull(response);
+	}
+	
+	public void testIncorrectURL() {
+		String response = http.get("http://www.google.com/404");
+		
+		assertNull(response);
 	}
 }

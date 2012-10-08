@@ -1,4 +1,4 @@
-package se.chalmers.watchmetest.modeltest;
+package se.chalmers.watchmetest.model;
 
 import java.util.Calendar;
 
