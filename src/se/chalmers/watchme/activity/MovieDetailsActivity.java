@@ -65,7 +65,7 @@ public class MovieDetailsActivity extends Activity {
         tagField = (TextView) findViewById(R.id.tag_field);
         
         Cursor tagCursor = getContentResolver().query(uri_has_tags, null,
-				"_id = " + movieId, null, null);
+				"movieid = " + movieId, null, null);
 		
         String tags = "";
 		if (tagCursor != null) {
