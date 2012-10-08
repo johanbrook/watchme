@@ -23,13 +23,23 @@ public class HasTagTable {
 			COLUMN_TAG_ID + " INTEGER," + 
 			"PRIMARY KEY(" + COLUMN_MOVIE_ID + ", " + COLUMN_TAG_ID + "), " + 
 			"FOREIGN KEY(" + COLUMN_MOVIE_ID + ") REFERENCES " + 
-			MoviesTable.TABLE_MOVIES + "(" + MoviesTable.COLUMN_MOVIE_ID + ")," +
+			MoviesTable.TABLE_MOVIES + "(" + MoviesTable.COLUMN_MOVIE_ID +
+			") ON DELETE CASCADE," +
 			"FOREIGN KEY(" + COLUMN_TAG_ID + ") REFERENCES " + 
-			TagsTable.TABLE_TAGS + "(" + TagsTable.COLUMN_TAG_ID + ")" +
+			TagsTable.TABLE_TAGS + "(" + TagsTable.COLUMN_TAG_ID + 
+			") ON DELETE CASCADE" +
 			")";
 
+	private static final String TRIGGER = "CREATE TRIGGER deleteMovie BEFORE " +
+			"DELETE ON " + MoviesTable.TABLE_MOVIES +
+			" FOR EACH ROW BEGIN " +
+			"DELETE FROM " + HasTagTable.TABLE_HAS_TAG + " WHERE " +
+			HasTagTable.COLUMN_MOVIE_ID + " = " + "old." + MoviesTable.COLUMN_MOVIE_ID +
+			"; END;";
+	
 	public static void onCreate(SQLiteDatabase db) {
 		db.execSQL(CREATE_HAS_TAG_TABLE);
+		db.execSQL(TRIGGER);
 	}
 
 	public static void onUpgrade(SQLiteDatabase db, int oldVersion,

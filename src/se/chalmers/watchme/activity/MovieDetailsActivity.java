@@ -68,8 +68,7 @@ public class MovieDetailsActivity extends Activity {
 				"movieid = " + movieId, null, null);
 		
         String tags = "";
-		if (tagCursor != null) {
-	        tagCursor.moveToFirst();
+		if (tagCursor.moveToFirst()) {
 	        tags = tagCursor.getString(3);
 	        while(tagCursor.moveToNext()) {
 	        	tags = tags + ", " + tagCursor.getString(3);
@@ -77,19 +76,6 @@ public class MovieDetailsActivity extends Activity {
 		}
 		
 		tagField.setText(tags);
-        
-        /*
-        
-		tagField = (TextView) findViewById(R.id.tag_field);
-		
-        String tags = null;
-        for(Tag tag : movie.getTags()) {
-        	tags = tags + ", " + tag.toString();
-        }
-        
-        tagField.setText(tags);
-        */
-        
         noteField.setText(note);
         ratingBar.setRating(rating);
         
