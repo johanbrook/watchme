@@ -39,11 +39,7 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
 	
 	SimpleCursorAdapter adapter;
 	private Uri uri = WatchMeContentProvider.CONTENT_URI_MOVIES;
-	
-	public static final String MOVIE_DETAILS_ID = "se.chalmers.watchme.DETAILS_ID";
-	public static final String MOVIE_DETAILS_TITLE = "se.chalmers.watchme.DETAILS_TITLE";
-	public static final String MOVIE_DETAILS_RATING = "se.chalmers.watchme.DETAILS_RATING";
-	public static final String MOVIE_DETAILS_NOTE = "se.chalmers.watchme.DETAILS_NOTE";
+
 	
 	@Override
 	public void onActivityCreated(Bundle b) {
@@ -132,16 +128,13 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
 			movie.setId(movieId);
 			movie.setRating(movieCursor.getInt(2));
 			movie.setNote(movieCursor.getString(3));
-			Log.i("Custom", movieCursor.getColumnNames().toString());
+			movie.setImdbID(movieCursor.getString(4));
 			
 			//final Movie movie = (Movie) getListView().getItemAtPosition(arg2);
 			Intent intent = new Intent(getActivity(), MovieDetailsActivity.class);
 			
 			// TODO Fetch all data from database in DetailsActivity instead?
-			intent.putExtra(MOVIE_DETAILS_ID, movie.getId());
-			intent.putExtra(MOVIE_DETAILS_TITLE, movie.getTitle());
-			intent.putExtra(MOVIE_DETAILS_RATING, movie.getRating());
-			intent.putExtra(MOVIE_DETAILS_NOTE, movie.getNote());
+			intent.putExtra("movie", movie);
 			
 			startActivity(intent);
 			

@@ -23,7 +23,10 @@ import android.support.v4.app.NavUtils;
 @TargetApi(11)
 public class MovieDetailsActivity extends Activity {
 	
-	private TextView noteField, tagField;
+	private Movie movie;
+	
+	private TextView noteField;
+	private TextView tagField;
 	private RatingBar ratingBar;
 	
 	private Uri uri_has_tags = WatchMeContentProvider.CONTENT_URI_HAS_TAG;
@@ -31,68 +34,50 @@ public class MovieDetailsActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_movie_details);
+        getActionBar().setDisplayHomeAsUpEnabled(true);
         
-        // TODO Why does getMovie return a long from Movie object but database returns int?
-        // Get the movie id. Is set to -1 if no value is returned
-        long  movieId = getIntent().getLongExtra(MainActivity.MOVIE_DETAILS_ID, -1);
-        
+        this.movie = (Movie) getIntent().getSerializableExtra("movie");
          
         /*
          * If no movie id was received earlier then finish this activity before
          * anything else is done
          */
-        if(movieId == -1) {
+        if(this.movie == null) {
         	// TODO Why does this cause a crash?
         	finish();
         }
         
-        String title = getIntent().getStringExtra(MainActivity.MOVIE_DETAILS_TITLE);
-        int rating = getIntent().getIntExtra(MainActivity.MOVIE_DETAILS_RATING, -1);
-        String note = getIntent().getStringExtra(MainActivity.MOVIE_DETAILS_NOTE);
+        initUIControls();
+        populateFieldsFromMovie(this.movie);
         
-        
-        // TODO Fetch data from database (Create movie object from database)
-        
-        
-        
-        setContentView(R.layout.activity_movie_details);
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-        setTitle(title);
-        
-        noteField = (TextView) findViewById(R.id.note_field);
-        ratingBar = (RatingBar) findViewById(R.id.my_rating_bar);
-        
-        tagField = (TextView) findViewById(R.id.tag_field);
+    }
+    
+    private void initUIControls() {
+    	this.noteField = (TextView) findViewById(R.id.note_field);
+        this.ratingBar = (RatingBar) findViewById(R.id.my_rating_bar);
+        this.tagField = (TextView) findViewById(R.id.tag_field);
+	}
+
+	
+    public void populateFieldsFromMovie(Movie m) {
+		setTitle(m.getTitle());
+		
+    	noteField.setText(m.getNote());
+        ratingBar.setRating(m.getRating());
         
         Cursor tagCursor = getContentResolver().query(uri_has_tags, null,
-				"_id = " + movieId, null, null);
-		
+				"_id = " + m.getId(), null, null);
+        
         String tags = "";
-		if (tagCursor != null) {
-	        tagCursor.moveToFirst();
+		if (tagCursor.moveToFirst()) {
 	        tags = tagCursor.getString(3);
 	        while(tagCursor.moveToNext()) {
-	        	tags = tags + ", " + tagCursor.getString(3);
+	        	tags += tagCursor.getString(3) + ", ";
 	        }
 		}
 		
 		tagField.setText(tags);
-        
-        /*
-        
-		tagField = (TextView) findViewById(R.id.tag_field);
-		
-        String tags = null;
-        for(Tag tag : movie.getTags()) {
-        	tags = tags + ", " + tag.toString();
-        }
-        
-        tagField.setText(tags);
-        */
-        
-        noteField.setText(note);
-        ratingBar.setRating(rating);
-        
     }
 
     @Override
