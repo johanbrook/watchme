@@ -56,17 +56,6 @@
 		        android:layout_marginTop="5dp"
 		        android:hint="@string/details_duration_label"
 		        android:textAppearance="?android:attr/textAppearanceSmall" />
-		
-		    <Button
-		        android:id="@+id/imdb_button"
-		        android:layout_width="wrap_content"
-		        android:layout_height="wrap_content"
-		        android:layout_toRightOf="@+id/poster"
-		        android:layout_below="@+id/duration"
-		        android:layout_marginLeft="10dp"
-		        android:layout_marginTop="5dp"
-		        android:text="@string/details_imdb_button"
-		        style="?android:attr/buttonStyleSmall" />
 		    
 		</RelativeLayout>
 	
