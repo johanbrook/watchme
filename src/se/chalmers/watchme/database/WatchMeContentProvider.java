@@ -49,7 +49,7 @@ public class WatchMeContentProvider extends ContentProvider {
 		    sUriMatcher.addURI(AUTHORITY, BASE_PATH_MOVIES, MOVIES);
 		    sUriMatcher.addURI(AUTHORITY, BASE_PATH_MOVIES + "/#", MOVIES_ID);
 		    sUriMatcher.addURI(AUTHORITY, BASE_PATH_TAGS, TAGS);
-		    sUriMatcher.addURI(AUTHORITY, BASE_PATH_TAGS, TAGS_ID);
+		    sUriMatcher.addURI(AUTHORITY, BASE_PATH_TAGS + "/#", TAGS_ID);
 		    sUriMatcher.addURI(AUTHORITY, BASE_PATH_HAS_TAG, HAS_TAG);
 		  };
 	
@@ -60,9 +60,28 @@ public class WatchMeContentProvider extends ContentProvider {
 		int deletedRows;
 		switch (sUriMatcher.match(uri)) {
 		case MOVIES:
-			//Nothing need to be added to the selection
+			/*
+			 * movieSel[1] is supposed to contain: " = <movieId>"
+			 */
+			
+			String movieSel = selection.split(MoviesTable.COLUMN_MOVIE_ID)[1];
+			Cursor movieCursor = sqlDB.query(HasTagTable.TABLE_HAS_TAG, null, 
+					HasTagTable.COLUMN_MOVIE_ID + movieSel, null, 
+					null, null, null);
 			deletedRows = sqlDB.delete(MoviesTable.TABLE_MOVIES, selection, 
 					selectionArgs);
+			while (movieCursor.moveToNext()) {
+				String tagSel = " = " + movieCursor.getString(1);
+
+				Cursor tagCursor = sqlDB.query(HasTagTable.TABLE_HAS_TAG, null,
+						HasTagTable.COLUMN_TAG_ID + tagSel, null, null,
+						null, null);
+				if (!tagCursor.moveToFirst()) {
+					// If the tag isn't connected to any Movie, delete it.
+					sqlDB.delete(TagsTable.TABLE_TAGS, TagsTable.COLUMN_TAG_ID + tagSel, null);
+				}
+			}
+			
 			break;
 		case MOVIES_ID:
 			//TODO: Need to check if selection is null?
@@ -184,7 +203,7 @@ public class WatchMeContentProvider extends ContentProvider {
 	public boolean onCreate() {
 		db = new DatabaseHelper(getContext());
 		System.out.println("--- CREATED DB IN CONTENT PROVIDER ---");
-		//db.onUpgrade(db.getWritableDatabase(), 1, 1);
+		db.onUpgrade(db.getWritableDatabase(), 1, 1);
 		return true;
 	}
 
