@@ -15,19 +15,24 @@ import se.chalmers.watchme.database.WatchMeContentProvider;
 import se.chalmers.watchme.model.Movie;
 import se.chalmers.watchme.net.IMDBHandler;
 import se.chalmers.watchme.net.MovieSource;
+import se.chalmers.watchme.ui.ImageDialog;
 import se.chalmers.watchme.utils.DateTimeUtils;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -42,6 +47,11 @@ public class MovieDetailsActivity extends Activity {
 	private Movie movie;
 	private MovieSource imdb;
 	
+	private AsyncTask<String, Void, Bitmap> imageTask;
+	private ImageView poster;
+	
+	private ImageDialog dialog;
+	
 	private Uri uri_has_tags = WatchMeContentProvider.CONTENT_URI_HAS_TAG;
 
     @Override
@@ -52,6 +62,12 @@ public class MovieDetailsActivity extends Activity {
         
         this.movie = (Movie) getIntent().getSerializableExtra("movie");
         this.imdb = new IMDBHandler();
+        this.imageTask = new ImageDownloadTask();
+        
+        this.poster = (ImageView) findViewById(R.id.poster);
+        this.poster.setOnClickListener(new OnPosterClickListener());
+        
+        this.dialog = new ImageDialog(this);
         
         /*
          * If no movie id was received earlier then finish this activity before
@@ -150,7 +166,7 @@ public class MovieDetailsActivity extends Activity {
     		for(int i = 0; i < posters.length(); i++) {
     			JSONObject image = posters.optJSONObject(i).optJSONObject("image");
     			if(image.optString("size").equals("mid")) {
-    				new ImageDownloadTask().execute(new String[] {image.optString("url")});
+    				this.imageTask.execute(new String[] {image.optString("url")});
     				break;
     			}
     		}
@@ -216,7 +232,6 @@ public class MovieDetailsActivity extends Activity {
 		@Override
 		protected void onPostExecute(Bitmap bm) {
 			if(bm != null) {
-				ImageView poster = (ImageView) findViewById(R.id.poster);
 				poster.setImageBitmap(bm);
 			}
 		}
@@ -269,5 +284,25 @@ public class MovieDetailsActivity extends Activity {
 				.show();
 			}
 		}
+    }
+    
+    /**
+     * Listener class for when user clicks on the poster.
+     * 
+     *  <p>Gets the bitmap image from the poster and set it to the
+     *  custom full screen overlay, then show it.</p>
+     * 
+     * @author Johan
+     */
+    private class OnPosterClickListener implements OnClickListener {
+
+		public void onClick(View v) {
+			ImageView view = (ImageView) v;
+			Bitmap bm = ((BitmapDrawable) view.getDrawable()).getBitmap();
+			
+			dialog.setImage(bm);
+			dialog.show();
+		}
+    	
     }
 }
