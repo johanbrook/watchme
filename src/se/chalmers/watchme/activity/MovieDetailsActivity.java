@@ -1,21 +1,42 @@
 package se.chalmers.watchme.activity;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
+import java.util.Date;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import se.chalmers.watchme.R;
-import se.chalmers.watchme.R.layout;
-import se.chalmers.watchme.R.menu;
 import se.chalmers.watchme.database.WatchMeContentProvider;
 import se.chalmers.watchme.model.Movie;
-import se.chalmers.watchme.model.Tag;
+import se.chalmers.watchme.net.IMDBHandler;
+import se.chalmers.watchme.net.MovieSource;
+import se.chalmers.watchme.ui.ImageDialog;
+import se.chalmers.watchme.utils.DateTimeUtils;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.support.v4.app.NavUtils;
 
 // TODO IMPORTANT! Minimum allowed API is 11 by resources used,
@@ -23,62 +44,147 @@ import android.support.v4.app.NavUtils;
 @TargetApi(11)
 public class MovieDetailsActivity extends Activity {
 	
-	private TextView noteField, tagField;
-	private RatingBar ratingBar;
+	private Movie movie;
+	private MovieSource imdb;
+	
+	private AsyncTask<String, Void, Bitmap> imageTask;
+	private ImageView poster;
+	
+	private ImageDialog dialog;
 	
 	private Uri uri_has_tags = WatchMeContentProvider.CONTENT_URI_HAS_TAG;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_movie_details);
+        getActionBar().setDisplayHomeAsUpEnabled(true);
         
-        // TODO Why does getMovie return a long from Movie object but database returns int?
-        // Get the movie id. Is set to -1 if no value is returned
-        long  movieId = getIntent().getLongExtra(MainActivity.MOVIE_DETAILS_ID, -1);
+        this.movie = (Movie) getIntent().getSerializableExtra("movie");
+        this.imdb = new IMDBHandler();
+        this.imageTask = new ImageDownloadTask();
         
-         
+        this.poster = (ImageView) findViewById(R.id.poster);
+        this.poster.setOnClickListener(new OnPosterClickListener());
+        
+        this.dialog = new ImageDialog(this);
+        
         /*
          * If no movie id was received earlier then finish this activity before
          * anything else is done
          */
-        if(movieId == -1) {
+        if(this.movie == null) {
         	// TODO Why does this cause a crash?
         	finish();
         }
         
-        String title = getIntent().getStringExtra(MainActivity.MOVIE_DETAILS_TITLE);
-        int rating = getIntent().getIntExtra(MainActivity.MOVIE_DETAILS_RATING, -1);
-        String note = getIntent().getStringExtra(MainActivity.MOVIE_DETAILS_NOTE);
+        // Kick off the fetch for IMDb info
+        new IMDBTask().execute(new Integer[] {this.movie.getApiID()});
         
+        // Populate various view fields from the Movie object
+        populateFieldsFromMovie(this.movie);
         
-        // TODO Fetch data from database (Create movie object from database)
-        
-        
-        
-        setContentView(R.layout.activity_movie_details);
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-        setTitle(title);
-        
-        noteField = (TextView) findViewById(R.id.note_field);
-        ratingBar = (RatingBar) findViewById(R.id.my_rating_bar);
-        
-        tagField = (TextView) findViewById(R.id.tag_field);
+    }
+    
+	/**
+	 * Populate various view fields with data from a Movie.
+	 * 
+	 * @param m The movie to fill the fields with
+	 */
+    public void populateFieldsFromMovie(Movie m) {
+		setTitle(m.getTitle());
+		
+		TextView noteField = (TextView) findViewById(R.id.note_field);
+        RatingBar ratingBar = (RatingBar) findViewById(R.id.my_rating_bar);
+        TextView tagField = (TextView) findViewById(R.id.tag_field);
+        TextView releaseDate = (TextView) findViewById(R.id.releaseDate);
+		
+    	noteField.setText(m.getNote());
+        ratingBar.setRating(m.getRating());
+        releaseDate.setText(DateTimeUtils.toSimpleDate(m.getDate()));
         
         Cursor tagCursor = getContentResolver().query(uri_has_tags, null,
-				"movieid = " + movieId, null, null);
-		
+				"_id = " + m.getId(), null, null);
+        
         String tags = "";
 		if (tagCursor.moveToFirst()) {
 	        tags = tagCursor.getString(3);
 	        while(tagCursor.moveToNext()) {
-	        	tags = tags + ", " + tagCursor.getString(3);
+	        	tags += tagCursor.getString(3) + ", ";
 	        }
 		}
 		
 		tagField.setText(tags);
-        noteField.setText(note);
-        ratingBar.setRating(rating);
-        
+    }
+    
+    /*
+     * TODO: These JSON-to-Android view parsing is too tight coupled to the
+     * Activity I think .. I'd like to put this stuff somewhere else
+     * where it's easier to test. 
+     */
+    
+    public void populateFieldsFromJSON(JSONObject json) {
+    	TextView rating = (TextView) findViewById(R.id.imdb_rating_number_label);
+    	TextView plot = (TextView) findViewById(R.id.plot_content);
+    	TextView cast = (TextView) findViewById(R.id.cast_list);
+    	TextView duration = (TextView) findViewById(R.id.duration);
+    	TextView genres = (TextView) findViewById(R.id.genres);
+    	
+    	double imdbRating = json.optDouble("rating");
+    	if(!Double.isNaN(imdbRating)) {
+    		rating.setText(String.valueOf(imdbRating));
+    	}
+    	
+    	String imdbPlot = json.optString("overview");
+    	if(!imdbPlot.isEmpty()) {
+    		plot.setText(imdbPlot);
+    	}
+    	
+    	int runtime = json.optInt("runtime");
+    	if(runtime != 0) {
+    		duration.setText(DateTimeUtils.minutesToHuman(runtime));
+    	}
+    	
+    	
+    	JSONArray imdbGenres = json.optJSONArray("genres");
+    	
+    	if(imdbGenres != null && imdbGenres.length() > 0) {
+    		String genreString = "";
+    		
+    		for(int i = 0; i < imdbGenres.length(); i++) {
+    			genreString += imdbGenres.optJSONObject(i).optString("name") + ", ";
+    		}
+    		
+    		genres.setText(genreString);
+    	}
+    	
+    	
+    	JSONArray posters = json.optJSONArray("posters");
+    	
+    	if(posters != null && posters.length() > 0) {
+    		
+    		for(int i = 0; i < posters.length(); i++) {
+    			JSONObject image = posters.optJSONObject(i).optJSONObject("image");
+    			if(image.optString("size").equals("mid")) {
+    				this.imageTask.execute(new String[] {image.optString("url")});
+    				break;
+    			}
+    		}
+    	}
+    	
+    	JSONArray imdbCast = json.optJSONArray("cast");
+    	String actors = "";
+    	
+    	if(imdbCast != null) {
+    		for(int i = 0; i < imdbCast.length(); i++) {
+    			JSONObject o = imdbCast.optJSONObject(i);
+    			if(o.optString("department").equalsIgnoreCase("actors")) {
+    				actors += o.optString("name") + ", ";
+    			}
+    		}
+    		
+    		cast.setText(actors);
+    	}
     }
 
     @Override
@@ -98,4 +204,105 @@ public class MovieDetailsActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
+    
+    /**
+     * Async task for downloading the movie's poster.
+     * 
+     * @author Johan
+     *
+     */
+    private class ImageDownloadTask extends AsyncTask<String, Void, Bitmap> {
+
+		@Override
+		protected Bitmap doInBackground(String... params) {
+			InputStream in = null;
+			try {
+				in = (InputStream) new URL(params[0]).getContent();
+			} catch (MalformedURLException e) {
+				Log.e(getClass().getSimpleName(), "Bad URL format for poster");
+				e.printStackTrace();
+			} catch (IOException e) {
+				Log.e(getClass().getSimpleName(), "Error encoding image from URL");
+				e.printStackTrace();
+			}
+			
+			return BitmapFactory.decodeStream(in);
+		}
+		
+		@Override
+		protected void onPostExecute(Bitmap bm) {
+			if(bm != null) {
+				poster.setImageBitmap(bm);
+			}
+		}
+    	
+    }
+    
+    /**
+     * The IMDb info fetch task.
+     * 
+     *  <p>This async task calls the IMDb API in order to fetch and
+     *  show detailed JSON data from a single movie ID.</p>
+     * 
+     * @author Johan
+     */
+    private class IMDBTask extends AsyncTask<Integer, Void, JSONObject> {
+
+    	private ProgressDialog dialog;
+    	
+    	public IMDBTask() {
+    		this.dialog = new ProgressDialog(MovieDetailsActivity.this);
+    	}
+    	
+    	@Override
+    	protected void onPreExecute() {
+    		this.dialog.setMessage("Loading from IMDb ...");
+    		this.dialog.show();
+    	}
+    	
+		@Override
+		protected JSONObject doInBackground(Integer... params) {
+			JSONObject response = imdb.getMovieById(params[0]);
+			
+			return response;
+		}
+    	
+		@Override
+		protected void onPostExecute(JSONObject res) {
+			if(this.dialog.isShowing()) {
+				this.dialog.dismiss();
+			}
+			
+			// Update the UI with the JSON data
+			if(res != null) {
+				populateFieldsFromJSON(res);
+			}
+			else {
+				Toast.makeText(getBaseContext(), 
+						"An error occurred while fetching from IMDb", 
+						Toast.LENGTH_LONG)
+				.show();
+			}
+		}
+    }
+    
+    /**
+     * Listener class for when user clicks on the poster.
+     * 
+     *  <p>Gets the bitmap image from the poster and set it to the
+     *  custom full screen overlay, then show it.</p>
+     * 
+     * @author Johan
+     */
+    private class OnPosterClickListener implements OnClickListener {
+
+		public void onClick(View v) {
+			ImageView view = (ImageView) v;
+			Bitmap bm = ((BitmapDrawable) view.getDrawable()).getBitmap();
+			
+			dialog.setImage(bm);
+			dialog.show();
+		}
+    	
+    }
 }

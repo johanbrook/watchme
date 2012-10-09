@@ -9,7 +9,10 @@
 package se.chalmers.watchme.net;
 
 import org.json.JSONArray;
+import org.json.JSONObject;
 
 public interface MovieSource {
 	public JSONArray getMoviesByTitle(String title);
+	public JSONObject getMovieByIMDBID(String id);
+	public JSONObject getMovieById(int id);
 }

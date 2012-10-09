@@ -21,16 +21,16 @@ public class Movie implements Serializable {
 	 */
 	public static final String JSON_KEY_NAME = "original_name";
 	/**
-	 * The JSON key for a movie's IMDB ID
+	 * The JSON key for a movie's ID
 	 */
-	public static final String JSON_KEY_ID = "imdb_id";
+	public static final String JSON_KEY_ID = "id";
 	/**
 	 * The JSON key for a movie's release date
 	 */
 	public static final String JSON_KEY_DATE = "released";
 	
 	private String title, note;
-	private String imdbID;
+	private int apiID;
 	private int rating;
 	private long id;
 	private Calendar releaseDate;
@@ -57,8 +57,6 @@ public class Movie implements Serializable {
 		this.rating = rating;
 		this.note = note;
 		this.releaseDate = releaseDate;
-		
-		this.imdbID = null;
 		
 		// Set the time of day to 00.00.00 to allow for easier testing
 		this.releaseDate.set(releaseDate.get(Calendar.YEAR),
@@ -174,12 +172,12 @@ public class Movie implements Serializable {
 	}
 	
 	/**
-	 * Get the IMDb id of this movie.
+	 * Get the API id of this movie.
 	 * 
 	 * @return The IMDB id
 	 */
-	public String getImdbID() {
-		return this.imdbID;
+	public int getApiID() {
+		return this.apiID;
 	}
 	
 	/**
@@ -187,8 +185,8 @@ public class Movie implements Serializable {
 	 * 
 	 * @param id The IMDb id
 	 */
-	public void setImdbID(String id) {
-		this.imdbID = id;
+	public void setApiID(int id) {
+		this.apiID = id;
 	}
 	
 	@Override
