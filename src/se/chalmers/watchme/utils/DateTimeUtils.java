@@ -9,7 +9,9 @@ import java.util.Calendar;
 /**
  * A utility class for converting date's to common formats
  */
-public class DateConverter {
+public class DateTimeUtils {
+	
+	private final static int HOUR = 60;
 	
 	/**
 	 * Recieves a calendar instance and returns a String with simple
@@ -27,13 +29,26 @@ public class DateConverter {
 		
 	}
 	
+	/**
+	 * Convert duration in minutes to a more human readable form.
+	 * 
+	 * @param minutes The duration in minutes
+	 * @return A string on the format "HH:mm"
+	 */
+	public static String minutesToHuman(int minutes) {
+		int remainingMinutes = minutes % HOUR;
+		int hours = minutes / HOUR;
+		
+		return hours+":" + ((remainingMinutes < 10) ? "0"+remainingMinutes : remainingMinutes);
+	}
+	
 	
 	/* TODO Is it okay to require the string to be formated in a specific way?
 	 * Is this a place for pre-condition?
 	 */
 	
 	/**
-	 * Recieves a String in the format "MM/dd/yyyy" and returns a Calendar object
+	 * Receives a String in the format "MM/dd/yyyy" and returns a Calendar object
 	 * 
 	 * @param string The string to convert to a Calendar object
 	 * @returns Calendar object set to the recieved date

@@ -8,7 +8,7 @@ import se.chalmers.watchme.activity.MovieDetailsActivity;
 import se.chalmers.watchme.database.MoviesTable;
 import se.chalmers.watchme.database.WatchMeContentProvider;
 import se.chalmers.watchme.model.Movie;
-import se.chalmers.watchme.utils.DateConverter;
+import se.chalmers.watchme.utils.DateTimeUtils;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.LoaderManager;
@@ -21,6 +21,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,11 +39,7 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
 	
 	SimpleCursorAdapter adapter;
 	private Uri uri = WatchMeContentProvider.CONTENT_URI_MOVIES;
-	
-	public static final String MOVIE_DETAILS_ID = "se.chalmers.watchme.DETAILS_ID";
-	public static final String MOVIE_DETAILS_TITLE = "se.chalmers.watchme.DETAILS_TITLE";
-	public static final String MOVIE_DETAILS_RATING = "se.chalmers.watchme.DETAILS_RATING";
-	public static final String MOVIE_DETAILS_NOTE = "se.chalmers.watchme.DETAILS_NOTE";
+
 	
 	@Override
 	public void onActivityCreated(Bundle b) {
@@ -67,7 +64,7 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
 					TextView textView = (TextView) view;
 					Calendar cal = Calendar.getInstance();
 					cal.setTimeInMillis(Long.parseLong(date));
-					String formattedDate = DateConverter.toSimpleDate(cal);
+					String formattedDate = DateTimeUtils.toSimpleDate(cal);
 					
 					textView.setText(formattedDate);
 					return true;
@@ -131,15 +128,16 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
 			movie.setId(movieId);
 			movie.setRating(movieCursor.getInt(2));
 			movie.setNote(movieCursor.getString(3));
+			Calendar c = Calendar.getInstance();
+			c.setTimeInMillis(Long.parseLong(movieCursor.getString(4)));
+			movie.setDate(c);
+			movie.setApiID(movieCursor.getInt(5));
 			
 			//final Movie movie = (Movie) getListView().getItemAtPosition(arg2);
 			Intent intent = new Intent(getActivity(), MovieDetailsActivity.class);
 			
 			// TODO Fetch all data from database in DetailsActivity instead?
-			intent.putExtra(MOVIE_DETAILS_ID, movie.getId());
-			intent.putExtra(MOVIE_DETAILS_TITLE, movie.getTitle());
-			intent.putExtra(MOVIE_DETAILS_RATING, movie.getRating());
-			intent.putExtra(MOVIE_DETAILS_NOTE, movie.getNote());
+			intent.putExtra(MovieDetailsActivity.MOVIE_EXTRA, movie);
 			
 			startActivity(intent);
 			

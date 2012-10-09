@@ -20,7 +20,7 @@ import android.net.Uri;
 import se.chalmers.watchme.model.Tag;
 import se.chalmers.watchme.ui.DatePickerFragment;
 import se.chalmers.watchme.ui.DatePickerFragment.DatePickerListener;
-import se.chalmers.watchme.utils.DateConverter;
+import se.chalmers.watchme.utils.DateTimeUtils;
 import se.chalmers.watchme.utils.MovieHelper;
 import se.chalmers.watchme.net.IMDBHandler;
 import se.chalmers.watchme.notifications.NotificationClient;
@@ -73,7 +73,7 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
 	
 	private Uri uri_movies = WatchMeContentProvider.CONTENT_URI_MOVIES;
 	private Uri uri_has_tags = WatchMeContentProvider.CONTENT_URI_HAS_TAG;
-
+	
     @SuppressLint("NewApi")
 	@Override
     public void onCreate(Bundle savedInstanceState) {
@@ -95,7 +95,7 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
     private void initUIControls() {
     	 //TODO Use the XML-value although it is overwritten here?
         this.dateField = (TextView) findViewById(R.id.release_date_label);
-        this.dateField.setText(DateConverter.toSimpleDate(this.releaseDate));
+        this.dateField.setText(DateTimeUtils.toSimpleDate(this.releaseDate));
         
         this.titleField = (AutoCompleteTextView) findViewById(R.id.title_field);
         this.noteField = (TextView) findViewById(R.id.note_field);
@@ -140,12 +140,17 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
 		
 		Movie movie = new Movie(movieTitle, releaseDate, rating, movieNote);
 		
+		// Fetch and set the IMDb ID stored in the title field
+		int imdbID = (Integer) this.titleField.getTag();
+		movie.setApiID(imdbID);
+		
 		// Insert into database
 		ContentValues movieValues = new ContentValues();
 	    movieValues.put(MoviesTable.COLUMN_TITLE, movie.getTitle());
 	    movieValues.put(MoviesTable.COLUMN_RATING, movie.getRating());
 	    movieValues.put(MoviesTable.COLUMN_NOTE, movie.getNote());
 	    movieValues.put(MoviesTable.COLUMN_DATE, movie.getDate().getTimeInMillis());
+	    movieValues.put(MoviesTable.COLUMN_IMDB_ID, movie.getApiID());
 	    
 		Uri uri_movie_id = getContentResolver().insert(uri_movies, movieValues);
 		int movieId = Integer.parseInt(uri_movie_id.getLastPathSegment());
@@ -195,7 +200,7 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
      */
     private void setNotification(Movie movie) {
     	this.notifications.setMovieNotification(movie);
-    	Toast.makeText(this, "Notification set for " + DateConverter.toSimpleDate(movie.getDate()), Toast.LENGTH_LONG).show();
+    	Toast.makeText(this, "Notification set for " + DateTimeUtils.toSimpleDate(movie.getDate()), Toast.LENGTH_LONG).show();
     }
     
     
@@ -232,7 +237,7 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
     public void setDate(Calendar pickedDate) {
 		this.releaseDate = pickedDate;
 
-		dateField.setText(DateConverter.toSimpleDate(this.releaseDate));
+		dateField.setText(DateTimeUtils.toSimpleDate(this.releaseDate));
 		
 	}
     
@@ -277,11 +282,10 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
     private class AutoCompleteClickListener implements OnItemClickListener {
 
 		public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+			// Get the IMDb ID from the JSONObject and tag it to the title field view
+			// Used later when creating a Movie object
 			JSONObject json = autoCompleteAdapter.getItem(position);
-			Log.i("Custom", "Clicked: "+ json.optString(Movie.JSON_KEY_ID));
-			
-			//TODO Here we have access to the IMDb ID of the selected movie from the list
-			// Now do something with it :)
+			titleField.setTag(json.opt(Movie.JSON_KEY_ID));
 		}
     	
     }

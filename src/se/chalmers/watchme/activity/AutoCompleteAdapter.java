@@ -19,6 +19,7 @@ import org.json.JSONObject;
 import se.chalmers.watchme.R;
 import se.chalmers.watchme.model.Movie;
 import se.chalmers.watchme.net.MovieSource;
+import se.chalmers.watchme.utils.MovieHelper;
 
 import android.content.Context;
 import android.util.Log;
@@ -142,21 +143,22 @@ public class AutoCompleteAdapter extends ArrayAdapter<JSONObject> implements Fil
 		JSONObject suggestion = this.getItem(position);
 		
 		if(convertView == null) {
-			Log.i("Custom", "INFLATE");
 			convertView = this.inflater.inflate(R.layout.auto_complete_item, null);
 			holder = new ViewHolder();
 			holder.title = (TextView) convertView.findViewById(R.id.autocomplete_title);
-			holder.year = (TextView) convertView.findViewById(R.id.autocomplete_year);
 			convertView.setTag(holder);
 		}
 		else {
-			Log.i("Custom", "GET TAG");
 			holder = (ViewHolder) convertView.getTag();
 		}
 		
 		if(suggestion != null) {
-			holder.title.setText(suggestion.optString(Movie.JSON_KEY_NAME));
-			holder.year.setText(suggestion.optString(Movie.JSON_KEY_DATE));
+			String releaseDate = suggestion.optString("released");
+			releaseDate = (releaseDate.isEmpty()) ? null : releaseDate;
+			String year = MovieHelper.parseYearFromDate(releaseDate);
+			
+			holder.title.setText(suggestion.optString(Movie.JSON_KEY_NAME) + 
+					( (year != null) ? " ("+ year +")" : "" ) );
 		}
 		
 		return convertView;
@@ -169,7 +171,6 @@ public class AutoCompleteAdapter extends ArrayAdapter<JSONObject> implements Fil
 	 */
 	static class ViewHolder {
 		TextView title;
-		TextView year;
 		int position;
 	}
 
