@@ -30,7 +30,7 @@ public class HasTagTable {
 			") ON DELETE CASCADE" +
 			")";
 
-	private static final String TRIGGER = "CREATE TRIGGER deleteMovie BEFORE " +
+	private static final String TRIGGER = "CREATE TRIGGER deleteMovie AFTER " +
 			"DELETE ON " + MoviesTable.TABLE_MOVIES +
 			" FOR EACH ROW BEGIN " +
 			"DELETE FROM " + HasTagTable.TABLE_HAS_TAG + " WHERE " +
