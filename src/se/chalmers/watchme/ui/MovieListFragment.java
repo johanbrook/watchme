@@ -1,6 +1,5 @@
 package se.chalmers.watchme.ui;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import se.chalmers.watchme.R;
@@ -11,27 +10,27 @@ import se.chalmers.watchme.model.Movie;
 import se.chalmers.watchme.utils.DateTimeUtils;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
-import android.app.LoaderManager;
-import android.content.CursorLoader;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
-import android.text.format.DateFormat;
-import android.util.Log;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
+import android.support.v4.widget.SimpleCursorAdapter;
+import android.support.v4.widget.SimpleCursorAdapter.ViewBinder;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
-import android.widget.SimpleCursorAdapter;
-import android.widget.SimpleCursorAdapter.ViewBinder;
 import android.widget.TextView;
 import android.widget.Toast;
+
+
 
 // TODO Important! API level required does not match with what is used
 @TargetApi(11)
@@ -49,7 +48,7 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
 		String[] from = new String[] { MoviesTable.COLUMN_MOVIE_ID, MoviesTable.COLUMN_TITLE,  MoviesTable.COLUMN_RATING , MoviesTable.COLUMN_DATE };
 		int[] to = new int[] { 0 , R.id.title, R.id.raiting, R.id.date };
 		
-		getActivity().getLoaderManager().initLoader(0, null, this);
+		getActivity().getSupportLoaderManager().initLoader(0, null, this);
 		adapter = new SimpleCursorAdapter(getActivity(), R.layout.list_item_movie , null, from, to, 0);
 		
 		/**
