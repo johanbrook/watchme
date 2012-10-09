@@ -44,6 +44,8 @@ import android.support.v4.app.NavUtils;
 @TargetApi(11)
 public class MovieDetailsActivity extends Activity {
 	
+	public static final String MOVIE_EXTRA = "movie";
+	
 	private Movie movie;
 	private MovieSource imdb;
 	
@@ -60,7 +62,7 @@ public class MovieDetailsActivity extends Activity {
         setContentView(R.layout.activity_movie_details);
         getActionBar().setDisplayHomeAsUpEnabled(true);
         
-        this.movie = (Movie) getIntent().getSerializableExtra("movie");
+        this.movie = (Movie) getIntent().getSerializableExtra(MOVIE_EXTRA);
         this.imdb = new IMDBHandler();
         this.imageTask = new ImageDownloadTask();
         

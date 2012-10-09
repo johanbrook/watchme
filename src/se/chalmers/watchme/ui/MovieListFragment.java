@@ -137,7 +137,7 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
 			Intent intent = new Intent(getActivity(), MovieDetailsActivity.class);
 			
 			// TODO Fetch all data from database in DetailsActivity instead?
-			intent.putExtra("movie", movie);
+			intent.putExtra(MovieDetailsActivity.MOVIE_EXTRA, movie);
 			
 			startActivity(intent);
 			

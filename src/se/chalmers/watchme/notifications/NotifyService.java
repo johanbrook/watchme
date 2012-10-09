@@ -9,6 +9,7 @@
 package se.chalmers.watchme.notifications;
 
 import se.chalmers.watchme.activity.MainActivity;
+import se.chalmers.watchme.activity.MovieDetailsActivity;
 import se.chalmers.watchme.model.Movie;
 import android.R;
 import android.annotation.TargetApi;
@@ -81,7 +82,10 @@ public class NotifyService extends Service {
 		int icon = R.drawable.ic_popup_reminder;
 		
 		// The intent to launch an activity if the user presses this notification
-		PendingIntent pending = PendingIntent.getActivity(this, 0, new Intent(this, MainActivity.class), 0);
+		Intent detailsIntent = new Intent(this, MovieDetailsActivity.class);
+		detailsIntent.putExtra(MovieDetailsActivity.MOVIE_EXTRA, movie);
+		
+		PendingIntent pending = PendingIntent.getActivity(this, 0, detailsIntent, 0);
 
 		// Build the notification
 
