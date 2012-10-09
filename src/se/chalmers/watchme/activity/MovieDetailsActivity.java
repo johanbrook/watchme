@@ -129,6 +129,20 @@ public class MovieDetailsActivity extends Activity {
     		duration.setText(DateTimeUtils.minutesToHuman(runtime));
     	}
     	
+    	
+    	JSONArray imdbGenres = json.optJSONArray("genres");
+    	
+    	if(imdbGenres != null && imdbGenres.length() > 0) {
+    		String genreString = "";
+    		
+    		for(int i = 0; i < imdbGenres.length(); i++) {
+    			genreString += imdbGenres.optJSONObject(i).optString("name") + ", ";
+    		}
+    		
+    		genres.setText(genreString);
+    	}
+    	
+    	
     	JSONArray posters = json.optJSONArray("posters");
     	
     	if(posters != null && posters.length() > 0) {
