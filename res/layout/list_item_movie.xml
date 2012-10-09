@@ -8,12 +8,11 @@
    android:paddingRight="5dp">
 
     <ImageView
-       android:id="@+id/poster"
-       android:layout_width="50dp"
-       android:layout_height="50dp"
-       android:scaleType="fitXY"
-       android:layout_marginRight="6dp"
-       android:src="@drawable/batman" />
+        android:id="@+id/poster"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginRight="6dp"
+         />
     
     <LinearLayout
        android:orientation="vertical"
