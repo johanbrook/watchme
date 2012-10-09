@@ -73,7 +73,6 @@ public class NotifyService extends Service {
 		return this.binder;
 	}
 	
-	@TargetApi(16)
 	private void showNotification(Movie movie) {
 
 		// The content of the notification box
