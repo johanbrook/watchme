@@ -1,11 +1,22 @@
 package se.chalmers.watchme.ui;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.CacheRequest;
+import java.net.CacheResponse;
 import java.net.MalformedURLException;
+import java.net.ResponseCache;
+import java.net.URI;
 import java.net.URL;
+import java.net.URLConnection;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.List;
+import java.util.Map;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -27,6 +38,7 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -36,9 +48,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebView.FindListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
+import android.widget.ProgressBar;
 import android.widget.SimpleCursorAdapter;
 import android.widget.SimpleCursorAdapter.ViewBinder;
 import android.widget.ImageView;
@@ -51,12 +65,57 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
 	
 	SimpleCursorAdapter adapter;
 	private Uri uri = WatchMeContentProvider.CONTENT_URI_MOVIES;
-
 	
 	@Override
 	public void onActivityCreated(Bundle b) {
 		super.onActivityCreated(b);
 		Thread.currentThread().setContextClassLoader(getActivity().getClassLoader());
+		
+		final File cacheDir = getActivity().getBaseContext().getCacheDir();
+		ResponseCache.setDefault(new ResponseCache() {
+		    
+			@Override
+			public CacheResponse get(URI uri, String s, Map<String, List<String>> headers) throws IOException {
+				final File file = new File(cacheDir, escape(uri.getPath()));
+		        if (file.exists()) {
+		            return new CacheResponse() {
+		                @Override
+		                public Map<String, List<String>> getHeaders() throws IOException {
+		                    return null;
+		                }
+
+		                @Override
+		                public InputStream getBody() throws IOException {
+		                    return new FileInputStream(file);
+		                }
+		            };
+		        } else {
+		            return null;
+		        }
+			}
+			
+
+		    @Override
+		    public CacheRequest put(URI uri, URLConnection urlConnection) throws IOException {
+		        final File file = new File(cacheDir, escape(urlConnection.getURL().getPath()));
+		        return new CacheRequest() {
+		            @Override
+		            public OutputStream getBody() throws IOException {
+		                return new FileOutputStream(file);
+		            }
+
+		            @Override
+		            public void abort() {
+		                file.delete();
+		            }
+		        };
+		    }
+
+		    private String escape(String url) {
+		       return url.replace("/", "-").replace(".", "-");
+		    }
+
+		});
 
 		String[] from = new String[] { 
 				MoviesTable.COLUMN_MOVIE_ID, 
@@ -114,6 +173,7 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
+		
 		return inflater.inflate(R.layout.movie_list_fragment_view, container, false);
 	}
 	
@@ -146,7 +206,7 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
      * @author Johan
      *
      */
-    private class ImageDownloadTask extends AsyncTask<Integer, Void, Bitmap> {
+    private class ImageDownloadTask extends AsyncTask<Integer, Void, Drawable> {
 
     	private ImageView view;
     	
@@ -155,17 +215,16 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
     	}
     	
 		@Override
-		protected Bitmap doInBackground(Integer... params) {
-			InputStream in = null;
+		protected Drawable doInBackground(Integer... params) {
 			String url = null;
 			JSONObject response = new IMDBHandler().getMovieById(params[0]);
 			JSONArray posters = response.optJSONArray("posters");
-	    	
+			
 	    	if(posters != null && posters.length() > 0) {
 	    		
 	    		for(int i = 0; i < posters.length(); i++) {
 	    			JSONObject image = posters.optJSONObject(i).optJSONObject("image");
-	    			if(image.optString("size").equals("mid")) {
+	    			if(image.optString("size").equals("thumb")) {
 	    				url = image.optString("url");
 	    				break;
 	    			}
@@ -177,22 +236,39 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
 	    	}
 			
 			try {
-				in = (InputStream) new URL(url).getContent();
+				URL imageURL = new URL(url);
+				URLConnection connection = imageURL.openConnection();
+				connection.setUseCaches(true);
+				
+				return Drawable.createFromStream(connection.getInputStream(), "src");
+				
 			} catch (MalformedURLException e) {
-				Log.e(getClass().getSimpleName(), "Bad URL format for poster");
+				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IOException e) {
-				Log.e(getClass().getSimpleName(), "Error encoding image from URL");
+				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
-			return BitmapFactory.decodeStream(in);
+	    	
+			return null;
+	    	
+//			try {
+//				in = (InputStream) new URL(url).getContent();
+//			} catch (MalformedURLException e) {
+//				Log.e(getClass().getSimpleName(), "Bad URL format for poster");
+//				e.printStackTrace();
+//			} catch (IOException e) {
+//				Log.e(getClass().getSimpleName(), "Error encoding image from URL");
+//				e.printStackTrace();
+//			}
+//			
+//			return BitmapFactory.decodeStream(in);
 		}
 		
 		@Override
-		protected void onPostExecute(Bitmap bm) {
-			if(bm != null) {
-				this.view.setImageBitmap(bm);
+		protected void onPostExecute(Drawable drawable) {
+			if(drawable != null) {
+				this.view.setImageDrawable(drawable);
 			}
 		}
     	
