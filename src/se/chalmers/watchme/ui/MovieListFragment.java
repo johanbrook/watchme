@@ -264,7 +264,7 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
 		public void onItemClick(AdapterView<?> parent, View view, int position,
 				long id) {
 			
-			if(imageTask.getStatus() == AsyncTask.Status.RUNNING) {
+			if(imageTask != null && imageTask.getStatus() == AsyncTask.Status.RUNNING) {
 				imageTask.cancel(true);
 			}
 			
