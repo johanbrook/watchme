@@ -9,6 +9,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
 
+import se.chalmers.watchme.activity.MovieDetailsActivity;
 import se.chalmers.watchme.model.Movie;
 import se.chalmers.watchme.model.Tag;
 
@@ -216,7 +217,10 @@ public class DatabaseAdapter {
 	 * @param tag The Tag to be detached.
 	 */
 	public void detachTag(Movie movie, Tag tag) {
+		String where = HasTagTable.COLUMN_MOVIE_ID + " = " + movie.getId() +
+				" AND " + HasTagTable.COLUMN_TAG_ID + " = " + tag.getId();
 		
+		contentResolver.delete(uri_has_tag, where, null);
 	}
 	
 	/**
