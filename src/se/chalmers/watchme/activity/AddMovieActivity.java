@@ -111,6 +111,8 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
         // Add listeners to the title field
         this.titleField.addTextChangedListener(new AddButtonToggler());
         this.titleField.setOnItemClickListener(new AutoCompleteClickListener());
+        // Set a minimum of 3 characters in order to kick-off auto complete
+        this.titleField.setThreshold(3);
         
         this.titleField.setAdapter(this.autoCompleteAdapter);
         
