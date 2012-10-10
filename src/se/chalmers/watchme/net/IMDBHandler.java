@@ -8,6 +8,7 @@
 
 package se.chalmers.watchme.net;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import org.json.JSONArray;
@@ -77,14 +78,14 @@ public class IMDBHandler implements MovieSource {
 	 */
 	public JSONArray getMoviesByTitle(String title) {
 		final String url = this.buildURL(title, MOVIE_SEARCH);
-		String response = this.http.get(url);
+		String response = this.getResponse(url);
 		
 		/*
 		 * Since the API service doesn't use sane HTTP status codes for
 		 * things such as non-existing movies, we have to compare to a 
 		 * static string .. 
 		 */
-		if(response.indexOf("Nothing found") != -1) {
+		if(response == null || response.indexOf("Nothing found") != -1) {
 			return null;
 		}
 		
@@ -111,9 +112,9 @@ public class IMDBHandler implements MovieSource {
 	 */
 	public JSONObject getMovieById(int id) {
 		final String url = this.buildURL(String.valueOf(id), MOVIE_INFO);
-		String response = this.http.get(url);
+		String response = this.getResponse(url);
 		
-		return parseStringToJSON(response);
+		return (response == null) ? null : parseStringToJSON(response);
 	}
 	
 	/**
@@ -125,9 +126,9 @@ public class IMDBHandler implements MovieSource {
 	 */
 	public JSONObject getMovieByIMDBID(String id) {
 		final String url = this.buildURL(id, IMDB_INFO);
-		String response = this.http.get(url);
+		String response = this.getResponse(url);
 		
-		return parseStringToJSON(response);
+		return (response == null) ? null : parseStringToJSON(response);
 	}
 	
 	
@@ -156,9 +157,36 @@ public class IMDBHandler implements MovieSource {
 			
 		}
 		catch(JSONException e) {
+			System.err.println("Error while parsing JSONObject");
+			System.err.println(e.getMessage());
 			e.printStackTrace();
 		}
 		
 		return json;
+	}
+	
+	
+	/**
+	 * Helper method to get a String response from an URL.
+	 * 
+	 * <p>Catches eventual exceptions.</p>
+	 * 
+	 * @param url The URL
+	 * @return A String response. Returns null if something
+	 * went wrong.
+	 */
+	private String getResponse(String url) {
+		String response = null;
+
+		try {
+			response = this.http.get(url);
+		} catch (IOException e) {
+			System.err.print("Error fetching "+url+": ");
+			System.err.println(e.getMessage());
+		} catch (NoEntityException e) {
+			System.err.println(e.getMessage());
+		}
+		
+		return response;
 	}
 }

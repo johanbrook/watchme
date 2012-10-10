@@ -6,7 +6,9 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -15,6 +17,7 @@ import se.chalmers.watchme.database.MoviesTable;
 import se.chalmers.watchme.database.TagsTable;
 import se.chalmers.watchme.database.WatchMeContentProvider;
 import se.chalmers.watchme.model.Movie;
+import se.chalmers.watchme.model.Movie.PosterSize;
 import se.chalmers.watchme.R;
 import android.net.Uri;
 import se.chalmers.watchme.model.Tag;
@@ -128,8 +131,23 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
     }
     
     private void addMovie() {
-    	String movieTitle = this.titleField.getText().toString();
-    	String movieNote = this.noteField.getText().toString();
+
+    	// Get the movie from the auto-complete field 
+    	Movie movie = (Movie) this.titleField.getTag();
+    	String title = this.titleField.getText().toString();
+    	
+    	/*
+    	 * If the auto-complete failed, or if the user choses
+    	 * a movie from the dropdown and later erases the title
+    	 * text to something custom, *without* choosing a new 
+    	 * suggestion from the list.
+    	 */
+    	if(movie == null || !movie.getTitle().equals(title)) {
+    		movie = new Movie(title);
+    	}
+    	
+    	movie.setNote(this.noteField.getText().toString());
+    	movie.setDate(releaseDate);
     	
 		/*
 		 * Extract the rating from the ratingBar and convert it to
@@ -137,12 +155,9 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
 		 */
 		RatingBar ratingBar = (RatingBar) findViewById(R.id.rating_bar); 
 		int rating = (int) ratingBar.getRating();
+		movie.setRating(rating);
 		
-		Movie movie = new Movie(movieTitle, releaseDate, rating, movieNote);
-		
-		// Fetch and set the IMDb ID stored in the title field
-		int imdbID = (Integer) this.titleField.getTag();
-		movie.setApiID(imdbID);
+		Log.i("Custom", movie.getPosterURLs().toString());
 		
 		// Insert into database
 		ContentValues movieValues = new ContentValues();
@@ -151,6 +166,8 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
 	    movieValues.put(MoviesTable.COLUMN_NOTE, movie.getNote());
 	    movieValues.put(MoviesTable.COLUMN_DATE, movie.getDate().getTimeInMillis());
 	    movieValues.put(MoviesTable.COLUMN_IMDB_ID, movie.getApiID());
+	    movieValues.put(MoviesTable.COLUMN_POSTER_LARGE, movie.getPosterURL(Movie.PosterSize.MID));
+	    movieValues.put(MoviesTable.COLUMN_POSTER_SMALL, movie.getPosterURL(Movie.PosterSize.THUMB));
 	    
 		Uri uri_movie_id = getContentResolver().insert(uri_movies, movieValues);
 		int movieId = Integer.parseInt(uri_movie_id.getLastPathSegment());
@@ -282,10 +299,31 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
     private class AutoCompleteClickListener implements OnItemClickListener {
 
 		public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-			// Get the IMDb ID from the JSONObject and tag it to the title field view
-			// Used later when creating a Movie object
+			// Get the actual JSON object
 			JSONObject json = autoCompleteAdapter.getItem(position);
-			titleField.setTag(json.opt(Movie.JSON_KEY_ID));
+			
+			// Create a new movie from the object
+			Movie movie = new Movie(json.optString(Movie.JSON_KEY_NAME));
+			
+			// Parse out the poster URLs
+			
+			String largeImage = MovieHelper.getPosterFromCollection(
+						json.optJSONArray("posters"), 
+						Movie.PosterSize.MID);
+			
+			String smallImage = MovieHelper.getPosterFromCollection(
+					json.optJSONArray("posters"), 
+					Movie.PosterSize.THUMB);
+			
+			Map<Movie.PosterSize, String> posters = new HashMap<Movie.PosterSize, String>();
+			posters.put(Movie.PosterSize.MID, largeImage);
+			posters.put(Movie.PosterSize.THUMB, smallImage);
+			
+			movie.setPosters(posters);
+			movie.setApiID(json.optInt(Movie.JSON_KEY_ID, Movie.NO_API_ID));
+			
+			// Tag the field with this movie object
+			titleField.setTag(movie);
 		}
     	
     }

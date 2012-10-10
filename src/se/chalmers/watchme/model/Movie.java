@@ -11,8 +11,10 @@ package se.chalmers.watchme.model;
 
 import java.io.Serializable;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 public class Movie implements Serializable {
 	
@@ -28,6 +30,10 @@ public class Movie implements Serializable {
 	 * The JSON key for a movie's release date
 	 */
 	public static final String JSON_KEY_DATE = "released";
+	/**
+	 * Use to check if a Movie hasn't an API id set.
+	 */
+	public static final int NO_API_ID = -1;
 	
 	private String title, note;
 	private int apiID;
@@ -35,6 +41,27 @@ public class Movie implements Serializable {
 	private long id;
 	private Calendar releaseDate;
 	private List<Tag> tags;
+	
+	private Map<PosterSize, String> posters;
+	
+	/**
+	 * Supported poster sizes for a Movie.
+	 * 
+	 * @author Johan
+	 */
+	public enum PosterSize {
+		MID("mid"), THUMB("thumb");
+		
+		private final String size;
+		
+		private PosterSize(String size) {
+			this.size = size;
+		}
+		
+		public String getSize() {
+			return this.size;
+		}
+	}
 	
 	/**
 	 * Creates a movie with the given title, release date set as current date,
@@ -57,6 +84,9 @@ public class Movie implements Serializable {
 		this.rating = rating;
 		this.note = note;
 		this.releaseDate = releaseDate;
+		
+		this.apiID = -1;
+		this.posters = new HashMap<PosterSize, String>();
 		
 		// Set the time of day to 00.00.00 to allow for easier testing
 		this.releaseDate.set(releaseDate.get(Calendar.YEAR),
@@ -187,6 +217,56 @@ public class Movie implements Serializable {
 	 */
 	public void setApiID(int id) {
 		this.apiID = id;
+	}
+	
+	/**
+	 * Checks whether the IMDb API id is set. 
+	 * 
+	 * @return True if this Movie has an API id,
+	 * otherwise false.
+	 */
+	public boolean hasApiIDSet() {
+		return this.apiID != NO_API_ID;
+	}
+	
+	/**
+	 * Set a poster URL for a certain size.
+	 * 
+	 * @param url The URL to the image
+	 * @param size The size
+	 */
+	public void setPosterURL(String url, PosterSize size) {
+		this.posters.put(size, url);
+	}
+	
+	/**
+	 * Get the poster URL for a certain size
+	 * 
+	 * @param size The size. See {@link PosterSize}.
+	 * @return The URL to the poster. Null if the size doesn't
+	 * exist
+	 */
+	public String getPosterURL(PosterSize size) {
+		return this.posters.get(size);
+	}
+	
+	/**
+	 * Get all poster URLs.
+	 * 
+	 * @return The URLs in a map for all sizes
+	 */
+	public Map<PosterSize, String> getPosterURLs() {
+		return this.posters;
+	}
+	
+	/**
+	 * Set all posters to this Movie.
+	 * 
+	 * @param posters A map of posters with sizes and URLs
+	 */
+	public void setPosters(Map<PosterSize, String> posters) {
+		this.posters.clear();
+		this.posters.putAll(posters);
 	}
 	
 	@Override

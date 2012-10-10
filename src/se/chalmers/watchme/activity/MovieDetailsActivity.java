@@ -17,9 +17,11 @@ import se.chalmers.watchme.net.IMDBHandler;
 import se.chalmers.watchme.net.MovieSource;
 import se.chalmers.watchme.ui.ImageDialog;
 import se.chalmers.watchme.utils.DateTimeUtils;
+import se.chalmers.watchme.utils.MovieHelper;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Dialog;
@@ -50,6 +52,10 @@ public class MovieDetailsActivity extends Activity {
 	private MovieSource imdb;
 	
 	private AsyncTask<String, Void, Bitmap> imageTask;
+	
+	// Timeout for fetching IMDb info (in milliseconds)
+	private final static int IMDB_FETCH_TIMEOUT = 10000;
+	
 	private ImageView poster;
 	
 	private ImageDialog dialog;
@@ -80,8 +86,24 @@ public class MovieDetailsActivity extends Activity {
         	finish();
         }
         
-        // Kick off the fetch for IMDb info
-        new IMDBTask().execute(new Integer[] {this.movie.getApiID()});
+        // Kick off the fetch for IMDb info IF there's a set API id
+        // set.
+        if(this.movie.hasApiIDSet()){
+        	final AsyncTask<Integer, Void, JSONObject> t = new IMDBTask()
+        		.execute(new Integer[] {this.movie.getApiID()});
+        	
+        	// Cancel the task after a timeout
+        	Handler handler = new Handler();
+        	handler.postDelayed(new Runnable() {
+				
+				public void run() {
+					if(t.getStatus() == AsyncTask.Status.RUNNING) {
+						t.cancel(true);
+						System.err.println("Fetching IMDb info did timeout");
+					}
+				}
+			}, IMDB_FETCH_TIMEOUT);
+        }
         
         // Populate various view fields from the Movie object
         populateFieldsFromMovie(this.movie);
@@ -162,17 +184,9 @@ public class MovieDetailsActivity extends Activity {
     	
     	
     	JSONArray posters = json.optJSONArray("posters");
+    	String imageURL = MovieHelper.getPosterFromCollection(posters, Movie.PosterSize.MID);
+    	this.imageTask.execute(new String[] {imageURL});
     	
-    	if(posters != null && posters.length() > 0) {
-    		
-    		for(int i = 0; i < posters.length(); i++) {
-    			JSONObject image = posters.optJSONObject(i).optJSONObject("image");
-    			if(image.optString("size").equals("mid")) {
-    				this.imageTask.execute(new String[] {image.optString("url")});
-    				break;
-    			}
-    		}
-    	}
     	
     	JSONArray imdbCast = json.optJSONArray("cast");
     	String actors = "";
@@ -261,6 +275,15 @@ public class MovieDetailsActivity extends Activity {
     		this.dialog.setMessage("Loading from IMDb ...");
     		this.dialog.show();
     	}
+    	
+    	@Override
+		public void onCancelled() {
+    		this.dialog.dismiss();
+    		Toast.makeText(getBaseContext(), 
+					"An error occurred while fetching from IMDb", 
+					Toast.LENGTH_SHORT)
+			.show();
+		}
     	
 		@Override
 		protected JSONObject doInBackground(Integer... params) {

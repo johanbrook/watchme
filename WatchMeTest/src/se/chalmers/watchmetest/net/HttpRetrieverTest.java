@@ -1,7 +1,10 @@
 package se.chalmers.watchmetest.net;
 
+import java.io.IOException;
+
 import junit.framework.TestCase;
 import se.chalmers.watchme.net.HttpRetriever;
+import se.chalmers.watchme.net.NoEntityException;
 
 /**
  *	HttpRetrieverTest.java
@@ -18,14 +21,30 @@ public class HttpRetrieverTest extends TestCase {
 	}
 	
 	public void testGetURL() {
-		String response = http.get("http://google.com");
+		String response;
+		try {
+			response = http.get("http://google.com");
+			assertNotNull(response);
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (NoEntityException e) {
+			e.printStackTrace();
+		}
 		
-		assertNotNull(response);
 	}
 	
 	public void testIncorrectURL() {
-		String response = http.get("http://www.google.com/404");
+		String response;
+		try {
+			response = http.get("http://www.google.com/404");
+			assertNull(response);
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (NoEntityException e) {
+			e.printStackTrace();
+		}
 		
-		assertNull(response);
 	}
 }
