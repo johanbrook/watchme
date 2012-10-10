@@ -9,7 +9,6 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
 
-import se.chalmers.watchme.activity.MovieDetailsActivity;
 import se.chalmers.watchme.model.Movie;
 import se.chalmers.watchme.model.Tag;
 
@@ -95,9 +94,19 @@ public class DatabaseAdapter {
 	 * @return all Movies from the database.
 	 */
 	public List<Movie> getAllMovies() {
+		return getAllMovies(null);
+	}
+	
+	/**
+	 * Return all Movies from the database in the specified order.
+	 * 
+	 * @param orderBy The attribute to order by.
+	 * @return all Movies from the database in the specified order.
+	 */
+	public List<Movie> getAllMovies(String orderBy) {
 		List<Movie> movies = new ArrayList<Movie>();
 		
-		Cursor cursor = contentResolver.query(uri_movies, null, null, null, null);
+		Cursor cursor = contentResolver.query(uri_movies, null, null, null, orderBy);
 		
 		while(cursor.moveToNext()) {
 			long id = Long.parseLong(cursor.getString(0));
