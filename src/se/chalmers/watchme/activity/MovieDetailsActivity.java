@@ -20,6 +20,7 @@ import se.chalmers.watchme.utils.DateTimeUtils;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Dialog;
@@ -50,6 +51,10 @@ public class MovieDetailsActivity extends Activity {
 	private MovieSource imdb;
 	
 	private AsyncTask<String, Void, Bitmap> imageTask;
+	
+	// Timeout for fetching IMDb info (in milliseconds)
+	private final static int IMDB_FETCH_TIMEOUT = 10000;
+	
 	private ImageView poster;
 	
 	private ImageDialog dialog;
@@ -80,8 +85,24 @@ public class MovieDetailsActivity extends Activity {
         	finish();
         }
         
-        // Kick off the fetch for IMDb info
-        new IMDBTask().execute(new Integer[] {this.movie.getApiID()});
+        // Kick off the fetch for IMDb info IF there's a set API id
+        // set.
+        if(this.movie.hasApiIDSet()){
+        	final AsyncTask<Integer, Void, JSONObject> t = new IMDBTask()
+        		.execute(new Integer[] {this.movie.getApiID()});
+        	
+        	// Cancel the task after a timeout
+        	Handler handler = new Handler();
+        	handler.postDelayed(new Runnable() {
+				
+				public void run() {
+					if(t.getStatus() == AsyncTask.Status.RUNNING) {
+						t.cancel(true);
+						System.err.println("Fetching IMDb info did timeout");
+					}
+				}
+			}, IMDB_FETCH_TIMEOUT);
+        }
         
         // Populate various view fields from the Movie object
         populateFieldsFromMovie(this.movie);
@@ -261,6 +282,15 @@ public class MovieDetailsActivity extends Activity {
     		this.dialog.setMessage("Loading from IMDb ...");
     		this.dialog.show();
     	}
+    	
+    	@Override
+		public void onCancelled() {
+    		this.dialog.dismiss();
+    		Toast.makeText(getBaseContext(), 
+					"An error occurred while fetching from IMDb", 
+					Toast.LENGTH_SHORT)
+			.show();
+		}
     	
 		@Override
 		protected JSONObject doInBackground(Integer... params) {

@@ -28,6 +28,7 @@ public class Movie implements Serializable {
 	 * The JSON key for a movie's release date
 	 */
 	public static final String JSON_KEY_DATE = "released";
+	public static final int NO_API_ID = -1;
 	
 	private String title, note;
 	private int apiID;
@@ -57,6 +58,7 @@ public class Movie implements Serializable {
 		this.rating = rating;
 		this.note = note;
 		this.releaseDate = releaseDate;
+		this.apiID = -1;
 		
 		// Set the time of day to 00.00.00 to allow for easier testing
 		this.releaseDate.set(releaseDate.get(Calendar.YEAR),
@@ -187,6 +189,16 @@ public class Movie implements Serializable {
 	 */
 	public void setApiID(int id) {
 		this.apiID = id;
+	}
+	
+	/**
+	 * Checks whether the IMDb API id is set. 
+	 * 
+	 * @return True if this Movie has an API id,
+	 * otherwise false.
+	 */
+	public boolean hasApiIDSet() {
+		return this.apiID != NO_API_ID;
 	}
 	
 	@Override

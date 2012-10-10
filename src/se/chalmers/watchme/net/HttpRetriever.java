@@ -33,35 +33,33 @@ public class HttpRetriever {
 	 * 
 	 * @param url The url
 	 * @return String with the response on success, otherwise null
+	 * @throws {@link IOException} if the HTTP connection failed
+	 * @throws NoEntityException if no HttpEntity was available in
+	 * the response
 	 */
-	public String get(String url) {
+	public String get(String url) throws IOException, NoEntityException {
 		
 		HttpGet request = new HttpGet(url);
 		
-		try {
-			HttpResponse res = this.client.execute(request);
-			final int statusCode = res.getStatusLine().getStatusCode();
+		HttpResponse res = this.client.execute(request);
+		final int statusCode = res.getStatusLine().getStatusCode();
 			
-			Log.i("Custom", "Retrieving " + url + ", status: "+statusCode);
+		Log.i("Custom", "Retrieving " + url + ", status: "+statusCode);
 			
-			// Return null if the status code isn't 200 OK
-			if(statusCode != HttpStatus.SC_OK) {
-				return null;
-			}
-			
-			HttpEntity entity = res.getEntity();
-			
-			// Return a stringified version of the response
-			if(entity != null) {
-				return EntityUtils.toString(entity);
-			}
-		}
-		catch(IOException ex) {
-			request.abort();
-			Log.i("Custom", "Error retrieving " + url);
+		// Return null if the status code isn't 200 OK
+		if(statusCode != HttpStatus.SC_OK) {
+			return null;
 		}
 		
-		return null;
+		HttpEntity entity = res.getEntity();
+		
+		// Return a stringified version of the response
+		if(entity != null) {
+			return EntityUtils.toString(entity);
+		}
+		else {
+			throw new NoEntityException("No entity from "+url);
+		}
 	}
 	
 }

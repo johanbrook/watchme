@@ -65,6 +65,8 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
 	
 	SimpleCursorAdapter adapter;
 	private Uri uri = WatchMeContentProvider.CONTENT_URI_MOVIES;
+	private AsyncTask<Integer, Void, Drawable> imageTask;
+
 	
 	@Override
 	public void onActivityCreated(Bundle b) {
@@ -155,7 +157,9 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
 				else if(columnIndex == cursor.getColumnIndexOrThrow(MoviesTable.COLUMN_IMDB_ID)) {
 					int apiID = cursor.getInt(columnIndex);
 					
-					new ImageDownloadTask((ImageView) view).execute(new Integer[] {apiID});
+					if(apiID != Movie.NO_API_ID) {	
+						imageTask = new ImageDownloadTask((ImageView) view).execute(new Integer[] {apiID});
+					}
 					
 					return true;
 				}
@@ -218,6 +222,11 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
 		protected Drawable doInBackground(Integer... params) {
 			String url = null;
 			JSONObject response = new IMDBHandler().getMovieById(params[0]);
+			
+			if(response == null) {
+				return null;
+			}
+			
 			JSONArray posters = response.optJSONArray("posters");
 			
 	    	if(posters != null && posters.length() > 0) {
@@ -286,6 +295,10 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
 
 		public void onItemClick(AdapterView<?> parent, View view, int position,
 				long id) {
+			
+			if(imageTask.getStatus() == AsyncTask.Status.RUNNING) {
+				imageTask.cancel(true);
+			}
 			
 			final long movieId = id;
 			
