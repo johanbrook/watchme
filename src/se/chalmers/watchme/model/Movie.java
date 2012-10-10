@@ -28,6 +28,9 @@ public class Movie implements Serializable {
 	 * The JSON key for a movie's release date
 	 */
 	public static final String JSON_KEY_DATE = "released";
+	/**
+	 * Use to check if a Movie hasn't an API id set.
+	 */
 	public static final int NO_API_ID = -1;
 	
 	private String title, note;
