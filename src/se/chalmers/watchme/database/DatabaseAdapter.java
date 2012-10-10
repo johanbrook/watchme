@@ -1,5 +1,6 @@
 package se.chalmers.watchme.database;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -93,7 +94,25 @@ public class DatabaseAdapter {
 	 * @return all Movies from the database.
 	 */
 	public List<Movie> getAllMovies() {
-		return null;
+		List<Movie> movies = new ArrayList<Movie>();
+		
+		Cursor cursor = contentResolver.query(uri_movies, null, null, null, null);
+		
+		while(cursor.moveToNext()) {
+			long id = Long.parseLong(cursor.getString(0));
+			String title = cursor.getString(1);
+			Calendar calendar = Calendar.getInstance();
+			calendar.setTimeInMillis(Long.parseLong(cursor.getString(4)));
+			int rating = Integer.parseInt(cursor.getString(2));
+			String note = cursor.getString(3);
+			
+			Movie movie = new Movie(title, calendar, rating, note);
+			movie.setId(id);
+			movie.setApiID(Integer.parseInt(cursor.getString(5)));
+			
+			movies.add(movie);
+		}
+		return movies;
 	}
 	
 	/**
