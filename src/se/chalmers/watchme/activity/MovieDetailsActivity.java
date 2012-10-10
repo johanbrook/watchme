@@ -73,7 +73,7 @@ public class MovieDetailsActivity extends Activity {
         setContentView(R.layout.activity_movie_details);
         getActionBar().setDisplayHomeAsUpEnabled(true);
         
-        db = new DatabaseAdapter(getContentResolver());
+        
         
         this.movie = (Movie) getIntent().getSerializableExtra(MOVIE_EXTRA);
         this.imdb = new IMDBHandler();
@@ -123,6 +123,8 @@ public class MovieDetailsActivity extends Activity {
 	 * @param m The movie to fill the fields with
 	 */
     public void populateFieldsFromMovie(Movie m) {
+    	db = new DatabaseAdapter(this.getContentResolver());
+    	
 		setTitle(m.getTitle());
 		
 		TextView noteField = (TextView) findViewById(R.id.note_field);

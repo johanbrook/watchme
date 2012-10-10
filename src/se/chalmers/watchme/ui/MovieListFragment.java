@@ -23,6 +23,7 @@ import org.json.JSONObject;
 
 import se.chalmers.watchme.R;
 import se.chalmers.watchme.activity.MovieDetailsActivity;
+import se.chalmers.watchme.database.DatabaseAdapter;
 import se.chalmers.watchme.database.MoviesTable;
 import se.chalmers.watchme.database.WatchMeContentProvider;
 import se.chalmers.watchme.model.Movie;
@@ -63,10 +64,10 @@ import android.widget.Toast;
 @TargetApi(11)
 public class MovieListFragment extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor> {
 	
-	SimpleCursorAdapter adapter;
+	private SimpleCursorAdapter adapter;
 	private Uri uri = WatchMeContentProvider.CONTENT_URI_MOVIES;
 	private AsyncTask<String, Void, Drawable> imageTask;
-
+	private DatabaseAdapter db;
 	
 	@Override
 	public void onActivityCreated(Bundle b) {
@@ -263,6 +264,7 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
 
 		public void onItemClick(AdapterView<?> parent, View view, int position,
 				long id) {
+			db = new DatabaseAdapter(getActivity().getContentResolver());
 			
 			if(imageTask != null && imageTask.getStatus() == AsyncTask.Status.RUNNING) {
 				imageTask.cancel(true);
@@ -270,6 +272,8 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
 			
 			final long movieId = id;
 			
+			final Movie movie = db.getMovie(id);
+			/*
 			Cursor movieCursor = getActivity().getContentResolver().query(uri, null,
 					"_id = " + movieId, null, null);
 			
@@ -285,7 +289,7 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
 			c.setTimeInMillis(Long.parseLong(movieCursor.getString(4)));
 			movie.setDate(c);
 			movie.setApiID(movieCursor.getInt(5));
-			
+			*/
 			//final Movie movie = (Movie) getListView().getItemAtPosition(arg2);
 			Intent intent = new Intent(getActivity(), MovieDetailsActivity.class);
 			
@@ -308,7 +312,10 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
      */
     private class OnDeleteListener implements OnItemLongClickListener {
     	public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-
+			db = new DatabaseAdapter(getActivity().getContentResolver());
+			
+    		final Movie movie = db.getMovie(id);
+    		/*
 			final long movieId = id;
 			
 			String[] projection = { MoviesTable.COLUMN_TITLE };
@@ -319,13 +326,16 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
 			}
 			
 			final String movieTitle = movieCursor.getString(0);
-			
+			*/
             AlertDialog.Builder alertbox = new AlertDialog.Builder(getActivity());
-            alertbox.setMessage("Are you sure you want to delete the movie \"" + movieTitle + "\"?");           
+            alertbox.setMessage("Are you sure you want to delete the movie \"" + movie.getTitle() + "\"?");           
             alertbox.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface arg0, int arg1) {
-                	getActivity().getContentResolver().delete(uri, "_id = " + movieId , null);
-                    Toast.makeText(getActivity().getApplicationContext(), "\"" + movieTitle + "\" was deleted" , Toast.LENGTH_SHORT).show();
+                	//getActivity().getContentResolver().delete(uri, "_id = " + movieId , null);
+                	db = new DatabaseAdapter(getActivity().getContentResolver());
+                	db.removeMovie(movie);
+                	
+                    Toast.makeText(getActivity().getApplicationContext(), "\"" + movie.getTitle() + "\" was deleted" , Toast.LENGTH_SHORT).show();
                 }
             });
             alertbox.setNeutralButton("Cancel", new DialogInterface.OnClickListener() {

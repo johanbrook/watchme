@@ -39,7 +39,7 @@ public class DatabaseAdapter {
 	 * Returns the specified Movie.
 	 * 
 	 * @param id The id of the Movie.
-	 * @return null if there is no Movie with the specified id..
+	 * @return null if there is no Movie with the specified id.
 	 */
 	public Movie getMovie(long id) {
 		String selection = MoviesTable.COLUMN_MOVIE_ID + " = " + id; 
@@ -61,21 +61,24 @@ public class DatabaseAdapter {
 	}
 	
 	/**
-	 * Inserts a Movie to the database.
+	 * Inserts a Movie to the database and set the id of the Movie.
 	 * 
 	 * @param movie Movie to be inserted.
 	 * @return the id of the added Movie.
 	 */
-	public int addMovie(Movie movie) {
+	public long addMovie(Movie movie) {
 		ContentValues values = new ContentValues();
 	    values.put(MoviesTable.COLUMN_TITLE, movie.getTitle());
 	    values.put(MoviesTable.COLUMN_RATING, movie.getRating());
 	    values.put(MoviesTable.COLUMN_NOTE, movie.getNote());
 	    values.put(MoviesTable.COLUMN_DATE, movie.getDate().getTimeInMillis());
 	    values.put(MoviesTable.COLUMN_IMDB_ID, movie.getApiID());
+	    values.put(MoviesTable.COLUMN_POSTER_LARGE, movie.getPosterURL(Movie.PosterSize.MID));
+	    values.put(MoviesTable.COLUMN_POSTER_SMALL, movie.getPosterURL(Movie.PosterSize.THUMB));
 	    
 		Uri uri_movie_id = contentResolver.insert(uri_movies, values);
-		return Integer.parseInt(uri_movie_id.getLastPathSegment());
+		movie.setId(Long.parseLong(uri_movie_id.getLastPathSegment()));
+		return movie.getId();
 	}
 	
 	/**
@@ -152,12 +155,13 @@ public class DatabaseAdapter {
 	 * @param tag The Tag to be inserted.
 	 * @return the id of the added Tag.
 	 */
-	private int addTag(Tag tag) {
+	private long addTag(Tag tag) {
 		ContentValues values = new ContentValues();
 	    values.put(TagsTable.COLUMN_NAME, tag.getName());
 	    
 	    Uri uri_tag_id = contentResolver.insert(uri_tags, values);
-		return Integer.parseInt(uri_tag_id.getLastPathSegment());
+	    tag.setId(Long.parseLong(uri_tag_id.getLastPathSegment()));
+		return tag.getId();
 	}
 	
 	/**
@@ -241,8 +245,11 @@ public class DatabaseAdapter {
 	public List<Tag> getAttachedTags(Movie movie) {
 		List<Tag> tags = new ArrayList<Tag>();
 		
-		String selection = HasTagTable.COLUMN_MOVIE_ID + " = " + movie.getId();
-		String[] projection = { HasTagTable.COLUMN_TAG_ID, TagsTable.COLUMN_NAME };
+		String selection = MoviesTable.TABLE_MOVIES + "." + 
+				MoviesTable.COLUMN_MOVIE_ID + " = " + movie.getId();
+		String[] projection = 
+			{ TagsTable.TABLE_TAGS + "." + TagsTable.COLUMN_TAG_ID, 
+				TagsTable.TABLE_TAGS + "." + TagsTable.COLUMN_NAME };
 		Cursor cursor = contentResolver.query(uri_has_tag, projection, selection, null, null);
 		
 		while(cursor.moveToNext()) {
@@ -269,7 +276,9 @@ public class DatabaseAdapter {
 		
 		List<Movie> movies = new ArrayList<Movie>();
 		
-		String selection = HasTagTable.COLUMN_TAG_ID + " = " + tag.getId();
+		String selection = HasTagTable.TABLE_HAS_TAG + "." + 
+				HasTagTable.COLUMN_TAG_ID + " = " + tag.getId();
+		
 		Cursor cursor = contentResolver.query(uri_has_tag, null, selection, null, null);
 		
 		while(cursor.moveToNext()) {
