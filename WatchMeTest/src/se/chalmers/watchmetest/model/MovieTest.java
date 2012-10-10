@@ -70,6 +70,18 @@ public class MovieTest extends TestCase {
 		assertTrue(batman.getRating() == 8);
 	}
 	
+	public void testHasApiID() {
+		batman.setApiID(10);
+		assertTrue(batman.hasApiIDSet());
+	}
+	
+	/**
+	 * Movie should not have API id set on init
+	 */
+	public void testHasNotApiID() {
+		assertFalse(batman.hasApiIDSet());
+	}
+	
 	public void testEquals() {
 		Movie compareObject = null; 
 		assertFalse(batman.equals(compareObject));

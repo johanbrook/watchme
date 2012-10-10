@@ -140,9 +140,15 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
 		
 		Movie movie = new Movie(movieTitle, releaseDate, rating, movieNote);
 		
-		// Fetch and set the IMDb ID stored in the title field
-		int imdbID = (Integer) this.titleField.getTag();
-		movie.setApiID(imdbID);
+		/*
+		 * Fetch and set the IMDb ID stored in the title field.
+		 * The getTag() _might_ return null if the auto complete
+		 * failed, due to perhaps network issues.
+		 */
+		if(this.titleField.getTag() != null) {
+			int imdbID = (Integer) this.titleField.getTag();
+			movie.setApiID(imdbID);
+		}
 		
 		// Insert into database
 		ContentValues movieValues = new ContentValues();
