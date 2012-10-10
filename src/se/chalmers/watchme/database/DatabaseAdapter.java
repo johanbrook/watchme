@@ -160,6 +160,18 @@ public class DatabaseAdapter {
 	}
 	
 	/**
+	 * Attach Tags to a movie.
+	 * 
+	 * @param movie The Movie.
+	 * @param tags A list of Tags with Tags to be attached.
+	 */
+	public void attachTags(Movie movie, List<Tag> tags) {
+		for(Tag tag : tags) {
+			attachTag(movie, tag);
+		}
+	}
+	
+	/**
 	 * Detach a Tag from a Movie.
 	 * 
 	 * @param movie The Movie.
