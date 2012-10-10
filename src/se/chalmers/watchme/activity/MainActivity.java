@@ -1,17 +1,9 @@
 package se.chalmers.watchme.activity;
 
 import java.util.ArrayList;
+
 import se.chalmers.watchme.R;
 import se.chalmers.watchme.model.Movie;
-import android.net.Uri;
-
-import android.os.Bundle;
-import android.annotation.TargetApi;
-import android.app.AlertDialog;
-import android.app.ListActivity;
-import android.app.LoaderManager;
-import android.content.CursorLoader;
-import android.content.DialogInterface;
 import se.chalmers.watchme.ui.MovieListFragment;
 import se.chalmers.watchme.ui.TagListFragment;
 import android.app.ActionBar;
@@ -25,12 +17,8 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView.OnItemLongClickListener;
-import android.widget.SimpleCursorAdapter;
-import android.widget.Toast;
+
+
 
 public class MainActivity extends FragmentActivity {
 	
