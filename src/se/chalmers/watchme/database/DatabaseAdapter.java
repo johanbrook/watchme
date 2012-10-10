@@ -165,7 +165,19 @@ public class DatabaseAdapter {
 	 * @return all Tags in the database. 
 	 */
 	public List<Tag> getAllTags() {
-		return null;
+		List<Tag> tags = new ArrayList<Tag>();
+		Cursor cursor = contentResolver.query(uri_movies, null, null, null, null);
+		
+		while(cursor.moveToNext()) {
+			long id = Long.parseLong(cursor.getString(0));
+			String name = cursor.getString(1);
+			
+			Tag tag = new Tag(name);
+			tag.setId(id);
+			
+			tags.add(tag);
+		}
+		return tags;
 	}
 	
 	/**
