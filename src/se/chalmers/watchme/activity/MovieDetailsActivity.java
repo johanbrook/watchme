@@ -17,6 +17,7 @@ import se.chalmers.watchme.net.IMDBHandler;
 import se.chalmers.watchme.net.MovieSource;
 import se.chalmers.watchme.ui.ImageDialog;
 import se.chalmers.watchme.utils.DateTimeUtils;
+import se.chalmers.watchme.utils.MovieHelper;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -183,17 +184,9 @@ public class MovieDetailsActivity extends Activity {
     	
     	
     	JSONArray posters = json.optJSONArray("posters");
+    	String imageURL = MovieHelper.getPosterFromCollection(posters, Movie.PosterSize.MID);
+    	this.imageTask.execute(new String[] {imageURL});
     	
-    	if(posters != null && posters.length() > 0) {
-    		
-    		for(int i = 0; i < posters.length(); i++) {
-    			JSONObject image = posters.optJSONObject(i).optJSONObject("image");
-    			if(image.optString("size").equals("mid")) {
-    				this.imageTask.execute(new String[] {image.optString("url")});
-    				break;
-    			}
-    		}
-    	}
     	
     	JSONArray imdbCast = json.optJSONArray("cast");
     	String actors = "";
