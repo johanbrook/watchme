@@ -11,6 +11,12 @@ import android.net.Uri;
 import se.chalmers.watchme.model.Movie;
 import se.chalmers.watchme.model.Tag;
 
+/**
+ * Adapter to the Content Provider.
+ * 
+ * @author lisastenberg
+ *
+ */
 public class DatabaseAdapter {
 	
 	private Uri uri_movies = WatchMeContentProvider.CONTENT_URI_MOVIES;
@@ -19,6 +25,11 @@ public class DatabaseAdapter {
 	
 	private ContentResolver contentResolver;
 	
+	/**
+	 * Creates a new adapter.
+	 * 
+	 * @param contentResolver the ContentResolver.
+	 */
 	public DatabaseAdapter(ContentResolver contentResolver) {
 		this.contentResolver = contentResolver;
 	}
@@ -136,6 +147,26 @@ public class DatabaseAdapter {
 	 */
 	public List<Tag> getAllTags() {
 		return null;
+	}
+	
+	/**
+	 * Attach a Tag to a Movie.
+	 * 
+	 * @param movie The Movie.
+	 * @param tag The Tag to be attached.
+	 */
+	public void attachTag(Movie movie, Tag tag) {
+		
+	}
+	
+	/**
+	 * Detach a Tag from a Movie.
+	 * 
+	 * @param movie The Movie.
+	 * @param tag The Tag to be detached.
+	 */
+	public void detachTag(Movie movie, Tag tag) {
+		
 	}
 	
 	/**
