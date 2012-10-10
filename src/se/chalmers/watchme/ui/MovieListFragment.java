@@ -65,7 +65,7 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
 	
 	SimpleCursorAdapter adapter;
 	private Uri uri = WatchMeContentProvider.CONTENT_URI_MOVIES;
-	private AsyncTask<Integer, Void, Drawable> imageTask;
+	private AsyncTask<String, Void, Drawable> imageTask;
 
 	
 	@Override
@@ -124,7 +124,7 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
 				MoviesTable.COLUMN_TITLE,  
 				MoviesTable.COLUMN_RATING ,
 				MoviesTable.COLUMN_DATE,
-				MoviesTable.COLUMN_IMDB_ID
+				MoviesTable.COLUMN_POSTER_SMALL
 				};
 		
 		int[] to = new int[] { 0 , 
@@ -154,11 +154,14 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
 					textView.setText(formattedDate);
 					return true;
 				}
-				else if(columnIndex == cursor.getColumnIndexOrThrow(MoviesTable.COLUMN_IMDB_ID)) {
-					int apiID = cursor.getInt(columnIndex);
+				
+				// Handle poster images
+				else if(columnIndex == cursor.getColumnIndexOrThrow(MoviesTable.COLUMN_POSTER_SMALL)) {
+					String smallImage = cursor.getString(columnIndex);
 					
-					if(apiID != Movie.NO_API_ID) {	
-						imageTask = new ImageDownloadTask((ImageView) view).execute(new Integer[] {apiID});
+					if(smallImage != null && !smallImage.isEmpty()) {
+						// Fetch the image in an async task
+						imageTask = new ImageDownloadTask((ImageView) view).execute(new String[]{smallImage});
 					}
 					
 					return true;
@@ -187,7 +190,7 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
 				MoviesTable.COLUMN_TITLE, 
 				MoviesTable.COLUMN_RATING, 
 				MoviesTable.COLUMN_DATE,
-				MoviesTable.COLUMN_IMDB_ID};
+				MoviesTable.COLUMN_POSTER_SMALL};
 		
 	    CursorLoader cursorLoader = new CursorLoader(getActivity(),
 	        uri, projection, null, null, null);
@@ -210,7 +213,7 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
      * @author Johan
      *
      */
-    private class ImageDownloadTask extends AsyncTask<Integer, Void, Drawable> {
+    private class ImageDownloadTask extends AsyncTask<String, Void, Drawable> {
 
     	private ImageView view;
     	
@@ -219,59 +222,24 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
     	}
     	
 		@Override
-		protected Drawable doInBackground(Integer... params) {
-			String url = null;
-			JSONObject response = new IMDBHandler().getMovieById(params[0]);
-			
-			if(response == null) {
-				return null;
-			}
-			
-			JSONArray posters = response.optJSONArray("posters");
-			
-	    	if(posters != null && posters.length() > 0) {
-	    		
-	    		for(int i = 0; i < posters.length(); i++) {
-	    			JSONObject image = posters.optJSONObject(i).optJSONObject("image");
-	    			if(image.optString("size").equals("thumb")) {
-	    				url = image.optString("url");
-	    				break;
-	    			}
-	    		}
-	    	}
-	    	
-	    	if(url == null) {
-	    		return null;
-	    	}
+		protected Drawable doInBackground(String... params) {
+			String url = params[0];
 			
 			try {
 				URL imageURL = new URL(url);
 				URLConnection connection = imageURL.openConnection();
+				// Use local caches
 				connection.setUseCaches(true);
 				
 				return Drawable.createFromStream(connection.getInputStream(), "src");
 				
 			} catch (MalformedURLException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 	    	
 			return null;
-	    	
-//			try {
-//				in = (InputStream) new URL(url).getContent();
-//			} catch (MalformedURLException e) {
-//				Log.e(getClass().getSimpleName(), "Bad URL format for poster");
-//				e.printStackTrace();
-//			} catch (IOException e) {
-//				Log.e(getClass().getSimpleName(), "Error encoding image from URL");
-//				e.printStackTrace();
-//			}
-//			
-//			return BitmapFactory.decodeStream(in);
 		}
 		
 		@Override
