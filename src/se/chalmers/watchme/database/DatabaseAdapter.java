@@ -1,41 +1,161 @@
 package se.chalmers.watchme.database;
 
+import java.util.Calendar;
 import java.util.List;
+
+import android.content.ContentResolver;
+import android.content.ContentValues;
+import android.database.Cursor;
+import android.net.Uri;
 
 import se.chalmers.watchme.model.Movie;
 import se.chalmers.watchme.model.Tag;
 
 public class DatabaseAdapter {
 	
-	public Movie getMovie(int id) {
+	private Uri uri_movies = WatchMeContentProvider.CONTENT_URI_MOVIES;
+	private Uri uri_tags = WatchMeContentProvider.CONTENT_URI_TAGS;
+	private Uri uri_has_tags = WatchMeContentProvider.CONTENT_URI_HAS_TAG;
+	
+	private ContentResolver contentResolver;
+	
+	public DatabaseAdapter(ContentResolver contentResolver) {
+		this.contentResolver = contentResolver;
+	}
+	
+	/**
+	 * Returns the specified Movie.
+	 * 
+	 * @param id The id of the Movie.
+	 * @return null if there is no Movie with the specified id..
+	 */
+	public Movie getMovie(long id) {
+		String selection = MoviesTable.COLUMN_MOVIE_ID + " = " + id; 
+		Cursor cursor = contentResolver.query(uri_movies, null, selection, null, null);
+		if(cursor.moveToFirst()) {
+			String title = cursor.getString(1);
+			Calendar calendar = Calendar.getInstance();
+			calendar.setTimeInMillis(Long.parseLong(cursor.getString(4)));
+			int rating = Integer.parseInt(cursor.getString(2));
+			String note = cursor.getString(3);
+			
+			Movie movie = new Movie(title, calendar, rating, note);
+			movie.setId(id);
+			movie.setApiID(Integer.parseInt(cursor.getString(5)));
+			
+			return movie;
+		}
 		return null;
 	}
 	
-	public void addMovie(Movie movie) {
-		
+	/**
+	 * Inserts a Movie to the database.
+	 * 
+	 * @param movie Movie to be inserted.
+	 * @return the id of the added Movie.
+	 */
+	public int addMovie(Movie movie) {
+		ContentValues values = new ContentValues();
+	    values.put(MoviesTable.COLUMN_TITLE, movie.getTitle());
+	    values.put(MoviesTable.COLUMN_RATING, movie.getRating());
+	    values.put(MoviesTable.COLUMN_NOTE, movie.getNote());
+	    values.put(MoviesTable.COLUMN_DATE, movie.getDate().getTimeInMillis());
+	    values.put(MoviesTable.COLUMN_IMDB_ID, movie.getApiID());
+	    
+		Uri uri_movie_id = contentResolver.insert(uri_movies, values);
+		return Integer.parseInt(uri_movie_id.getLastPathSegment());
 	}
 	
-	public void deleteMovie(Movie movie) {
+	/**
+	 * Delete a Movie from the database.
+	 * 
+	 * @param movie The movie to be removed.
+	 */
+	public void removeMovie(Movie movie) {
+		String where = MoviesTable.COLUMN_MOVIE_ID + " = " + movie.getId();
 		
+		contentResolver.delete(uri_movies, where, null);
 	}
 	
-	public List<Movie> getMovies() {
+	/**
+	 * Return all Movies from the database.
+	 * @return all Movies from the database.
+	 */
+	public List<Movie> getAllMovies() {
 		return null;
 	}
 	
-	public Tag getTag(int id) {
+	/**
+	 * Returns the specified Tag.
+	 * 
+	 * @param id The id of the Tag.
+	 * @return null if there is no Tag with the specified id.
+	 */
+	public Tag getTag(long id) {
+		String selection = TagsTable.COLUMN_TAG_ID + " = " + id; 
+		Cursor cursor = contentResolver.query(uri_tags, null, selection, null, null);
+		
+		if(cursor.moveToFirst()) {
+			String name = cursor.getString(1);
+			
+			Tag tag = new Tag(name);
+			tag.setId(id);
+			
+			return tag;
+		}
 		return null;
 	}
 	
-	public void addTag(Tag tag) {
-		
+	/**
+	 * Inserts a Tag to the database.
+	 * 
+	 * @param tag The Tag to be inserted.
+	 * @return the id of the added Tag.
+	 */
+	private int addTag(Tag tag) {
+		ContentValues values = new ContentValues();
+	    values.put(TagsTable.COLUMN_NAME, tag.getName());
+	    
+	    Uri uri_tag_id = contentResolver.insert(uri_tags, values);
+		return Integer.parseInt(uri_tag_id.getLastPathSegment());
 	}
 	
-	public void deleteTag(Tag tag) {
+	/**
+	 * Deletes a Tag from the database.
+	 * @param tag The Tag to be removed.
+	 */
+	public void removeTag(Tag tag) {
+		String where = TagsTable.COLUMN_TAG_ID + " = " + tag.getId();
 		
+		contentResolver.delete(uri_tags, where, null);
 	}
 	
-	public List<Tag> getTags() {
+	/**
+	 * Return all Tags in the database.
+	 * @return all Tags in the database. 
+	 */
+	public List<Tag> getAllTags() {
+		return null;
+	}
+	
+	/**
+	 * Return all Tags attached to a Movie.
+	 * 
+	 * @param movie The Movie.
+	 * @return all Tags attached to the Movie.
+	 */
+	public List<Tag> getAttachedTags(Movie movie) {
+	
+		return null;
+	}
+	
+	/**
+	 * Return all Movies attached to a Tag.
+	 * @param tag The tag.
+	 * @return all Movies attached to the Tag.
+	 */
+	public List<Movie> getAttachedMovies(Tag tag) {
+		
 		return null;
 	}
 }
