@@ -22,7 +22,7 @@ public class DatabaseAdapter {
 	
 	private Uri uri_movies = WatchMeContentProvider.CONTENT_URI_MOVIES;
 	private Uri uri_tags = WatchMeContentProvider.CONTENT_URI_TAGS;
-	private Uri uri_has_tags = WatchMeContentProvider.CONTENT_URI_HAS_TAG;
+	private Uri uri_has_tag = WatchMeContentProvider.CONTENT_URI_HAS_TAG;
 	
 	private ContentResolver contentResolver;
 	
@@ -152,6 +152,7 @@ public class DatabaseAdapter {
 	
 	/**
 	 * Deletes a Tag from the database.
+	 * 
 	 * @param tag The Tag to be removed.
 	 */
 	public void removeTag(Tag tag) {
@@ -162,6 +163,7 @@ public class DatabaseAdapter {
 	
 	/**
 	 * Return all Tags in the database.
+	 * 
 	 * @return all Tags in the database. 
 	 */
 	public List<Tag> getAllTags() {
@@ -219,8 +221,22 @@ public class DatabaseAdapter {
 	 * @return all Tags attached to the Movie.
 	 */
 	public List<Tag> getAttachedTags(Movie movie) {
-	
-		return null;
+		List<Tag> tags = new ArrayList<Tag>();
+		
+		String selection = HasTagTable.COLUMN_MOVIE_ID + " = " + movie.getId();
+		Cursor cursor = contentResolver.query(uri_has_tag, null, selection, null, null);
+		
+		while(cursor.moveToNext()) {
+			long id = Long.parseLong(cursor.getString(2));
+			String name = cursor.getString(3);
+			
+			Tag tag = new Tag(name);
+			tag.setId(id);
+			
+			tags.add(tag);
+		}
+		
+		return tags;
 	}
 	
 	/**
