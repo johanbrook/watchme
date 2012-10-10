@@ -75,7 +75,7 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
 	private Calendar releaseDate;
 	
 	private Uri uri_movies = WatchMeContentProvider.CONTENT_URI_MOVIES;
-	private Uri uri_has_tags = WatchMeContentProvider.CONTENT_URI_HAS_TAG;
+	private Uri uri_has_tag = WatchMeContentProvider.CONTENT_URI_HAS_TAG;
 	
     @SuppressLint("NewApi")
 	@Override
@@ -196,7 +196,7 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
 				
 				tagValues.put(MoviesTable.COLUMN_MOVIE_ID, movieId);
 				tagValues.put(TagsTable.COLUMN_NAME, tag.getSlug());
-				getContentResolver().insert(uri_has_tags, tagValues);
+				getContentResolver().insert(uri_has_tag, tagValues);
 
 				newTags.add(tag);
 			}

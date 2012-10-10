@@ -189,7 +189,12 @@ public class DatabaseAdapter {
 	 * @param tag The Tag to be attached.
 	 */
 	public void attachTag(Movie movie, Tag tag) {
+		ContentValues values = new ContentValues();
 		
+		values.put(MoviesTable.COLUMN_MOVIE_ID, movie.getId());
+		values.put(TagsTable.COLUMN_NAME, tag.getSlug());
+		
+		contentResolver.insert(uri_has_tag, values);
 	}
 	
 	/**
@@ -245,7 +250,7 @@ public class DatabaseAdapter {
 	 * @return all Movies attached to the Tag.
 	 */
 	public List<Movie> getAttachedMovies(Tag tag) {
-		
+		// TODO Change implementation for CASE HAS_TAG in DatabaseApapter:query
 		return null;
 	}
 }
