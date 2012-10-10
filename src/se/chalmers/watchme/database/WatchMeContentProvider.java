@@ -142,6 +142,8 @@ public class WatchMeContentProvider extends ContentProvider {
 		long id = 0;
 		switch(sUriMatcher.match(uri)) {
 		case MOVIES:
+			System.out.println("INSIDE insert MOVIES");
+			
 			// TODO It should not be possible to add the same movie twice
 			String movieTitle = values.getAsString(MoviesTable.COLUMN_TITLE);
 			Cursor movieCursor = sqlDB.query(MoviesTable.TABLE_MOVIES, null, 
@@ -230,15 +232,24 @@ public class WatchMeContentProvider extends ContentProvider {
 	    	queryBuilder.setTables(TagsTable.TABLE_TAGS);
 	        break;  
 		case HAS_TAG:
-			/*
-			 * selection should contain "movieid = <movieid>"
-			 */
 			String tables = HasTagTable.TABLE_HAS_TAG + " LEFT OUTER JOIN " + 
 					TagsTable.TABLE_TAGS + " ON " + 
 					HasTagTable.TABLE_HAS_TAG + "." + HasTagTable.COLUMN_TAG_ID +
 					" = " + 
 					TagsTable.TABLE_TAGS + "." + TagsTable.COLUMN_TAG_ID;
-			queryBuilder.setTables(tables);
+			
+			// WILL BE THE TABLE USED AFTER TESTING
+			String tmpTables = MoviesTable.TABLE_MOVIES + " LEFT OUTER JOIN " +
+					HasTagTable.TABLE_HAS_TAG + " ON " + 
+					MoviesTable.TABLE_MOVIES + "." + MoviesTable.COLUMN_MOVIE_ID + 
+					" = " +
+					HasTagTable.TABLE_HAS_TAG + "." + HasTagTable.COLUMN_TAG_ID +
+					" LEFT OUTER JOIN " + TagsTable.TABLE_TAGS + " ON " + 
+					HasTagTable.TABLE_HAS_TAG + "." + HasTagTable.COLUMN_TAG_ID +
+					" = " + 
+					TagsTable.TABLE_TAGS + "." + TagsTable.COLUMN_TAG_ID;
+			
+			queryBuilder.setTables(tables);		
 			break;
 	    default:
 	        throw new IllegalArgumentException("Unknown URI");

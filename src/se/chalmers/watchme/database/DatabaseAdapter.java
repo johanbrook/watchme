@@ -233,11 +233,12 @@ public class DatabaseAdapter {
 		List<Tag> tags = new ArrayList<Tag>();
 		
 		String selection = HasTagTable.COLUMN_MOVIE_ID + " = " + movie.getId();
-		Cursor cursor = contentResolver.query(uri_has_tag, null, selection, null, null);
+		String[] projection = { TagsTable.COLUMN_TAG_ID, TagsTable.COLUMN_NAME };
+		Cursor cursor = contentResolver.query(uri_has_tag, projection, selection, null, null);
 		
 		while(cursor.moveToNext()) {
-			long id = Long.parseLong(cursor.getString(2));
-			String name = cursor.getString(3);
+			long id = Long.parseLong(cursor.getString(0));
+			String name = cursor.getString(1);
 			
 			Tag tag = new Tag(name);
 			tag.setId(id);
@@ -255,6 +256,27 @@ public class DatabaseAdapter {
 	 */
 	public List<Movie> getAttachedMovies(Tag tag) {
 		// TODO Change implementation for CASE HAS_TAG in DatabaseApapter:query
+		
+		List<Movie> movies = new ArrayList<Movie>();
+		
+		String selection = HasTagTable.COLUMN_TAG_ID + " = " + tag.getId();
+		Cursor cursor = contentResolver.query(uri_has_tag, null, selection, null, null);
+		
+		while(cursor.moveToNext()) {
+			long id = Long.parseLong(cursor.getString(0));
+			String title = cursor.getString(1);
+			Calendar calendar = Calendar.getInstance();
+			calendar.setTimeInMillis(Long.parseLong(cursor.getString(4)));
+			int rating = Integer.parseInt(cursor.getString(2));
+			String note = cursor.getString(3);
+			
+			Movie movie = new Movie(title, calendar, rating, note);
+			movie.setId(id);
+			movie.setApiID(Integer.parseInt(cursor.getString(5)));
+			
+			movies.add(movie);
+		}
+		
 		return null;
 	}
 }
