@@ -1,6 +1,8 @@
 package se.chalmers.watchmetest.model;
 
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 
 import junit.framework.TestCase;
 
@@ -80,6 +82,28 @@ public class MovieTest extends TestCase {
 	 */
 	public void testHasNotApiID() {
 		assertFalse(batman.hasApiIDSet());
+	}
+	
+	public void testMoviePosterSize() {
+		batman.setPosterURL("someimage.png", Movie.PosterSize.MID);
+		
+		assertEquals("someimage.png", batman.getPosterURL(Movie.PosterSize.MID));
+	}
+	
+	public void testNonExistingPosterSize() {
+		assertNull(batman.getPosterURL(Movie.PosterSize.MID));
+		assertNull(batman.getPosterURL(Movie.PosterSize.THUMB));
+	}
+	
+	public void testGetAllPosterSizes() {
+		batman.setPosterURL("someimage1.png", Movie.PosterSize.MID);
+		batman.setPosterURL("someimage2.png", Movie.PosterSize.THUMB);
+		
+		Map<Movie.PosterSize, String> posters = new HashMap<Movie.PosterSize, String>();
+		posters.put(Movie.PosterSize.MID, "someimage1.png");
+		posters.put(Movie.PosterSize.THUMB, "someimage2.png");
+		
+		assertEquals(posters, batman.getPosterURLs());
 	}
 	
 	public void testEquals() {
