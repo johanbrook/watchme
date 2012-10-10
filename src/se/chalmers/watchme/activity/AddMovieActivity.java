@@ -169,7 +169,6 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
 	    movieValues.put(MoviesTable.COLUMN_POSTER_LARGE, movie.getPosterURL(Movie.PosterSize.MID));
 	    movieValues.put(MoviesTable.COLUMN_POSTER_SMALL, movie.getPosterURL(Movie.PosterSize.THUMB));
 	    
-	    System.out.println("CALLING INSERT");
 		Uri uri_movie_id = getContentResolver().insert(uri_movies, movieValues);
 		int movieId = Integer.parseInt(uri_movie_id.getLastPathSegment());
     	

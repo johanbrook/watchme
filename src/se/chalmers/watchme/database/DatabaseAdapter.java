@@ -242,7 +242,7 @@ public class DatabaseAdapter {
 		List<Tag> tags = new ArrayList<Tag>();
 		
 		String selection = HasTagTable.COLUMN_MOVIE_ID + " = " + movie.getId();
-		String[] projection = { TagsTable.COLUMN_TAG_ID, TagsTable.COLUMN_NAME };
+		String[] projection = { HasTagTable.COLUMN_TAG_ID, TagsTable.COLUMN_NAME };
 		Cursor cursor = contentResolver.query(uri_has_tag, projection, selection, null, null);
 		
 		while(cursor.moveToNext()) {
@@ -260,6 +260,7 @@ public class DatabaseAdapter {
 	
 	/**
 	 * Return all Movies attached to a Tag.
+	 * 
 	 * @param tag The tag.
 	 * @return all Movies attached to the Tag.
 	 */

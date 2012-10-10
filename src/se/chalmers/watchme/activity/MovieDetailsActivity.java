@@ -6,13 +6,16 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.util.Date;
+import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import se.chalmers.watchme.R;
+import se.chalmers.watchme.database.DatabaseAdapter;
 import se.chalmers.watchme.database.WatchMeContentProvider;
 import se.chalmers.watchme.model.Movie;
+import se.chalmers.watchme.model.Tag;
 import se.chalmers.watchme.net.IMDBHandler;
 import se.chalmers.watchme.net.MovieSource;
 import se.chalmers.watchme.ui.ImageDialog;
@@ -60,13 +63,17 @@ public class MovieDetailsActivity extends Activity {
 	
 	private ImageDialog dialog;
 	
-	private Uri uri_has_tags = WatchMeContentProvider.CONTENT_URI_HAS_TAG;
+	private Uri uri_has_tag = WatchMeContentProvider.CONTENT_URI_HAS_TAG;
+	
+	private DatabaseAdapter db;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_details);
         getActionBar().setDisplayHomeAsUpEnabled(true);
+        
+        db = new DatabaseAdapter(getContentResolver());
         
         this.movie = (Movie) getIntent().getSerializableExtra(MOVIE_EXTRA);
         this.imdb = new IMDBHandler();
@@ -127,18 +134,8 @@ public class MovieDetailsActivity extends Activity {
         ratingBar.setRating(m.getRating());
         releaseDate.setText(DateTimeUtils.toSimpleDate(m.getDate()));
         
-        Cursor tagCursor = getContentResolver().query(uri_has_tags, null,
-				"_id = " + m.getId(), null, null);
-        
-        String tags = "";
-		if (tagCursor.moveToFirst()) {
-	        tags = tagCursor.getString(3);
-	        while(tagCursor.moveToNext()) {
-	        	tags += tagCursor.getString(3) + ", ";
-	        }
-		}
-		
-		tagField.setText(tags);
+        List<Tag> tags = db.getAttachedTags(m);
+        tagField.setText(tags.toString());
     }
     
     /*
