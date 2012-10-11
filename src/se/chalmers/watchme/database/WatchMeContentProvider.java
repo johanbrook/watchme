@@ -63,26 +63,39 @@ public class WatchMeContentProvider extends ContentProvider {
 		switch (sUriMatcher.match(uri)) {
 		case MOVIES:
 			/*
-			 * movieSel[1] is supposed to contain: " = <movieId>"
+			 * movieSel is supposed to contain: " = <movieId>"
 			 */
 			
 			String movieSel = selection.split(MoviesTable.COLUMN_MOVIE_ID)[1];
+			
+			System.out.println("MOVIESELECTION: " + movieSel);
+			
 			Cursor movieCursor = sqlDB.query(HasTagTable.TABLE_HAS_TAG, null, 
 					HasTagTable.COLUMN_MOVIE_ID + movieSel, null, 
 					null, null, null);
+			
+			System.out.println("NBR OF TAGS ( BD ): " + movieCursor.getCount());
+			
 			deletedRows = sqlDB.delete(MoviesTable.TABLE_MOVIES, selection, 
 					selectionArgs);
+			
+			System.out.println("NBR OF TAGS: ( AD ) " + movieCursor.getCount());
 			while (movieCursor.moveToNext()) {
 				String tagSel = " = " + movieCursor.getString(1);
+				System.out.println("TAGSEL: " + tagSel);
 
 				Cursor tagCursor = sqlDB.query(HasTagTable.TABLE_HAS_TAG, null,
 						HasTagTable.COLUMN_TAG_ID + tagSel, null, null,
 						null, null);
+				System.out.println("NBR OF MOVIES ( BD ): " + tagCursor.getCount());
+				
 				if (!tagCursor.moveToFirst()) {
 					// If the tag isn't connected to any Movie, delete it.
 					sqlDB.delete(TagsTable.TABLE_TAGS, TagsTable.COLUMN_TAG_ID + tagSel, null);
 				}
+				tagCursor.close();
 			}
+			movieCursor.close();
 			
 			break;
 		case MOVIES_ID:

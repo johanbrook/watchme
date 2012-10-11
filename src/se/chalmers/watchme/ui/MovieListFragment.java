@@ -56,7 +56,7 @@ import android.widget.Toast;
 public class MovieListFragment extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor> {
 	
 	private SimpleCursorAdapter adapter;
-	private Uri uri = WatchMeContentProvider.CONTENT_URI_MOVIES;
+	private Uri uri_movies = WatchMeContentProvider.CONTENT_URI_MOVIES;
 	private AsyncTask<String, Void, Drawable> imageTask;
 	private DatabaseAdapter db;
 	
@@ -185,7 +185,7 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
 				MoviesTable.COLUMN_POSTER_SMALL};
 		
 	    CursorLoader cursorLoader = new CursorLoader(getActivity(),
-	        uri, projection, null, null, null);
+	        uri_movies, projection, null, null, null);
 	    return cursorLoader;
 	}
 

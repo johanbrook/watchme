@@ -237,65 +237,45 @@ public class DatabaseAdapter {
 	}
 	
 	/**
-	 * Return all Tags attached to a Movie.
+	 * Return a Cursor containing all Tags attached to a Movie. 
+	 * Cursor.getString(0) contains the id of the Tag.
+	 * Cursor.getString(1) contains the name of the Tag.
 	 * 
 	 * @param movie The Movie.
 	 * @return all Tags attached to the Movie.
 	 */
-	public List<Tag> getAttachedTags(Movie movie) {
-		List<Tag> tags = new ArrayList<Tag>();
+	public Cursor getAttachedTags(Movie movie) {
 		
 		String selection = MoviesTable.TABLE_MOVIES + "." + 
 				MoviesTable.COLUMN_MOVIE_ID + " = " + movie.getId();
 		String[] projection = 
 			{ TagsTable.TABLE_TAGS + "." + TagsTable.COLUMN_TAG_ID, 
 				TagsTable.TABLE_TAGS + "." + TagsTable.COLUMN_NAME };
-		Cursor cursor = contentResolver.query(uri_has_tag, projection, selection, null, null);
-		
-		while(cursor.moveToNext()) {
-			long id = Long.parseLong(cursor.getString(0));
-			String name = cursor.getString(1);
-			
-			Tag tag = new Tag(name);
-			tag.setId(id);
-			
-			tags.add(tag);
-		}
-		
-		return tags;
+
+		return contentResolver.query(uri_has_tag, projection, selection, null, null);
 	}
 	
 	/**
-	 * Return all Movies attached to a Tag.
+	 * Return a Cursor containing all Movies attached to a Tag.
+	 * Cursor.getString(0) contains the id.
+	 * Cursor.getString(1) contains the title.
+	 * Cursor.getString(2) contains the rating.
+	 * Cursor.getString(3) contains the note.
+	 * Cursor.getString(4) contains the timeInMillis.
+	 * Cursor.getString(5) contains the IMDb-id
+	 * Cursor.getString(6) contains the large poster.
+	 * Cursor.getString(7) contains the small poster.
 	 * 
 	 * @param tag The tag.
 	 * @return all Movies attached to the Tag.
 	 */
-	public List<Movie> getAttachedMovies(Tag tag) {
-		// TODO Change implementation for CASE HAS_TAG in DatabaseApapter:query
-		
-		List<Movie> movies = new ArrayList<Movie>();
+	public Cursor getAttachedMovies(Tag tag) {
 		
 		String selection = HasTagTable.TABLE_HAS_TAG + "." + 
 				HasTagTable.COLUMN_TAG_ID + " = " + tag.getId();
 		
 		Cursor cursor = contentResolver.query(uri_has_tag, null, selection, null, null);
 		
-		while(cursor.moveToNext()) {
-			long id = Long.parseLong(cursor.getString(0));
-			String title = cursor.getString(1);
-			Calendar calendar = Calendar.getInstance();
-			calendar.setTimeInMillis(Long.parseLong(cursor.getString(4)));
-			int rating = Integer.parseInt(cursor.getString(2));
-			String note = cursor.getString(3);
-			
-			Movie movie = new Movie(title, calendar, rating, note);
-			movie.setId(id);
-			movie.setApiID(Integer.parseInt(cursor.getString(5)));
-			
-			movies.add(movie);
-		}
-		
-		return null;
+		return cursor;
 	}
 }

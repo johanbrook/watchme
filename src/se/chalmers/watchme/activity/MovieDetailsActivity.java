@@ -63,8 +63,6 @@ public class MovieDetailsActivity extends Activity {
 	
 	private ImageDialog dialog;
 	
-	private Uri uri_has_tag = WatchMeContentProvider.CONTENT_URI_HAS_TAG;
-	
 	private DatabaseAdapter db;
 
     @Override
@@ -72,8 +70,6 @@ public class MovieDetailsActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_details);
         getActionBar().setDisplayHomeAsUpEnabled(true);
-        
-        
         
         this.movie = (Movie) getIntent().getSerializableExtra(MOVIE_EXTRA);
         this.imdb = new IMDBHandler();
@@ -136,7 +132,14 @@ public class MovieDetailsActivity extends Activity {
         ratingBar.setRating(m.getRating());
         releaseDate.setText(DateTimeUtils.toSimpleDate(m.getDate()));
         
-        List<Tag> tags = db.getAttachedTags(m);
+        Cursor cursor = db.getAttachedTags(m);
+        String tags = "";
+        if(cursor.moveToFirst()) {
+        	tags = cursor.getString(1);
+        	while(cursor.moveToNext()) {
+        		tags = tags + "," + cursor.getString(1);
+        	}
+        }
         tagField.setText(tags.toString());
     }
     

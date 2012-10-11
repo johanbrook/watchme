@@ -14,8 +14,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import se.chalmers.watchme.database.DatabaseAdapter;
-import se.chalmers.watchme.database.MoviesTable;
-import se.chalmers.watchme.database.TagsTable;
 import se.chalmers.watchme.database.WatchMeContentProvider;
 import se.chalmers.watchme.model.Movie;
 import se.chalmers.watchme.model.Movie.PosterSize;
@@ -75,9 +73,6 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
 	
 	private Calendar releaseDate;
 	
-	private Uri uri_movies = WatchMeContentProvider.CONTENT_URI_MOVIES;
-	private Uri uri_has_tag = WatchMeContentProvider.CONTENT_URI_HAS_TAG;
-	
 	private DatabaseAdapter db;
 	
     @SuppressLint("NewApi")
@@ -86,7 +81,6 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_movie);
         getActionBar().setDisplayHomeAsUpEnabled(true);
-        
         
         this.releaseDate = Calendar.getInstance();
         this.autoCompleteAdapter = new AutoCompleteAdapter(this, R.layout.auto_complete_item, new IMDBHandler());
@@ -169,22 +163,15 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
 		// Insert into database
 		db.addMovie(movie);
 		
-    	// TODO Better suited list for tags?
-    	// TODO Do we really need the list?
-		List<Tag> newTags = new ArrayList<Tag>();
-		
 		/* 
 		 * Split the text input into separate strings input at
 		 * commas (",") from tag-field
 		 */
 		String [] tagStrings = tagField.getText().toString().split(",");
-		
-		ContentValues tagValues;
 		Tag tag;
 		
 		for(String tagString : tagStrings) {
 			if (!tagString.equals("")) {
-				tagValues = new ContentValues();
 
 				/*
 				 * Remove whitespaces from the beginning and end of each string
@@ -192,12 +179,6 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
 				 */
 				tag = new Tag(tagString.trim());
 				db.attachTag(movie, tag);
-				/*
-				tagValues.put(MoviesTable.COLUMN_MOVIE_ID, movieId);
-				tagValues.put(TagsTable.COLUMN_NAME, tag.getSlug());
-				getContentResolver().insert(uri_has_tag, tagValues);
-				 */
-				newTags.add(tag);
 			}
 		}
 		
