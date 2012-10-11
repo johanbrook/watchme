@@ -16,36 +16,34 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-public class TagListFragment extends ListFragment /*implements LoaderManager.LoaderCallbacks<Cursor> */{
+public class TagListFragment extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor> {
 	
 	SimpleCursorAdapter adapter;
-	private Uri uri = WatchMeContentProvider.CONTENT_URI_TAGS;
-
+	private Uri uri_tags = WatchMeContentProvider.CONTENT_URI_TAGS;
 	
 	@Override
 	public void onActivityCreated(Bundle b) {
 		super.onActivityCreated(b);
-		/*Thread.currentThread().setContextClassLoader(getActivity().getClassLoader());
+		Thread.currentThread().setContextClassLoader(getActivity().getClassLoader());
 		
-		String[] from = new String[] { TagsTable.COLUMN_TAG_ID, TagsTable.COLUMN_NAME  };
+		String[] from = new String[] { TagsTable.COLUMN_TAG_ID, TagsTable.COLUMN_NAME };
 		int[] to = new int[] { android.R.id.text1 , android.R.id.text1 };
 		
 		getActivity().getSupportLoaderManager().initLoader(1, null, this);
 		adapter = new SimpleCursorAdapter(getActivity(), android.R.layout.simple_list_item_1 , null, from, to, 0);
-		*/
-		
+		setListAdapter(adapter);
 	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
+		
 		return inflater.inflate(R.layout.tag_list_fragment_view, container, false);
 	}
-	/*
 	public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
 		String[] projection = { TagsTable.COLUMN_TAG_ID, TagsTable.COLUMN_NAME };
 	    CursorLoader cursorLoader = new CursorLoader(getActivity(),
-	        uri, projection, null, null, null);
+	        uri_tags, projection, null, null, null);
 	    return cursorLoader;
 	}
 
@@ -57,6 +55,5 @@ public class TagListFragment extends ListFragment /*implements LoaderManager.Loa
 		// data is not available anymore, delete reference
 	    adapter.swapCursor(null);
 		
-	}*/
-
+	}
 }

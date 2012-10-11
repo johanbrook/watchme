@@ -258,18 +258,15 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
 			if(imageTask != null && imageTask.getStatus() == AsyncTask.Status.RUNNING) {
 				imageTask.cancel(true);
 			}
-			
-			final long movieId = id;
-			
 			Cursor movieCursor = getActivity().getContentResolver().query(uri, null,
-					"_id = " + movieId, null, null);
+					"_id = " + id, null, null);
 			
 			if (movieCursor != null) {
 		        movieCursor.moveToFirst();
 			}
 			
 			final Movie movie = new Movie(movieCursor.getString(1));
-			movie.setId(movieId);
+			movie.setId(id);
 			movie.setRating(movieCursor.getInt(2));
 			movie.setNote(movieCursor.getString(3));
 			Calendar c = Calendar.getInstance();
