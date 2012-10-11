@@ -1,5 +1,6 @@
 package se.chalmers.watchme.activity;
 
+import se.chalmers.watchme.R;
 import se.chalmers.watchme.ui.MovieListFragment;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -31,5 +32,13 @@ public class TagMovieListActivity extends FragmentActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+	
+	@Override
+	public void onBackPressed() {
+
+	    this.finish();
+	    overridePendingTransition(R.anim.right_slide_in, R.anim.right_slide_out);
+	    return;
+	}
 	
 }
