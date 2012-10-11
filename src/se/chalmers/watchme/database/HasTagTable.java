@@ -29,31 +29,9 @@ public class HasTagTable {
 			TagsTable.TABLE_TAGS + "(" + TagsTable.COLUMN_TAG_ID + 
 			") " +
 			")";
-
-	private static final String TRIGGER = "CREATE TRIGGER deleteMovie AFTER " +
-			"DELETE ON " + MoviesTable.TABLE_MOVIES +
-			" FOR EACH ROW BEGIN " +
-			"DELETE FROM " + HasTagTable.TABLE_HAS_TAG + " WHERE " +
-			HasTagTable.COLUMN_MOVIE_ID + " = old." + MoviesTable.COLUMN_MOVIE_ID +
-			"; END;";
-	
-	// TODO Delete if we don't get it to work correctly
-	private static final String TRIGGER2 = "CREATE TRIGGER deleteTag AFTER " +
-    		"DELETE ON " + HasTagTable.TABLE_HAS_TAG + 
-    		" BEGIN " +
-    		"SELECT CASE WHEN (1 > (SELECT Count(*) " +
-    		"FROM " + HasTagTable.TABLE_HAS_TAG + 
-    		" WHERE " + HasTagTable.COLUMN_TAG_ID + " = old." + 
-    		HasTagTable.COLUMN_TAG_ID + "))" + 
-    		" THEN " +
-    		"DELETE FROM " + TagsTable.TABLE_TAGS + " WHERE " + 
-    		TagsTable.COLUMN_TAG_ID + " = old." + HasTagTable.COLUMN_TAG_ID +
-    		"; END; " +
-    		"END;";
 	
 	public static void onCreate(SQLiteDatabase db) {
 		db.execSQL(CREATE_HAS_TAG_TABLE);
-		db.execSQL(TRIGGER);
 	}
 
 	public static void onUpgrade(SQLiteDatabase db, int oldVersion,
