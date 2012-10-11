@@ -66,6 +66,7 @@ public class TagListFragment extends ListFragment implements LoaderManager.Loade
 		//TODO: MainActivity as instance variable?
 		Intent intent = new Intent(getActivity(), TagMovieListActivity.class);
 		startActivity(intent);
+		getActivity().overridePendingTransition(R.anim.right_slide_in, R.anim.right_slide_out);
 		
 		//1. Get a cursor that points to the movies that should be shown i a list
 		//2. Call MainActivity.onTagClicked(Cursor cursor) and pass the cursor on for
