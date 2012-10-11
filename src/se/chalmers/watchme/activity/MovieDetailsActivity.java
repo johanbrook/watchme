@@ -39,6 +39,7 @@ import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 import android.support.v4.app.NavUtils;
 
 // TODO IMPORTANT! Minimum allowed API is 11 by resources used,
@@ -206,16 +207,27 @@ public class MovieDetailsActivity extends Activity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.activity_movie_details, menu);
+        
+        View itemView = menu.findItem(R.id.toggle_edit).getActionView();
+        
+        itemView.setOnClickListener(new OnEditClickListener());
+        
         return true;
     }
-
     
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
+
+    	Log.i("Custom-toggle", "Selected");
+    	
+    	switch (item.getItemId()) {
+        
+        	case android.R.id.home:
                 NavUtils.navigateUpFromSameTask(this);
                 return true;
+            
+        	case R.id.toggle_edit:
+                
         }
         return super.onOptionsItemSelected(item);
     }
@@ -330,4 +342,35 @@ public class MovieDetailsActivity extends Activity {
 		}
     	
     }
+    
+    /**
+     * Listener class for when user clicks the edit toggle button
+     * 
+     * <p>If the toggle button is checked only the data that is be editable is
+     * shown. The remaining data is hidden.</p>
+     * 
+     * <p>If the toggle button is unchecked everything is shown and the editable
+     * data is made uneditable. </p>
+     * 
+     * @author Robin
+     *
+     */
+    private class OnEditClickListener implements OnClickListener {
+
+		public void onClick(View v) {
+			
+			if(((ToggleButton) v).isChecked()) {
+    			Log.i("Custom-toggle", "On");
+    		}
+    		
+    		else {
+    			Log.i("Custom-toggle", "Off");
+    		}
+			
+		}
+    	
+    }
+    
+    
+    
 }

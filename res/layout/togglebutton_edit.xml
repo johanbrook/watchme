@@ -3,8 +3,8 @@
     android:id="@+id/toggle_edit"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:textOn="@string/edit_toggle"
-    android:textOff="@string/edit_toggle" >
+    android:textOn="@string/details_edit_toggle"
+    android:textOff="@string/details_edit_toggle" >
     
 
 </ToggleButton>
