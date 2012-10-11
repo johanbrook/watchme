@@ -13,6 +13,7 @@ import se.chalmers.watchme.activity.MovieDetailsActivity;
 import se.chalmers.watchme.database.MoviesTable;
 import se.chalmers.watchme.database.WatchMeContentProvider;
 import se.chalmers.watchme.model.Movie;
+import se.chalmers.watchme.net.ImageDownloadTask;
 import se.chalmers.watchme.utils.DateTimeUtils;
 import se.chalmers.watchme.utils.ImageCache;
 import android.annotation.TargetApi;
@@ -20,6 +21,8 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -48,7 +51,7 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
 	
 	private SimpleCursorAdapter adapter;
 	private Uri uri = WatchMeContentProvider.CONTENT_URI_MOVIES;
-	private AsyncTask<String, Void, Drawable> imageTask;
+	private AsyncTask<String, Void, Bitmap> imageTask;
 
 	
 	@Override
@@ -97,13 +100,27 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
 					return true;
 				}
 				
-				// Handle poster images
+				/*
+				 * Handle poster images
+				 */
+				
 				else if(columnIndex == cursor.getColumnIndexOrThrow(MoviesTable.COLUMN_POSTER_SMALL)) {
-					String smallImage = cursor.getString(columnIndex);
+					String smallImageUrl = cursor.getString(columnIndex);
+					final ImageView imageView = (ImageView) view;
 					
-					if(smallImage != null && !smallImage.isEmpty()) {
+					if(smallImageUrl != null && !smallImageUrl.isEmpty()) {
+						
 						// Fetch the image in an async task
-						imageTask = new ImageDownloadTask((ImageView) view).execute(new String[]{smallImage});
+						imageTask = new ImageDownloadTask(new ImageDownloadTask.TaskActions() {
+							
+							public void onFinished(Bitmap image) {
+								if(image != null) {
+									((ImageView) imageView).setImageBitmap(image);
+								}
+							}
+						});
+						
+						imageTask.execute(new String[]{smallImageUrl});
 					}
 					
 					return true;
@@ -150,50 +167,6 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
 	    adapter.swapCursor(null);
 		
 	}
-	
-	/**
-     * Async task for downloading the movie's poster.
-     * 
-     * @author Johan
-     *
-     */
-    private class ImageDownloadTask extends AsyncTask<String, Void, Drawable> {
-
-    	private ImageView view;
-    	
-    	public ImageDownloadTask(ImageView view) {
-    		this.view = view;
-    	}
-    	
-		@Override
-		protected Drawable doInBackground(String... params) {
-			String url = params[0];
-			
-			try {
-				URL imageURL = new URL(url);
-				URLConnection connection = imageURL.openConnection();
-				// Use local caches
-				connection.setUseCaches(true);
-				
-				return Drawable.createFromStream(connection.getInputStream(), "src");
-				
-			} catch (MalformedURLException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-	    	
-			return null;
-		}
-		
-		@Override
-		protected void onPostExecute(Drawable drawable) {
-			if(drawable != null) {
-				this.view.setImageDrawable(drawable);
-			}
-		}
-    	
-    }
 	
 	
 	/**

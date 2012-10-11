@@ -215,7 +215,11 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
      */
     private void setNotification(Movie movie) {
     	this.notifications.setMovieNotification(movie);
-    	Toast.makeText(this, "Notification set for " + DateTimeUtils.toSimpleDate(movie.getDate()), Toast.LENGTH_LONG).show();
+    	Toast.makeText(this, 
+    			"Notification set for " + 
+    			DateTimeUtils.toSimpleDate(movie.getDate()), 
+    			Toast.LENGTH_LONG)
+    		.show();
     }
     
     
@@ -291,6 +295,9 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
     /**
      * Class responsible for listening to click events in the auto complete
      * dropdown box. 
+     * 
+     * <p>Creates a new Movie from the JSON object chosen from the list and 
+     * tags it to the title field.</p>
      * 
      * @author Johan
      */
