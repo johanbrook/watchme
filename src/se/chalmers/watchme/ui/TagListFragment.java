@@ -2,8 +2,11 @@ package se.chalmers.watchme.ui;
 
 import se.chalmers.watchme.R;
 import se.chalmers.watchme.activity.MainActivity;
+import se.chalmers.watchme.activity.MovieDetailsActivity;
+import se.chalmers.watchme.activity.TagMovieListActivity;
 import se.chalmers.watchme.database.TagsTable;
 import se.chalmers.watchme.database.WatchMeContentProvider;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -61,6 +64,12 @@ public class TagListFragment extends ListFragment implements LoaderManager.Loade
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
 		//TODO: MainActivity as instance variable?
-		((MainActivity) getActivity()).onTagClicked();
+		Intent intent = new Intent(getActivity(), TagMovieListActivity.class);
+		startActivity(intent);
+		
+		//1. Get a cursor that points to the movies that should be shown i a list
+		//2. Call MainActivity.onTagClicked(Cursor cursor) and pass the cursor on for
+		//use in movielistfragment.
+			
 	}
 }

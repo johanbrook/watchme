@@ -31,6 +31,7 @@ public class MainActivity extends FragmentActivity {
 	
 	private ViewPager viewPager;
 	private TabsAdapter tabsAdapter;
+	ActionBar actionBar;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -42,7 +43,7 @@ public class MainActivity extends FragmentActivity {
         setContentView(viewPager);
         
         //setup actionbar
-        final ActionBar actionBar = getActionBar();
+        actionBar = getActionBar();
 		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 		actionBar.setDisplayOptions(0, ActionBar.DISPLAY_SHOW_TITLE);
 		
@@ -94,13 +95,6 @@ public class MainActivity extends FragmentActivity {
         super.onSaveInstanceState(outState);
         outState.putInt("tab", getActionBar().getSelectedNavigationIndex());
     }
-    
-    /**
-     * Called from TagListFragment when a tag is clicked
-     */
-	public void onTagClicked() {
-		viewPager.setCurrentItem(0);
-	}
 	
     //TODO: stolen from http://developer.android.com/reference/android/support/v4/view/ViewPager.html
     //need license or something?
