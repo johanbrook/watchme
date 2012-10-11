@@ -120,6 +120,7 @@ public class MovieHelper {
 	 * Creates a string with the elements in column 1 (with 0 being the first),
 	 * with the elements separated by ","
 	 * 
+	 * @author lisastenberg
 	 * @param cursor The Cursor.
 	 * @return a String that represents the cursor.
 	 */
@@ -129,9 +130,11 @@ public class MovieHelper {
         	s = cursor.getString(1);
         	
         	while(cursor.moveToNext()) {
-        		s = s + "," + cursor.getString(1);
+        		s = s + ", " + cursor.getString(1);
         	}
         }
+        cursor.close();
+        
         return s;
 	}
 }

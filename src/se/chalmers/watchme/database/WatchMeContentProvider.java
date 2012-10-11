@@ -250,7 +250,7 @@ public class WatchMeContentProvider extends ContentProvider {
 					HasTagTable.TABLE_HAS_TAG + " ON " + 
 					MoviesTable.TABLE_MOVIES + "." + MoviesTable.COLUMN_MOVIE_ID + 
 					" = " +
-					HasTagTable.TABLE_HAS_TAG + "." + HasTagTable.COLUMN_TAG_ID +
+					HasTagTable.TABLE_HAS_TAG + "." + HasTagTable.COLUMN_MOVIE_ID +
 					" LEFT OUTER JOIN " + TagsTable.TABLE_TAGS + " ON " + 
 					HasTagTable.TABLE_HAS_TAG + "." + HasTagTable.COLUMN_TAG_ID +
 					" = " + 

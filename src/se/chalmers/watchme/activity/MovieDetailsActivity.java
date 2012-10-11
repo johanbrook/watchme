@@ -144,14 +144,7 @@ public class MovieDetailsActivity extends Activity {
         ratingBar.setRating(m.getRating());
         releaseDate.setText(DateTimeUtils.toSimpleDate(m.getDate()));
         
-        Cursor cursor = db.getAttachedTags(m);
-        String tags = "";
-        if(cursor.moveToFirst()) {
-        	tags = cursor.getString(1);
-        	while(cursor.moveToNext()) {
-        		tags = tags + "," + cursor.getString(1);
-        	}
-        }
+        String tags = MovieHelper.getCursorString(db.getAttachedTags(m));
         tagField.setText(tags.toString());
     }
     
