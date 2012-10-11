@@ -1,21 +1,12 @@
 package se.chalmers.watchme.ui;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.CacheRequest;
-import java.net.CacheResponse;
 import java.net.MalformedURLException;
 import java.net.ResponseCache;
-import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Calendar;
-import java.util.List;
-import java.util.Map;
 
 import se.chalmers.watchme.R;
 import se.chalmers.watchme.activity.MovieDetailsActivity;
@@ -23,12 +14,16 @@ import se.chalmers.watchme.database.DatabaseAdapter;
 import se.chalmers.watchme.database.MoviesTable;
 import se.chalmers.watchme.database.WatchMeContentProvider;
 import se.chalmers.watchme.model.Movie;
+import se.chalmers.watchme.net.ImageDownloadTask;
 import se.chalmers.watchme.utils.DateTimeUtils;
+import se.chalmers.watchme.utils.ImageCache;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -57,7 +52,7 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
 	
 	private SimpleCursorAdapter adapter;
 	private Uri uri_movies = WatchMeContentProvider.CONTENT_URI_MOVIES;
-	private AsyncTask<String, Void, Drawable> imageTask;
+	private AsyncTask<String, Void, Bitmap> imageTask;
 	private DatabaseAdapter db;
 	
 	@Override
@@ -65,51 +60,10 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
 		super.onActivityCreated(b);
 		Thread.currentThread().setContextClassLoader(getActivity().getClassLoader());
 		
+		// Set up cache
+		
 		final File cacheDir = getActivity().getBaseContext().getCacheDir();
-		ResponseCache.setDefault(new ResponseCache() {
-		    
-			@Override
-			public CacheResponse get(URI uri, String s, Map<String, List<String>> headers) throws IOException {
-				final File file = new File(cacheDir, escape(uri.getPath()));
-		        if (file.exists()) {
-		            return new CacheResponse() {
-		                @Override
-		                public Map<String, List<String>> getHeaders() throws IOException {
-		                    return null;
-		                }
-
-		                @Override
-		                public InputStream getBody() throws IOException {
-		                    return new FileInputStream(file);
-		                }
-		            };
-		        } else {
-		            return null;
-		        }
-			}
-			
-
-		    @Override
-		    public CacheRequest put(URI uri, URLConnection urlConnection) throws IOException {
-		        final File file = new File(cacheDir, escape(urlConnection.getURL().getPath()));
-		        return new CacheRequest() {
-		            @Override
-		            public OutputStream getBody() throws IOException {
-		                return new FileOutputStream(file);
-		            }
-
-		            @Override
-		            public void abort() {
-		                file.delete();
-		            }
-		        };
-		    }
-
-		    private String escape(String url) {
-		       return url.replace("/", "-").replace(".", "-");
-		    }
-
-		});
+		ResponseCache.setDefault(new ImageCache(cacheDir));
 
 		String[] from = new String[] { 
 				MoviesTable.COLUMN_MOVIE_ID, 
@@ -147,13 +101,27 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
 					return true;
 				}
 				
-				// Handle poster images
+				/*
+				 * Handle poster images
+				 */
+				
 				else if(columnIndex == cursor.getColumnIndexOrThrow(MoviesTable.COLUMN_POSTER_SMALL)) {
-					String smallImage = cursor.getString(columnIndex);
+					String smallImageUrl = cursor.getString(columnIndex);
+					final ImageView imageView = (ImageView) view;
 					
-					if(smallImage != null && !smallImage.isEmpty()) {
+					if(smallImageUrl != null && !smallImageUrl.isEmpty()) {
+						
 						// Fetch the image in an async task
-						imageTask = new ImageDownloadTask((ImageView) view).execute(new String[]{smallImage});
+						imageTask = new ImageDownloadTask(new ImageDownloadTask.TaskActions() {
+							
+							public void onFinished(Bitmap image) {
+								if(image != null) {
+									((ImageView) imageView).setImageBitmap(image);
+								}
+							}
+						});
+						
+						imageTask.execute(new String[]{smallImageUrl});
 					}
 					
 					return true;
@@ -165,6 +133,8 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
 		
 		setListAdapter(adapter);
 	    
+		// Set up listeners to delete and view a movie
+		
         this.getListView().setOnItemClickListener(new OnDetailsListener());
 	    this.getListView().setOnItemLongClickListener(new OnDeleteListener());
 	}
@@ -198,50 +168,6 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
 	    adapter.swapCursor(null);
 		
 	}
-	
-	/**
-     * Async task for downloading the movie's poster.
-     * 
-     * @author Johan
-     *
-     */
-    private class ImageDownloadTask extends AsyncTask<String, Void, Drawable> {
-
-    	private ImageView view;
-    	
-    	public ImageDownloadTask(ImageView view) {
-    		this.view = view;
-    	}
-    	
-		@Override
-		protected Drawable doInBackground(String... params) {
-			String url = params[0];
-			
-			try {
-				URL imageURL = new URL(url);
-				URLConnection connection = imageURL.openConnection();
-				// Use local caches
-				connection.setUseCaches(true);
-				
-				return Drawable.createFromStream(connection.getInputStream(), "src");
-				
-			} catch (MalformedURLException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-	    	
-			return null;
-		}
-		
-		@Override
-		protected void onPostExecute(Drawable drawable) {
-			if(drawable != null) {
-				this.view.setImageDrawable(drawable);
-			}
-		}
-    	
-    }
 	
 	
 	/**
