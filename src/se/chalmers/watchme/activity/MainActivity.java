@@ -29,6 +29,9 @@ public class MainActivity extends FragmentActivity {
 	public static final String MOVIE_DETAILS_RATING = "se.chalmers.watchme.DETAILS_RATING";
 	public static final String MOVIE_DETAILS_NOTE = "se.chalmers.watchme.DETAILS_NOTE";
 	
+	//TODO: Correct to put key values for Intent.putExtra() here? 
+	public static final String EXTRA_CURSOR = "se.chalmers.watchme.CURSOR";
+	
 	private ViewPager viewPager;
 	private TabsAdapter tabsAdapter;
 	ActionBar actionBar;

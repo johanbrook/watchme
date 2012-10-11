@@ -57,7 +57,16 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
 	SimpleCursorAdapter adapter;
 	private Uri uri = WatchMeContentProvider.CONTENT_URI_MOVIES;
 	private AsyncTask<String, Void, Drawable> imageTask;
+	private String cursor;
+	
+	public MovieListFragment() {
+		super();
+	}
 
+	public MovieListFragment(String cursor) {
+		super();
+		this.cursor = cursor;
+	}
 	
 	@Override
 	public void onActivityCreated(Bundle b) {
@@ -163,6 +172,12 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
 		});
 		
 		setListAdapter(adapter);
+		
+		if (cursor != null) {
+			//If a cursor has been sent into the constructor of this, 
+			//swap to it. 
+			System.out.println("--- Cursor swapped ---");
+		}
 	    
         this.getListView().setOnItemClickListener(new OnDetailsListener());
 	    this.getListView().setOnItemLongClickListener(new OnDeleteListener());

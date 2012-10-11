@@ -63,14 +63,15 @@ public class TagListFragment extends ListFragment implements LoaderManager.Loade
 	
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
-		//TODO: MainActivity as instance variable?
+		/**
+		 * When a tag is clicked, create a cursor pointing at movies containing
+		 * that tag. Then send it to TagMovieListActivity using intent.putExtra()
+		 */
+		String imaginaryCursor = "cursor";
 		Intent intent = new Intent(getActivity(), TagMovieListActivity.class);
+		intent.putExtra(MainActivity.EXTRA_CURSOR, imaginaryCursor);
 		startActivity(intent);
 		getActivity().overridePendingTransition(R.anim.right_slide_in, R.anim.right_slide_out);
-		
-		//1. Get a cursor that points to the movies that should be shown i a list
-		//2. Call MainActivity.onTagClicked(Cursor cursor) and pass the cursor on for
-		//use in movielistfragment.
 			
 	}
 }
