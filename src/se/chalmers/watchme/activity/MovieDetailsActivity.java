@@ -22,7 +22,6 @@ import se.chalmers.watchme.net.MovieSource;
 import se.chalmers.watchme.ui.ImageDialog;
 import se.chalmers.watchme.utils.DateTimeUtils;
 import se.chalmers.watchme.utils.MovieHelper;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
