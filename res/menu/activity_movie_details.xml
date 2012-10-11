@@ -3,4 +3,7 @@
         android:title="@string/menu_settings"
         android:orderInCategory="100"
         android:showAsAction="never" />
+    <item android:id="@+id/button_edit"
+        android:showAsAction="always"
+        android:actionLayout="@menu/togglebutton_edit" />
 </menu>

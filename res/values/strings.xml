@@ -30,5 +30,6 @@
     <string name="details_activity_title">Movie Details</string>
     <string name="tab_movies">Movies</string>
     <string name="tab_tags">Tags</string>
+    <string name="edit_toggle">Edit</string>
 
 </resources>
