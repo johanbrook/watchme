@@ -45,15 +45,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
-
 // TODO Important! API level required does not match with what is used
 @TargetApi(11)
 public class MovieListFragment extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor> {
 	
 	private SimpleCursorAdapter adapter;
-	private Uri uri_movies = WatchMeContentProvider.CONTENT_URI_MOVIES;
-	private AsyncTask<String, Void, Bitmap> imageTask;
 	private DatabaseAdapter db;
+	
+	private AsyncTask<String, Void, Bitmap> imageTask;
 	
 	@Override
 	public void onActivityCreated(Bundle b) {
@@ -134,7 +133,6 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
 		setListAdapter(adapter);
 	    
 		// Set up listeners to delete and view a movie
-		
         this.getListView().setOnItemClickListener(new OnDetailsListener());
 	    this.getListView().setOnItemLongClickListener(new OnDeleteListener());
 	}
@@ -155,7 +153,9 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
 				MoviesTable.COLUMN_POSTER_SMALL};
 		
 	    CursorLoader cursorLoader = new CursorLoader(getActivity(),
-	        uri_movies, projection, null, null, null);
+	    		WatchMeContentProvider.CONTENT_URI_MOVIES, projection, 
+	    		null, null, null);
+	    
 	    return cursorLoader;
 	}
 
@@ -187,27 +187,7 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
 				imageTask.cancel(true);
 			}
 			
-			final long movieId = id;
-			
 			final Movie movie = db.getMovie(id);
-			/*
-			Cursor movieCursor = getActivity().getContentResolver().query(uri, null,
-					"_id = " + id, null, null);
-			
-			if (movieCursor != null) {
-		        movieCursor.moveToFirst();
-			}
-			
-			final Movie movie = new Movie(movieCursor.getString(1));
-			movie.setId(id);
-			movie.setRating(movieCursor.getInt(2));
-			movie.setNote(movieCursor.getString(3));
-			Calendar c = Calendar.getInstance();
-			c.setTimeInMillis(Long.parseLong(movieCursor.getString(4)));
-			movie.setDate(c);
-			movie.setApiID(movieCursor.getInt(5));
-			*/
-			//final Movie movie = (Movie) getListView().getItemAtPosition(arg2);
 			Intent intent = new Intent(getActivity(), MovieDetailsActivity.class);
 			
 			// TODO Fetch all data from database in DetailsActivity instead?
@@ -232,23 +212,12 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
 			db = new DatabaseAdapter(getActivity().getContentResolver());
 			
     		final Movie movie = db.getMovie(id);
-    		/*
-			final long movieId = id;
-			
-			String[] projection = { MoviesTable.COLUMN_TITLE };
-			Cursor movieCursor = getActivity().getContentResolver().query(uri, projection, "_id = " + movieId, null, null);
-			
-			if (movieCursor != null) {
-		        movieCursor.moveToFirst();
-			}
-			
-			final String movieTitle = movieCursor.getString(0);
-			*/
+    		
             AlertDialog.Builder alertbox = new AlertDialog.Builder(getActivity());
             alertbox.setMessage("Are you sure you want to delete the movie \"" + movie.getTitle() + "\"?");           
             alertbox.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface arg0, int arg1) {
-                	//getActivity().getContentResolver().delete(uri, "_id = " + movieId , null);
+                	
                 	db = new DatabaseAdapter(getActivity().getContentResolver());
                 	db.removeMovie(movie);
                 	
