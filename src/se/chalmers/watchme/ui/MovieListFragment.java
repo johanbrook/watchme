@@ -13,13 +13,9 @@ import java.net.ResponseCache;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import se.chalmers.watchme.R;
 import se.chalmers.watchme.activity.MovieDetailsActivity;
@@ -27,38 +23,33 @@ import se.chalmers.watchme.database.DatabaseAdapter;
 import se.chalmers.watchme.database.MoviesTable;
 import se.chalmers.watchme.database.WatchMeContentProvider;
 import se.chalmers.watchme.model.Movie;
-import se.chalmers.watchme.net.IMDBHandler;
 import se.chalmers.watchme.utils.DateTimeUtils;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
-import android.app.LoaderManager;
-import android.content.CursorLoader;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.Loader;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
-import android.text.format.DateFormat;
-import android.util.Log;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
+import android.support.v4.widget.SimpleCursorAdapter;
+import android.support.v4.widget.SimpleCursorAdapter.ViewBinder;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebView.FindListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
-import android.widget.ProgressBar;
-import android.widget.SimpleCursorAdapter;
-import android.widget.SimpleCursorAdapter.ViewBinder;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+
 
 // TODO Important! API level required does not match with what is used
 @TargetApi(11)
@@ -134,7 +125,7 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
 				R.id.date,
 				R.id.poster};
 		
-		getActivity().getLoaderManager().initLoader(0, null, this);
+		getActivity().getSupportLoaderManager().initLoader(0, null, this);
 		adapter = new SimpleCursorAdapter(getActivity(), R.layout.list_item_movie , null, from, to, 0);
 		
 		/**
@@ -275,14 +266,14 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
 			final Movie movie = db.getMovie(id);
 			/*
 			Cursor movieCursor = getActivity().getContentResolver().query(uri, null,
-					"_id = " + movieId, null, null);
+					"_id = " + id, null, null);
 			
 			if (movieCursor != null) {
 		        movieCursor.moveToFirst();
 			}
 			
 			final Movie movie = new Movie(movieCursor.getString(1));
-			movie.setId(movieId);
+			movie.setId(id);
 			movie.setRating(movieCursor.getInt(2));
 			movie.setNote(movieCursor.getString(3));
 			Calendar c = Calendar.getInstance();
