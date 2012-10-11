@@ -52,6 +52,14 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="se.chalmers.watchme.activity.MainActivity" />
         </activity>
+        
+        <activity 
+            android:name=".activity.TagMovieListActivity"
+            android.label="hej" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="se.chalmers.watchme.activity.MainActivity" />
+        </activity>
 
     </application>
 

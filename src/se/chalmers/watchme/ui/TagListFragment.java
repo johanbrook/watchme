@@ -1,9 +1,12 @@
 package se.chalmers.watchme.ui;
 
 import se.chalmers.watchme.R;
-import se.chalmers.watchme.database.MoviesTable;
+import se.chalmers.watchme.activity.MainActivity;
+import se.chalmers.watchme.activity.MovieDetailsActivity;
+import se.chalmers.watchme.activity.TagMovieListActivity;
 import se.chalmers.watchme.database.TagsTable;
 import se.chalmers.watchme.database.WatchMeContentProvider;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -15,6 +18,7 @@ import android.support.v4.widget.SimpleCursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 
 public class TagListFragment extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor> {
 	
@@ -54,5 +58,19 @@ public class TagListFragment extends ListFragment implements LoaderManager.Loade
 		// data is not available anymore, delete reference
 	    adapter.swapCursor(null);
 		
+	}
+	
+	@Override
+	public void onListItemClick(ListView l, View v, int position, long id) {
+		/**
+		 * When a tag is clicked, create a cursor pointing at movies containing
+		 * that tag. Then send it to TagMovieListActivity using intent.putExtra()
+		 */
+		String imaginaryCursor = "cursor";
+		Intent intent = new Intent(getActivity(), TagMovieListActivity.class);
+		intent.putExtra(MainActivity.EXTRA_CURSOR, imaginaryCursor);
+		startActivity(intent);
+		getActivity().overridePendingTransition(R.anim.right_slide_in, R.anim.right_slide_out);
+			
 	}
 }

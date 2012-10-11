@@ -27,8 +27,12 @@ public class MainActivity extends FragmentActivity {
 	public static final String MOVIE_DETAILS_RATING = "se.chalmers.watchme.DETAILS_RATING";
 	public static final String MOVIE_DETAILS_NOTE = "se.chalmers.watchme.DETAILS_NOTE";
 	
+	//TODO: Correct to put key values for Intent.putExtra() here? 
+	public static final String EXTRA_CURSOR = "se.chalmers.watchme.CURSOR";
+	
 	private ViewPager viewPager;
 	private TabsAdapter tabsAdapter;
+	ActionBar actionBar;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -40,7 +44,7 @@ public class MainActivity extends FragmentActivity {
         setContentView(viewPager);
         
         //setup actionbar
-        final ActionBar actionBar = getActionBar();
+        actionBar = getActionBar();
 		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 		actionBar.setDisplayOptions(0, ActionBar.DISPLAY_SHOW_TITLE);
 		
@@ -146,7 +150,6 @@ public class MainActivity extends FragmentActivity {
 		public int getCount() {
 			return this.tabs.size();
 		}
-
 
 	}
 }
