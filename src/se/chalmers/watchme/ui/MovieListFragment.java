@@ -10,6 +10,7 @@ import java.util.Calendar;
 
 import se.chalmers.watchme.R;
 import se.chalmers.watchme.activity.MovieDetailsActivity;
+import se.chalmers.watchme.database.DatabaseAdapter;
 import se.chalmers.watchme.database.MoviesTable;
 import se.chalmers.watchme.database.WatchMeContentProvider;
 import se.chalmers.watchme.model.Movie;
@@ -44,15 +45,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
-
 // TODO Important! API level required does not match with what is used
 @TargetApi(11)
 public class MovieListFragment extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor> {
 	
 	private SimpleCursorAdapter adapter;
-	private Uri uri = WatchMeContentProvider.CONTENT_URI_MOVIES;
+	private DatabaseAdapter db;
+	
 	private AsyncTask<String, Void, Bitmap> imageTask;
-
 	
 	@Override
 	public void onActivityCreated(Bundle b) {
@@ -133,7 +133,6 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
 		setListAdapter(adapter);
 	    
 		// Set up listeners to delete and view a movie
-		
         this.getListView().setOnItemClickListener(new OnDetailsListener());
 	    this.getListView().setOnItemLongClickListener(new OnDeleteListener());
 	}
@@ -154,7 +153,9 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
 				MoviesTable.COLUMN_POSTER_SMALL};
 		
 	    CursorLoader cursorLoader = new CursorLoader(getActivity(),
-	        uri, projection, null, null, null);
+	    		WatchMeContentProvider.CONTENT_URI_MOVIES, projection, 
+	    		null, null, null);
+	    
 	    return cursorLoader;
 	}
 
@@ -180,27 +181,13 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
 
 		public void onItemClick(AdapterView<?> parent, View view, int position,
 				long id) {
+			db = new DatabaseAdapter(getActivity().getContentResolver());
 			
 			if(imageTask != null && imageTask.getStatus() == AsyncTask.Status.RUNNING) {
 				imageTask.cancel(true);
 			}
-			Cursor movieCursor = getActivity().getContentResolver().query(uri, null,
-					"_id = " + id, null, null);
 			
-			if (movieCursor != null) {
-		        movieCursor.moveToFirst();
-			}
-			
-			final Movie movie = new Movie(movieCursor.getString(1));
-			movie.setId(id);
-			movie.setRating(movieCursor.getInt(2));
-			movie.setNote(movieCursor.getString(3));
-			Calendar c = Calendar.getInstance();
-			c.setTimeInMillis(Long.parseLong(movieCursor.getString(4)));
-			movie.setDate(c);
-			movie.setApiID(movieCursor.getInt(5));
-			
-			//final Movie movie = (Movie) getListView().getItemAtPosition(arg2);
+			final Movie movie = db.getMovie(id);
 			Intent intent = new Intent(getActivity(), MovieDetailsActivity.class);
 			
 			// TODO Fetch all data from database in DetailsActivity instead?
@@ -222,24 +209,19 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
      */
     private class OnDeleteListener implements OnItemLongClickListener {
     	public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-
-			final long movieId = id;
+			db = new DatabaseAdapter(getActivity().getContentResolver());
 			
-			String[] projection = { MoviesTable.COLUMN_TITLE };
-			Cursor movieCursor = getActivity().getContentResolver().query(uri, projection, "_id = " + movieId, null, null);
-			
-			if (movieCursor != null) {
-		        movieCursor.moveToFirst();
-			}
-			
-			final String movieTitle = movieCursor.getString(0);
-			
+    		final Movie movie = db.getMovie(id);
+    		
             AlertDialog.Builder alertbox = new AlertDialog.Builder(getActivity());
-            alertbox.setMessage("Are you sure you want to delete the movie \"" + movieTitle + "\"?");           
+            alertbox.setMessage("Are you sure you want to delete the movie \"" + movie.getTitle() + "\"?");           
             alertbox.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface arg0, int arg1) {
-                	getActivity().getContentResolver().delete(uri, "_id = " + movieId , null);
-                    Toast.makeText(getActivity().getApplicationContext(), "\"" + movieTitle + "\" was deleted" , Toast.LENGTH_SHORT).show();
+                	
+                	db = new DatabaseAdapter(getActivity().getContentResolver());
+                	db.removeMovie(movie);
+                	
+                    Toast.makeText(getActivity().getApplicationContext(), "\"" + movie.getTitle() + "\" was deleted" , Toast.LENGTH_SHORT).show();
                 }
             });
             alertbox.setNeutralButton("Cancel", new DialogInterface.OnClickListener() {

@@ -6,20 +6,22 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.util.Date;
+import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import se.chalmers.watchme.R;
+import se.chalmers.watchme.database.DatabaseAdapter;
 import se.chalmers.watchme.database.WatchMeContentProvider;
 import se.chalmers.watchme.model.Movie;
+import se.chalmers.watchme.model.Tag;
 import se.chalmers.watchme.net.IMDBHandler;
 import se.chalmers.watchme.net.ImageDownloadTask;
 import se.chalmers.watchme.net.MovieSource;
 import se.chalmers.watchme.ui.ImageDialog;
 import se.chalmers.watchme.utils.DateTimeUtils;
 import se.chalmers.watchme.utils.MovieHelper;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -61,7 +63,7 @@ public class MovieDetailsActivity extends Activity {
 	
 	private ImageDialog dialog;
 	
-	private Uri uri_has_tags = WatchMeContentProvider.CONTENT_URI_HAS_TAG;
+	private DatabaseAdapter db;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -129,6 +131,8 @@ public class MovieDetailsActivity extends Activity {
 	 * @param m The movie to fill the fields with
 	 */
     public void populateFieldsFromMovie(Movie m) {
+    	db = new DatabaseAdapter(this.getContentResolver());
+    	
 		setTitle(m.getTitle());
 		
 		TextView noteField = (TextView) findViewById(R.id.note_field);
@@ -140,18 +144,15 @@ public class MovieDetailsActivity extends Activity {
         ratingBar.setRating(m.getRating());
         releaseDate.setText(DateTimeUtils.toSimpleDate(m.getDate()));
         
-        Cursor tagCursor = getContentResolver().query(uri_has_tags, null,
-				"_id = " + m.getId(), null, null);
-        
+        Cursor cursor = db.getAttachedTags(m);
         String tags = "";
-		if (tagCursor.moveToFirst()) {
-	        tags = tagCursor.getString(3);
-	        while(tagCursor.moveToNext()) {
-	        	tags += tagCursor.getString(3) + ", ";
-	        }
-		}
-		
-		tagField.setText(tags);
+        if(cursor.moveToFirst()) {
+        	tags = cursor.getString(1);
+        	while(cursor.moveToNext()) {
+        		tags = tags + "," + cursor.getString(1);
+        	}
+        }
+        tagField.setText(tags.toString());
     }
     
     /*

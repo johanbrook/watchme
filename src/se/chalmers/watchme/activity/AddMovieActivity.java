@@ -13,8 +13,7 @@ import java.util.Map;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import se.chalmers.watchme.database.MoviesTable;
-import se.chalmers.watchme.database.TagsTable;
+import se.chalmers.watchme.database.DatabaseAdapter;
 import se.chalmers.watchme.database.WatchMeContentProvider;
 import se.chalmers.watchme.model.Movie;
 import se.chalmers.watchme.model.Movie.PosterSize;
@@ -74,8 +73,7 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
 	
 	private Calendar releaseDate;
 	
-	private Uri uri_movies = WatchMeContentProvider.CONTENT_URI_MOVIES;
-	private Uri uri_has_tags = WatchMeContentProvider.CONTENT_URI_HAS_TAG;
+	private DatabaseAdapter db;
 	
     @SuppressLint("NewApi")
 	@Override
@@ -133,7 +131,8 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
     }
     
     private void addMovie() {
-
+    	db = new DatabaseAdapter(this.getContentResolver());
+    	
     	// Get the movie from the auto-complete field 
     	Movie movie = (Movie) this.titleField.getTag();
     	String title = this.titleField.getText().toString();
@@ -162,45 +161,24 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
 		Log.i("Custom", movie.getPosterURLs().toString());
 		
 		// Insert into database
-		ContentValues movieValues = new ContentValues();
-	    movieValues.put(MoviesTable.COLUMN_TITLE, movie.getTitle());
-	    movieValues.put(MoviesTable.COLUMN_RATING, movie.getRating());
-	    movieValues.put(MoviesTable.COLUMN_NOTE, movie.getNote());
-	    movieValues.put(MoviesTable.COLUMN_DATE, movie.getDate().getTimeInMillis());
-	    movieValues.put(MoviesTable.COLUMN_IMDB_ID, movie.getApiID());
-	    movieValues.put(MoviesTable.COLUMN_POSTER_LARGE, movie.getPosterURL(Movie.PosterSize.MID));
-	    movieValues.put(MoviesTable.COLUMN_POSTER_SMALL, movie.getPosterURL(Movie.PosterSize.THUMB));
-	    
-		Uri uri_movie_id = getContentResolver().insert(uri_movies, movieValues);
-		int movieId = Integer.parseInt(uri_movie_id.getLastPathSegment());
-    	
-    	// TODO Better suited list for tags?
-    	// TODO Do we really need the list?
-		List<Tag> newTags = new ArrayList<Tag>();
+		db.addMovie(movie);
 		
 		/* 
 		 * Split the text input into separate strings input at
 		 * commas (",") from tag-field
 		 */
 		String [] tagStrings = tagField.getText().toString().split(",");
-		ContentValues tagValues;
 		Tag tag;
 		
 		for(String tagString : tagStrings) {
 			if (!tagString.equals("")) {
-				tagValues = new ContentValues();
 
 				/*
 				 * Remove whitespaces from the beginning and end of each string
 				 * to allow for multi-word tags.
 				 */
 				tag = new Tag(tagString.trim());
-				
-				tagValues.put(MoviesTable.COLUMN_MOVIE_ID, movieId);
-				tagValues.put(TagsTable.COLUMN_NAME, tag.getSlug());
-				getContentResolver().insert(uri_has_tags, tagValues);
-
-				newTags.add(tag);
+				db.attachTag(movie, tag);
 			}
 		}
 		

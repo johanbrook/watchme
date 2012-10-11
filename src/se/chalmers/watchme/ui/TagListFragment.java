@@ -19,7 +19,6 @@ import android.view.ViewGroup;
 public class TagListFragment extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor> {
 	
 	SimpleCursorAdapter adapter;
-	private Uri uri_tags = WatchMeContentProvider.CONTENT_URI_TAGS;
 	
 	@Override
 	public void onActivityCreated(Bundle b) {
@@ -43,7 +42,7 @@ public class TagListFragment extends ListFragment implements LoaderManager.Loade
 	public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
 		String[] projection = { TagsTable.COLUMN_TAG_ID, TagsTable.COLUMN_NAME };
 	    CursorLoader cursorLoader = new CursorLoader(getActivity(),
-	        uri_tags, projection, null, null, null);
+	    		WatchMeContentProvider.CONTENT_URI_TAGS, projection, null, null, null);
 	    return cursorLoader;
 	}
 
