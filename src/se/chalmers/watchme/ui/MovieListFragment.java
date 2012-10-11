@@ -53,7 +53,6 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
 	private DatabaseAdapter db;
 	
 	private AsyncTask<String, Void, Bitmap> imageTask;
-	private Uri uri = WatchMeContentProvider.CONTENT_URI_MOVIES;
 	private String cursor;
 	
 	public MovieListFragment() {
@@ -223,6 +222,7 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
      * The Movie object in the list is removed if the user confirms that he wants to remove the Movie.
      * 
      * @author Johan
+     * @author lisastenberg
      */
     private class OnDeleteListener implements OnItemLongClickListener {
     	public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
