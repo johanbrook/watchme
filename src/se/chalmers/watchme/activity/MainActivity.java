@@ -94,6 +94,13 @@ public class MainActivity extends FragmentActivity {
         super.onSaveInstanceState(outState);
         outState.putInt("tab", getActionBar().getSelectedNavigationIndex());
     }
+    
+    /**
+     * Called from TagListFragment when a tag is clicked
+     */
+	public void onTagClicked() {
+		viewPager.setCurrentItem(0);
+	}
 	
     //TODO: stolen from http://developer.android.com/reference/android/support/v4/view/ViewPager.html
     //need license or something?
@@ -163,7 +170,6 @@ public class MainActivity extends FragmentActivity {
 		public int getCount() {
 			return this.tabs.size();
 		}
-
 
 	}
 }

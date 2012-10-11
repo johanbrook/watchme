@@ -1,7 +1,7 @@
 package se.chalmers.watchme.ui;
 
 import se.chalmers.watchme.R;
-import se.chalmers.watchme.database.MoviesTable;
+import se.chalmers.watchme.activity.MainActivity;
 import se.chalmers.watchme.database.TagsTable;
 import se.chalmers.watchme.database.WatchMeContentProvider;
 import android.database.Cursor;
@@ -15,6 +15,7 @@ import android.support.v4.widget.SimpleCursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 
 public class TagListFragment extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor> {
 	
@@ -55,5 +56,11 @@ public class TagListFragment extends ListFragment implements LoaderManager.Loade
 		// data is not available anymore, delete reference
 	    adapter.swapCursor(null);
 		
+	}
+	
+	@Override
+	public void onListItemClick(ListView l, View v, int position, long id) {
+		//TODO: MainActivity as instance variable?
+		((MainActivity) getActivity()).onTagClicked();
 	}
 }
