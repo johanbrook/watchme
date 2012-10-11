@@ -9,9 +9,11 @@ import se.chalmers.watchme.database.MoviesTable;
 import se.chalmers.watchme.database.WatchMeContentProvider;
 import se.chalmers.watchme.model.Movie;
 import se.chalmers.watchme.utils.DateTimeUtils;
+import se.chalmers.watchme.utils.TagFilterSimpleCursorAdapter;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.LoaderManager;
+import android.content.ContentValues;
 import android.content.CursorLoader;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -37,7 +39,7 @@ import android.widget.Toast;
 @TargetApi(11)
 public class MovieListFragment extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor> {
 	
-	SimpleCursorAdapter adapter;
+	TagFilterSimpleCursorAdapter adapter;
 	private Uri uri = WatchMeContentProvider.CONTENT_URI_MOVIES;
 
 	
@@ -50,13 +52,16 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
 		int[] to = new int[] { 0 , R.id.title, R.id.raiting, R.id.date };
 		
 		getActivity().getLoaderManager().initLoader(0, null, this);
-		adapter = new SimpleCursorAdapter(getActivity(), R.layout.list_item_movie , null, from, to, 0);
+	    /*
+	    adapter = new SimpleCursorAdapter(getActivity(), R.layout.list_item_movie , null, from, to, 0); 
+		*/
+		adapter = new TagFilterSimpleCursorAdapter(getActivity(), R.layout.list_item_movie, null, from, to, 0, "action");
 		
 		/**
 		 * Convert date text from millis to dd-mm-yyyy format
 		 */
 		//TODO: Refactor?
-		adapter.setViewBinder(new ViewBinder() {
+		/*adapter.setViewBinder(new ViewBinder() {
 			
 			public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
 				if (columnIndex == 3) {
@@ -73,7 +78,7 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
 				return false;
 			}
 		});
-		
+		*/
 		setListAdapter(adapter);
 	    
         this.getListView().setOnItemClickListener(new OnDetailsListener());
