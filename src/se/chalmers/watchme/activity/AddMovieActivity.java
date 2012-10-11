@@ -204,10 +204,6 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
 			}
 		}
 		
-		Intent home = new Intent(this, MainActivity.class);
-		setResult(RESULT_OK, home);
-		home.putExtra("movie", movie);
-		
 		// Set a notification for the date picked
     	this.setNotification(movie);
     }

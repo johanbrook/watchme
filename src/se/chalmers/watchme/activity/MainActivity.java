@@ -22,8 +22,6 @@ import android.view.MenuItem;
 
 public class MainActivity extends FragmentActivity {
 	
-	public static final int ADD_MOVIE_REQUEST = 1;
-	
 	public static final String MOVIE_DETAILS_ID = "se.chalmers.watchme.DETAILS_ID";
 	public static final String MOVIE_DETAILS_TITLE = "se.chalmers.watchme.DETAILS_TITLE";
 	public static final String MOVIE_DETAILS_RATING = "se.chalmers.watchme.DETAILS_RATING";
@@ -55,19 +53,6 @@ public class MainActivity extends FragmentActivity {
 		}	
 
     }
-    
-    /**
-     * Callback for getting data from the "Add movie" activity.
-     * 
-     * On successful creation, add the created Movie object to this list.
-     */
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-    	if(requestCode == ADD_MOVIE_REQUEST && resultCode == RESULT_OK) {
-    		Movie m = (Movie) data.getSerializableExtra("movie");
-    		System.out.println(m);
-    	}
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -81,10 +66,8 @@ public class MainActivity extends FragmentActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         
-        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-        intent.setClass(this, AddMovieActivity.class);
-        
-        startActivityForResult(intent, ADD_MOVIE_REQUEST);
+        Intent intent = new Intent(this, AddMovieActivity.class);
+        startActivity(intent);
         
         return true;
     }
