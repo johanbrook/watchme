@@ -34,6 +34,7 @@ public class TagMovieListActivity extends FragmentActivity {
         switch (item.getItemId()) {
             case android.R.id.home:
                 NavUtils.navigateUpFromSameTask(this);
+                overridePendingTransition(R.anim.right_slide_in, R.anim.right_slide_out);
                 return true;
         }
         return super.onOptionsItemSelected(item);
