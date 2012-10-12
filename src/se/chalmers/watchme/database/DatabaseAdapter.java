@@ -132,6 +132,10 @@ public class DatabaseAdapter {
 		return movies;
 	}
 	
+	public Cursor getAllMoviesCursor() {
+		return contentResolver.query(uri_movies, null, null, null, null);
+	}
+	
 	/**
 	 * Returns the specified Tag.
 	 * 

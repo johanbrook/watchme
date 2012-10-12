@@ -57,6 +57,8 @@ public class TagListFragment extends ListFragment implements LoaderManager.Loade
 	}
 	
 	public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
+		
+		
 		String[] projection = { TagsTable.COLUMN_TAG_ID, TagsTable.COLUMN_NAME };
 	    CursorLoader cursorLoader = new CursorLoader(getActivity(),
 	    		WatchMeContentProvider.CONTENT_URI_TAGS, projection, null, null, null);
@@ -64,6 +66,7 @@ public class TagListFragment extends ListFragment implements LoaderManager.Loade
 	}
 
 	public void onLoadFinished(Loader<Cursor> arg0, Cursor arg1) {
+		
 		adapter.swapCursor(arg1);		
 	}
 

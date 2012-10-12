@@ -34,8 +34,11 @@ public class TagMovieListActivity extends FragmentActivity {
         FragmentTransaction ft = fragmentManager.beginTransaction();
         
         //Put cursor as a parameter to a new MovieListFragment
-        ft.add(android.R.id.content, new MovieListFragment(cursor));
+        MovieListFragment mlf = new MovieListFragment(cursor);
+        mlf.onCreate(savedInstanceState);
+        ft.add(android.R.id.content, mlf);
         ft.commit();
+        //mlf.onLoadFinished(null, cursor);
 	}
 	
 	@Override
