@@ -101,8 +101,8 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
         this.dateField.setText(DateTimeUtils.toSimpleDate(this.releaseDate));
         
         this.titleField = (AutoCompleteTextView) findViewById(R.id.title_field);
-        this.noteField = (TextView) findViewById(R.id.note_field);
-        this.tagField = (TextView) findViewById(R.id.tag_field);
+        this.noteField = (TextView) findViewById(R.id.note_field_addmovie);
+        this.tagField = (TextView) findViewById(R.id.tag_field_addmovie);
         
         // The progress bar when fetching IMDb movies
         this.progressSpinner = (ProgressBar) findViewById(R.id.title_progress);

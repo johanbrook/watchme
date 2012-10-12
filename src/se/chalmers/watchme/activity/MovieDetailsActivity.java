@@ -30,13 +30,18 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
+import android.text.InputType;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.AutoCompleteTextView;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RatingBar;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
@@ -119,9 +124,9 @@ public class MovieDetailsActivity extends Activity {
     public void populateFieldsFromMovie(Movie m) {
 		setTitle(m.getTitle());
 		
-		TextView noteField = (TextView) findViewById(R.id.note_field);
+		TextView noteField = (TextView) findViewById(R.id.note_field_details);
         RatingBar ratingBar = (RatingBar) findViewById(R.id.my_rating_bar);
-        TextView tagField = (TextView) findViewById(R.id.tag_field);
+        TextView tagField = (TextView) findViewById(R.id.tag_field_details);
         TextView releaseDate = (TextView) findViewById(R.id.releaseDate);
 		
     	noteField.setText(m.getNote());
@@ -359,12 +364,63 @@ public class MovieDetailsActivity extends Activity {
 
 		public void onClick(View v) {
 			
+			ImageView poster = (ImageView) findViewById(R.id.poster);
+			
+			AutoCompleteTextView title = (AutoCompleteTextView)
+					findViewById(R.id.title_field);
+			
+			TextView releaseDate = (TextView) findViewById(R.id.releaseDate);
+			Button releaseDateButton = (Button) findViewById(R.id.release_date_button);
+			TextView genres = (TextView) findViewById(R.id.genres);
+			TextView duration = (TextView) findViewById(R.id.duration);
+			
+			TextView myRatingLabel = (TextView) findViewById(R.id.my_rating_label);
+			RatingBar myRatingBar = (RatingBar) findViewById(R.id.my_rating_bar);
+			TextView imdbRatinglabel = (TextView) findViewById(R.id.imdb_rating_label);
+			TextView imdbRating = (TextView) findViewById(R.id.imdb_rating_number_label);
+			
+			EditText tags = (EditText) findViewById(R.id.tag_field_details);
+			EditText note = (EditText) findViewById(R.id.note_field_details);
+			
+			TextView plotTitle = (TextView) findViewById(R.id.plot_title);
+			TextView plotContent = (TextView) findViewById(R.id.plot_content);
+			TextView castTitle = (TextView) findViewById(R.id.cast_title);
+			TextView castList = (TextView) findViewById(R.id.cast_list);
+			
 			if(((ToggleButton) v).isChecked()) {
-    			Log.i("Custom-toggle", "On");
+				
+				title.setVisibility(AutoCompleteTextView.VISIBLE);
+				releaseDateButton.setVisibility(Button.VISIBLE);
+				myRatingBar.setIsIndicator(false);
+				
+				/*
+				 * setFocusable(true) does not work on EditText if it were
+				 * previously set to 'false'. This is a reported bug and at the
+				 * time of writing there is no fix. setFocusableInTouchMode(true)
+				 * gets the job done for now.
+				 */
+				tags.setFocusableInTouchMode(true);
+				tags.setFocusable(true);
+				note.setFocusableInTouchMode(true);
+				note.setFocusable(true);
+    			
     		}
     		
     		else {
-    			Log.i("Custom-toggle", "Off");
+				
+    			title.setVisibility(AutoCompleteTextView.GONE);
+    			releaseDateButton.setVisibility(Button.GONE);
+				myRatingBar.setIsIndicator(true);
+				
+				/*
+				 * Both unables the user from interracting with the text field
+				 * and removes the focus (if present)  
+				 */
+				tags.setFocusableInTouchMode(false);
+				tags.setFocusable(false);
+				note.setFocusableInTouchMode(false);
+				note.setFocusable(false);
+				
     		}
 			
 		}

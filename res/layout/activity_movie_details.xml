@@ -1,5 +1,6 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/detailsview"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
@@ -24,16 +25,39 @@
 		        android:layout_marginLeft="5dp"
 		        android:contentDescription="@string/details_poster_description"
 		        android:src="@drawable/ic_launcher" />
+		    
+		    <AutoCompleteTextView
+		        android:id="@+id/title_field"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:layout_alignParentTop="true"
+		        android:layout_toRightOf="@+id/poster"
+		        android:layout_marginLeft="10dp"
+		        android:ems="10"
+		        android:gravity="center"
+		        android:hint="@string/input_movie_hint"
+		        android:inputType="textCapWords"
+		        android:visibility="gone" />
 		
 		    <TextView
 		        android:id="@+id/releaseDate"
 		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
 		        android:layout_toRightOf="@+id/poster"
+		        android:layout_below="@+id/title_field"
 		        android:layout_marginLeft="10dp"
 		        android:layout_marginTop="5dp"
 		        android:hint="@string/release_date_hint"
 		        android:textAppearance="?android:attr/textAppearanceLarge" />
+		    
+		    <Button 
+		        android:id="@+id/release_date_button"
+		    	android:layout_width="wrap_content" 
+		    	android:layout_height="wrap_content"
+		    	android:layout_toRightOf="@+id/releaseDate"
+		    	android:layout_below="@+id/title_field"
+		    	android:text="@string/release_date_button"
+		        android:visibility="gone" />
 		    
 		    <TextView
 		        android:id="@+id/genres"
@@ -89,7 +113,8 @@
 		            android:layout_width="wrap_content"
 		            android:layout_height="wrap_content"
 		            android:layout_marginTop="10dp"
-		            android:isIndicator="true" />
+		            android:isIndicator="true"
+		            android:stepSize="1.0" />
 		        
 		    </LinearLayout>
 		    
@@ -122,7 +147,7 @@
 	    </LinearLayout>
 	
 	    <EditText
-	        android:id="@+id/tag_field"
+	        android:id="@+id/tag_field_details"
 	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"
 	        android:layout_below="@+id/rating_area"
@@ -138,10 +163,10 @@
 	        android:singleLine="false" />
 	    
 	    <EditText
-	        android:id="@+id/note_field"
+	        android:id="@+id/note_field_details"
 	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"
-	        android:layout_below="@+id/tag_field"
+	        android:layout_below="@id/tag_field_details"
 	        android:layout_marginLeft="10dip"
 	        android:layout_marginRight="10dip"
 	        android:layout_marginTop="20dp"
@@ -157,7 +182,7 @@
 	        android:id="@+id/plot_title"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
-	        android:layout_below="@+id/note_field"
+	        android:layout_below="@id/note_field_details"
 	        android:layout_marginTop="20dp"
 	        android:layout_marginRight="10dp"
 	        android:layout_marginLeft="10dp"
