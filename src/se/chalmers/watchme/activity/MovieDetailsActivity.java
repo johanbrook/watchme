@@ -146,7 +146,9 @@ public class MovieDetailsActivity extends Activity {
         
         db = new DatabaseAdapter(this.getContentResolver());
         String tags = MovieHelper.getCursorString(db.getAttachedTags(m));
-        tagField.setText(tags.toString());
+        if(tags != null && !tags.isEmpty()) {
+        	tagField.setText(tags);
+        }
     }
     
     /*

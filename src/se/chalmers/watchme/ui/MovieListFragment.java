@@ -15,6 +15,7 @@ import se.chalmers.watchme.database.MoviesTable;
 import se.chalmers.watchme.database.WatchMeContentProvider;
 import se.chalmers.watchme.model.Movie;
 import se.chalmers.watchme.net.ImageDownloadTask;
+import se.chalmers.watchme.notifications.NotificationClient;
 import se.chalmers.watchme.utils.DateTimeUtils;
 import se.chalmers.watchme.utils.ImageCache;
 import android.annotation.TargetApi;
@@ -242,7 +243,7 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
                 	
                 	db = new DatabaseAdapter(getActivity().getContentResolver());
                 	db.removeMovie(movie);
-                	
+                	NotificationClient.cancelNotification(getActivity(), movie);
                     Toast.makeText(getActivity().getApplicationContext(), "\"" + movie.getTitle() + "\" was deleted" , Toast.LENGTH_SHORT).show();
                 }
             });
