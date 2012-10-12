@@ -245,18 +245,29 @@ public class DatabaseAdapter {
 	 * Cursor.getString(0) contains the id of the Tag.
 	 * Cursor.getString(1) contains the name of the Tag.
 	 * 
-	 * @param movie The Movie.
+	 * @param movieId The id of the Movie.
 	 * @return all Tags attached to the Movie.
 	 */
-	public Cursor getAttachedTags(Movie movie) {
-		
+	public Cursor getAttachedTags(Long movieId) {
 		String selection = MoviesTable.TABLE_MOVIES + "." + 
-				MoviesTable.COLUMN_MOVIE_ID + " = " + movie.getId();
+				MoviesTable.COLUMN_MOVIE_ID + " = " + movieId;
 		String[] projection = 
 			{ TagsTable.TABLE_TAGS + "." + TagsTable.COLUMN_TAG_ID, 
 				TagsTable.TABLE_TAGS + "." + TagsTable.COLUMN_NAME };
 
 		return contentResolver.query(uri_has_tag, projection, selection, null, null);
+	}
+	
+	/**
+	 * Return a Cursor containing all Tags attached to a Movie. 
+	 * Cursor.getString(0) contains the id of the Tag.
+	 * Cursor.getString(1) contains the name of the Tag.
+	 * 
+	 * @param movie The Movie.
+	 * @return all Tags attached to the Movie.
+	 */
+	public Cursor getAttachedTags(Movie movie) {
+		return getAttachedTags(movie.getId());
 	}
 	
 	/**
