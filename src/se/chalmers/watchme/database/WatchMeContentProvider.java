@@ -219,6 +219,7 @@ public class WatchMeContentProvider extends ContentProvider {
 	public boolean onCreate() {
 		db = new DatabaseHelper(getContext());
 		System.out.println("--- CREATED DB IN CONTENT PROVIDER ---");
+		//db.onUpgrade(db.getReadableDatabase(), 1, 1);
 		return true;
 	}
 

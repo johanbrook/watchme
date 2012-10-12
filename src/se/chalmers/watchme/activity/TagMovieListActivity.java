@@ -1,8 +1,10 @@
 package se.chalmers.watchme.activity;
 
 import se.chalmers.watchme.R;
+import se.chalmers.watchme.database.DatabaseAdapter;
 import se.chalmers.watchme.ui.MovieListFragment;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -12,14 +14,21 @@ import android.view.MenuItem;
 
 public class TagMovieListActivity extends FragmentActivity {
 
+	private DatabaseAdapter db;
+	
 	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
         getActionBar().setDisplayHomeAsUpEnabled(true);
         
-        //Recieve cursor sent from TagListFragment
+        db = new DatabaseAdapter(this.getContentResolver());
+        
+        //Recieve tagId sent from TagListFragment
         Intent intent = getIntent();
-        String cursor = intent.getStringExtra(MainActivity.EXTRA_CURSOR);
+        Long tagId = intent.getLongExtra(MainActivity.TAG_ID, -1);
+        System.out.println("TAGID: " + tagId);
+        Cursor cursor = db.getAttachedMovies(tagId);
+        
+        System.out.println("CURSORCOUNT: " + cursor.getCount());
         
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction ft = fragmentManager.beginTransaction();

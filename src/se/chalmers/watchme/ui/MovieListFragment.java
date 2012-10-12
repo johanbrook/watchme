@@ -53,15 +53,17 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
 	private DatabaseAdapter db;
 	
 	private AsyncTask<String, Void, Bitmap> imageTask;
-	private String cursor;
+	private boolean recievedCursor = false;
+	private Cursor cursor;
 	
 	public MovieListFragment() {
 		super();
 	}
 
-	public MovieListFragment(String cursor) {
+	public MovieListFragment(Cursor cursor) {
 		super();
 		this.cursor = cursor;
+		recievedCursor = true;
 	}
 	
 	@Override
@@ -89,7 +91,7 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
 				R.id.poster};
 		
 		getActivity().getSupportLoaderManager().initLoader(0, null, this);
-		adapter = new SimpleCursorAdapter(getActivity(), R.layout.list_item_movie , null, from, to, 0);
+		adapter = new SimpleCursorAdapter(getActivity(), R.layout.list_item_movie , cursor, from, to, 0);
 		
 		/**
 		 * Convert date text from millis to dd-mm-yyyy format
@@ -141,12 +143,15 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
 		});
 		
 		setListAdapter(adapter);
-		
-		if (cursor != null) {
+		/*
+		if (recievedCursor) {
 			//If a cursor has been sent into the constructor of this, 
 			//swap to it. 
+			adapter.swapCursor(cursor);
 			System.out.println("--- Cursor swapped ---");
+			System.out.println("CURSOR COUNT: " + cursor.getCount());
 		}
+		*/
 	    
 		// Set up listeners to delete and view a movie
         this.getListView().setOnItemClickListener(new OnDetailsListener());

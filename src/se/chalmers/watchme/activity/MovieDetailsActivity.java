@@ -131,7 +131,7 @@ public class MovieDetailsActivity extends Activity {
 	 * @param m The movie to fill the fields with
 	 */
     public void populateFieldsFromMovie(Movie m) {
-    	db = new DatabaseAdapter(this.getContentResolver());
+    	
     	
 		setTitle(m.getTitle());
 		
@@ -144,6 +144,7 @@ public class MovieDetailsActivity extends Activity {
         ratingBar.setRating(m.getRating());
         releaseDate.setText(DateTimeUtils.toSimpleDate(m.getDate()));
         
+        db = new DatabaseAdapter(this.getContentResolver());
         String tags = MovieHelper.getCursorString(db.getAttachedTags(m));
         tagField.setText(tags.toString());
     }
