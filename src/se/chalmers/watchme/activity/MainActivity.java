@@ -1,17 +1,9 @@
 package se.chalmers.watchme.activity;
 
 import java.util.ArrayList;
+
 import se.chalmers.watchme.R;
 import se.chalmers.watchme.model.Movie;
-import android.net.Uri;
-
-import android.os.Bundle;
-import android.annotation.TargetApi;
-import android.app.AlertDialog;
-import android.app.ListActivity;
-import android.app.LoaderManager;
-import android.content.CursorLoader;
-import android.content.DialogInterface;
 import se.chalmers.watchme.ui.MovieListFragment;
 import se.chalmers.watchme.ui.TagListFragment;
 import android.app.ActionBar;
@@ -25,24 +17,22 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView.OnItemLongClickListener;
-import android.widget.SimpleCursorAdapter;
-import android.widget.Toast;
+
+
 
 public class MainActivity extends FragmentActivity {
-	
-	public static final int ADD_MOVIE_REQUEST = 1;
 	
 	public static final String MOVIE_DETAILS_ID = "se.chalmers.watchme.DETAILS_ID";
 	public static final String MOVIE_DETAILS_TITLE = "se.chalmers.watchme.DETAILS_TITLE";
 	public static final String MOVIE_DETAILS_RATING = "se.chalmers.watchme.DETAILS_RATING";
 	public static final String MOVIE_DETAILS_NOTE = "se.chalmers.watchme.DETAILS_NOTE";
 	
+	//TODO: Correct to put key values for Intent.putExtra() here? 
+	public static final String EXTRA_CURSOR = "se.chalmers.watchme.CURSOR";
+	
 	private ViewPager viewPager;
 	private TabsAdapter tabsAdapter;
+	ActionBar actionBar;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -54,7 +44,7 @@ public class MainActivity extends FragmentActivity {
         setContentView(viewPager);
         
         //setup actionbar
-        final ActionBar actionBar = getActionBar();
+        actionBar = getActionBar();
 		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 		actionBar.setDisplayOptions(0, ActionBar.DISPLAY_SHOW_TITLE);
 		
@@ -66,19 +56,6 @@ public class MainActivity extends FragmentActivity {
 			actionBar.setSelectedNavigationItem(savedInstanceState.getInt("tab", 0));
 		}	
 
-    }
-    
-    /**
-     * Callback for getting data from the "Add movie" activity.
-     * 
-     * On successful creation, add the created Movie object to this list.
-     */
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-    	if(requestCode == ADD_MOVIE_REQUEST && resultCode == RESULT_OK) {
-    		Movie m = (Movie) data.getSerializableExtra("movie");
-    		System.out.println(m);
-    	}
     }
 
     @Override
@@ -93,10 +70,8 @@ public class MainActivity extends FragmentActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         
-        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-        intent.setClass(this, AddMovieActivity.class);
-        
-        startActivityForResult(intent, ADD_MOVIE_REQUEST);
+        Intent intent = new Intent(this, AddMovieActivity.class);
+        startActivity(intent);
         
         return true;
     }
@@ -175,7 +150,6 @@ public class MainActivity extends FragmentActivity {
 		public int getCount() {
 			return this.tabs.size();
 		}
-
 
 	}
 }

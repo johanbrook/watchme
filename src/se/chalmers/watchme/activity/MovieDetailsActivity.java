@@ -6,19 +6,22 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.util.Date;
+import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import se.chalmers.watchme.R;
+import se.chalmers.watchme.database.DatabaseAdapter;
 import se.chalmers.watchme.database.WatchMeContentProvider;
 import se.chalmers.watchme.model.Movie;
+import se.chalmers.watchme.model.Tag;
 import se.chalmers.watchme.net.IMDBHandler;
+import se.chalmers.watchme.net.ImageDownloadTask;
 import se.chalmers.watchme.net.MovieSource;
 import se.chalmers.watchme.ui.ImageDialog;
 import se.chalmers.watchme.utils.DateTimeUtils;
 import se.chalmers.watchme.utils.MovieHelper;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -66,7 +69,7 @@ public class MovieDetailsActivity extends Activity {
 	
 	private ImageDialog dialog;
 	
-	private Uri uri_has_tags = WatchMeContentProvider.CONTENT_URI_HAS_TAG;
+	private DatabaseAdapter db;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -76,12 +79,24 @@ public class MovieDetailsActivity extends Activity {
         
         this.movie = (Movie) getIntent().getSerializableExtra(MOVIE_EXTRA);
         this.imdb = new IMDBHandler();
-        this.imageTask = new ImageDownloadTask();
         
         this.poster = (ImageView) findViewById(R.id.poster);
         this.poster.setOnClickListener(new OnPosterClickListener());
         
         this.dialog = new ImageDialog(this);
+        
+        /*
+    	 * Create a new image download task for the poster image
+    	 */
+    	this.imageTask = new ImageDownloadTask(new ImageDownloadTask.TaskActions() {
+			
+			public void onFinished(Bitmap image) {
+				if(image != null) {
+					poster.setImageBitmap(image);
+				}
+			}
+		});
+    	
         
         /*
          * If no movie id was received earlier then finish this activity before
@@ -122,6 +137,8 @@ public class MovieDetailsActivity extends Activity {
 	 * @param m The movie to fill the fields with
 	 */
     public void populateFieldsFromMovie(Movie m) {
+    	db = new DatabaseAdapter(this.getContentResolver());
+    	
 		setTitle(m.getTitle());
 		
 		TextView noteField = (TextView) findViewById(R.id.note_field_details);
@@ -133,18 +150,8 @@ public class MovieDetailsActivity extends Activity {
         ratingBar.setRating(m.getRating());
         releaseDate.setText(DateTimeUtils.toSimpleDate(m.getDate()));
         
-        Cursor tagCursor = getContentResolver().query(uri_has_tags, null,
-				"_id = " + m.getId(), null, null);
-        
-        String tags = "";
-		if (tagCursor.moveToFirst()) {
-	        tags = tagCursor.getString(3);
-	        while(tagCursor.moveToNext()) {
-	        	tags += tagCursor.getString(3) + ", ";
-	        }
-		}
-		
-		tagField.setText(tags);
+        String tags = MovieHelper.getCursorString(db.getAttachedTags(m));
+        tagField.setText(tags.toString());
     }
     
     /*
@@ -191,6 +198,8 @@ public class MovieDetailsActivity extends Activity {
     	
     	JSONArray posters = json.optJSONArray("posters");
     	String imageURL = MovieHelper.getPosterFromCollection(posters, Movie.PosterSize.MID);
+    	
+    	// Fetch movie poster
     	this.imageTask.execute(new String[] {imageURL});
     	
     	
@@ -237,40 +246,7 @@ public class MovieDetailsActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
-    
-    /**
-     * Async task for downloading the movie's poster.
-     * 
-     * @author Johan
-     *
-     */
-    private class ImageDownloadTask extends AsyncTask<String, Void, Bitmap> {
 
-		@Override
-		protected Bitmap doInBackground(String... params) {
-			InputStream in = null;
-			try {
-				in = (InputStream) new URL(params[0]).getContent();
-			} catch (MalformedURLException e) {
-				Log.e(getClass().getSimpleName(), "Bad URL format for poster");
-				e.printStackTrace();
-			} catch (IOException e) {
-				Log.e(getClass().getSimpleName(), "Error encoding image from URL");
-				e.printStackTrace();
-			}
-			
-			return BitmapFactory.decodeStream(in);
-		}
-		
-		@Override
-		protected void onPostExecute(Bitmap bm) {
-			if(bm != null) {
-				poster.setImageBitmap(bm);
-			}
-		}
-    	
-    }
-    
     /**
      * The IMDb info fetch task.
      * 

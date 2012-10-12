@@ -14,6 +14,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.database.Cursor;
 import android.util.Log;
 import se.chalmers.watchme.model.Movie;
 
@@ -111,5 +112,29 @@ public class MovieHelper {
 		}
 		
 		return list;
+	}
+	
+	/**
+	 * Return a String that represents a Cursor.
+	 * 
+	 * Creates a string with the elements in column 1 (with 0 being the first),
+	 * with the elements separated by ","
+	 * 
+	 * @author lisastenberg
+	 * @param cursor The Cursor.
+	 * @return a String that represents the cursor.
+	 */
+	public static String getCursorString(Cursor cursor) {
+        String s = "";
+        if(cursor.moveToFirst()) {
+        	s = cursor.getString(1);
+        	
+        	while(cursor.moveToNext()) {
+        		s = s + ", " + cursor.getString(1);
+        	}
+        }
+        cursor.close();
+        
+        return s;
 	}
 }
