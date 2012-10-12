@@ -362,10 +362,6 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
 
 		public void onClick(View v) {
 			
-			AutoCompleteTextView title = (AutoCompleteTextView)
-					findViewById(R.id.title_field);
-			
-			
 			Button releaseDateButton = (Button) findViewById(R.id.release_date_button);
 			TextView genres = (TextView) findViewById(R.id.genres);
 			TextView duration = (TextView) findViewById(R.id.duration);
@@ -385,7 +381,6 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
 			
 			if(((ToggleButton) v).isChecked()) {
 				
-				title.setVisibility(AutoCompleteTextView.VISIBLE);
 				releaseDateButton.setVisibility(Button.VISIBLE);
 				myRatingBar.setIsIndicator(false);
 				
@@ -404,13 +399,12 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
     		
     		else {
 				
-    			title.setVisibility(AutoCompleteTextView.GONE);
     			releaseDateButton.setVisibility(Button.GONE);
 				myRatingBar.setIsIndicator(true);
 				
 				/*
-				 * Both unables the user from interracting with the text field
-				 * and removes the focus (if present)  
+				 * Both disallows the user from interacting with the text field
+				 * and removes the focus from it (if focus is 'set')  
 				 */
 				tags.setFocusableInTouchMode(false);
 				tags.setFocusable(false);

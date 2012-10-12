@@ -25,26 +25,12 @@
 		        android:layout_marginLeft="5dp"
 		        android:contentDescription="@string/details_poster_description"
 		        android:src="@drawable/ic_launcher" />
-		    
-		    <AutoCompleteTextView
-		        android:id="@+id/title_field"
-		        android:layout_width="wrap_content"
-		        android:layout_height="wrap_content"
-		        android:layout_alignParentTop="true"
-		        android:layout_toRightOf="@+id/poster"
-		        android:layout_marginLeft="10dp"
-		        android:ems="10"
-		        android:gravity="center"
-		        android:hint="@string/input_movie_hint"
-		        android:inputType="textCapWords"
-		        android:visibility="gone" />
 		
 		    <TextView
 		        android:id="@+id/releaseDate"
 		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
 		        android:layout_toRightOf="@+id/poster"
-		        android:layout_below="@+id/title_field"
 		        android:layout_marginLeft="10dp"
 		        android:layout_marginTop="5dp"
 		        android:hint="@string/release_date_hint"
@@ -55,7 +41,6 @@
 		    	android:layout_width="wrap_content" 
 		    	android:layout_height="wrap_content"
 		    	android:layout_toRightOf="@+id/releaseDate"
-		    	android:layout_below="@+id/title_field"
 		    	android:text="@string/release_date_button"
 		    	android:layout_alignBaseline="@+id/releaseDate"
 		        android:visibility="gone"
