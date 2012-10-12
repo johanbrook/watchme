@@ -145,7 +145,9 @@ public class MovieDetailsActivity extends Activity {
         releaseDate.setText(DateTimeUtils.toSimpleDate(m.getDate()));
         
         String tags = MovieHelper.getCursorString(db.getAttachedTags(m));
-        tagField.setText(tags.toString());
+        if(tags != null && !tags.isEmpty()) {
+        	tagField.setText(tags);
+        }
     }
     
     /*
