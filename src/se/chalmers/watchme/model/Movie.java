@@ -287,4 +287,9 @@ public class Movie implements Serializable {
 			return this.title == tmp.title;
 		}
 	}
+	
+	@Override
+	public int hashCode() {
+		return this.title.hashCode();
+	}
 }
