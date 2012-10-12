@@ -381,7 +381,7 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
 			
 			if(((ToggleButton) v).isChecked()) {
 				
-				releaseDateButton.setVisibility(Button.VISIBLE);
+				releaseDateButton.setEnabled(true);
 				myRatingBar.setIsIndicator(false);
 				
 				/*
@@ -392,14 +392,16 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
 				 */
 				tags.setFocusableInTouchMode(true);
 				tags.setFocusable(true);
+				tags.setEnabled(true);
 				note.setFocusableInTouchMode(true);
 				note.setFocusable(true);
+				note.setEnabled(true);
     			
     		}
     		
     		else {
 				
-    			releaseDateButton.setVisibility(Button.GONE);
+    			releaseDateButton.setEnabled(false);
 				myRatingBar.setIsIndicator(true);
 				
 				/*
@@ -408,8 +410,10 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
 				 */
 				tags.setFocusableInTouchMode(false);
 				tags.setFocusable(false);
+				tags.setEnabled(false);
 				note.setFocusableInTouchMode(false);
 				note.setFocusable(false);
+				note.setEnabled(false);
 				
     		}
 			

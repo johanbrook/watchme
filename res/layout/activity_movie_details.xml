@@ -43,7 +43,7 @@
 		    	android:layout_toRightOf="@+id/releaseDate"
 		    	android:text="@string/release_date_button"
 		    	android:layout_alignBaseline="@+id/releaseDate"
-		        android:visibility="gone"
+		    	android:enabled="false"
 		        android:onClick="onDatePickerButtonClick" />
 		    
 		    <TextView
@@ -144,6 +144,7 @@
 	        android:background="@drawable/tagfield"
 	        android:ems="8"
 	        android:focusable="false"
+	        android:enabled="false"
 	        android:gravity="top"
 	        android:hint="@string/details_tag_area_hint"
 	        android:lines="3"
@@ -160,6 +161,7 @@
 	        android:background="@drawable/notefield"
 	        android:ems="8"
 	        android:focusable="false"
+	        android:enabled="false"
 	        android:gravity="top"
 	        android:hint="@string/details_note_area_hint"
 	        android:lines="5"
