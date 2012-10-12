@@ -74,6 +74,8 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
 	private DatabaseAdapter db;
 	
 	private Calendar tempReleaseDate;
+	
+	private Menu menu;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -228,9 +230,12 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.activity_movie_details, menu);
         
-        View itemView = menu.findItem(R.id.toggle_edit).getActionView();
+        View itemView = menu.findItem(R.id.toggle_edit_menu).getActionView();
         
         itemView.setOnClickListener(new OnEditClickListener());
+        
+        this.menu = menu;	// Can't get reference outside of this method,
+        					// reference needs to be stored here
         
         return true;
     }
@@ -349,7 +354,7 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
     /**
      * Listener class for when user clicks the edit toggle button
      * 
-     * <p>If the toggle button is checked only the data that is be editable is
+     * <p>If the toggle button is checked only the data that are be editable is
      * shown. The remaining data is hidden.</p>
      * 
      * <p>If the toggle button is unchecked everything is shown and the editable
@@ -361,6 +366,8 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
     private class OnEditClickListener implements OnClickListener {
 
 		public void onClick(View v) {
+			
+			MenuItem saveMenuButton = menu.findItem(R.id.save_button_edit_menu);
 			
 			Button releaseDateButton = (Button) findViewById(R.id.release_date_button);
 			TextView genres = (TextView) findViewById(R.id.genres);
@@ -381,6 +388,8 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
 			
 			if(((ToggleButton) v).isChecked()) {
 				
+				
+				saveMenuButton.setVisible(true);
 				releaseDateButton.setEnabled(true);
 				myRatingBar.setIsIndicator(false);
 				
@@ -401,6 +410,8 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
     		
     		else {
 				
+    			saveMenuButton.setVisible(false);
+    			
     			releaseDateButton.setEnabled(false);
 				myRatingBar.setIsIndicator(true);
 				
