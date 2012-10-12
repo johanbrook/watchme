@@ -28,4 +28,11 @@ public interface Notifiable {
 	 * @return The date to trigger
 	 */
 	public long getDateInMilliSeconds();
+	
+	/**
+	 * The string representation of this notifiable object.
+	 * 
+	 * @return The title to represent in the notification
+	 */
+	public String toString();
 }
