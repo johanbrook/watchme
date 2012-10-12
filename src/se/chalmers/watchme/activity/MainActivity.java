@@ -1,11 +1,14 @@
 package se.chalmers.watchme.activity;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import se.chalmers.watchme.R;
+import se.chalmers.watchme.database.DatabaseAdapter;
 import se.chalmers.watchme.model.Movie;
 import se.chalmers.watchme.ui.MovieListFragment;
 import se.chalmers.watchme.ui.TagListFragment;
+import se.chalmers.watchme.utils.DateTimeUtils;
 import android.app.ActionBar;
 import android.app.ActionBar.Tab;
 import android.content.Context;
@@ -15,6 +18,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -70,10 +74,41 @@ public class MainActivity extends FragmentActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         
-        Intent intent = new Intent(this, AddMovieActivity.class);
-        startActivity(intent);
-        
-        return true;
+    	Log.i("Custom", "Event, id: "+ item.getItemId() + ", Add: "+R.id.add_movie_button+ ", Email: "+R.id.send_email_button);
+    	
+    	switch(item.getItemId()) {
+    	case R.id.add_movie_menu:
+    		Intent intent = new Intent(this, AddMovieActivity.class);
+            startActivity(intent);
+            return true;
+    		
+    	case R.id.send_email_button:
+    		sendEmail();
+    		return true;
+    		
+    	default:
+    		return super.onOptionsItemSelected(item);
+    	}
+    	
+    }
+    
+    private void sendEmail() {
+    	Intent emailIntent = new Intent(android.content.Intent.ACTION_SEND);
+    	emailIntent.setType("text/plain");
+    	
+    	List<Movie> movies = new DatabaseAdapter(getContentResolver()).getAllMovies();
+    	
+    	// Parse all movies with their dates:
+    	String movieString = "";
+    	for(Movie m : movies) {
+    		movieString += m.getTitle() + " ("+DateTimeUtils.toSimpleDate(m.getDate()) + ")\n";
+    	}
+    	
+    	emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "WatchMe Movie List");
+    	emailIntent.putExtra(android.content.Intent.EXTRA_TEXT, movieString);  
+    	
+    	// Let the user choose email app to mail from
+    	startActivity(Intent.createChooser(emailIntent, "Send the movie list in:"));
     }
         
     @Override
