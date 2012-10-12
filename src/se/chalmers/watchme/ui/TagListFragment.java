@@ -79,9 +79,9 @@ public class TagListFragment extends ListFragment implements LoaderManager.Loade
 		 * When a tag is clicked, create a cursor pointing at movies containing
 		 * that tag. Then send it to TagMovieListActivity using intent.putExtra()
 		 */
-		String imaginaryCursor = "cursor";
+		
 		Intent intent = new Intent(getActivity(), TagMovieListActivity.class);
-		intent.putExtra(MainActivity.EXTRA_CURSOR, imaginaryCursor);
+		intent.putExtra(MainActivity.TAG_ID, id);
 		startActivity(intent);
 		getActivity().overridePendingTransition(R.anim.right_slide_in, R.anim.right_slide_out);
 			

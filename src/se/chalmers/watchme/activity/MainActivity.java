@@ -33,6 +33,7 @@ public class MainActivity extends FragmentActivity {
 	
 	//TODO: Correct to put key values for Intent.putExtra() here? 
 	public static final String EXTRA_CURSOR = "se.chalmers.watchme.CURSOR";
+	public static final String TAG_ID = "se.chalmers.watchme.TAG_ID";
 	
 	private ViewPager viewPager;
 	private TabsAdapter tabsAdapter;

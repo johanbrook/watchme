@@ -125,16 +125,19 @@ public class MovieHelper {
 	 * @return a String that represents the cursor.
 	 */
 	public static String getCursorString(Cursor cursor) {
-        String s = "";
-        if(cursor.moveToFirst()) {
-        	s = cursor.getString(1);
-        	
-        	while(cursor.moveToNext()) {
-        		s = s + ", " + cursor.getString(1);
-        	}
-        }
-        cursor.close();
-        
-        return s;
+		String s = "";
+		if (cursor.moveToFirst()) {
+			s = s + cursor.getString(1);
+
+			while (cursor.moveToNext()) {
+				s = s + ", " + cursor.getString(1);
+			}
+		}
+		cursor.close();
+
+		if (s.equals("null")) {
+			s = "";
+		}
+		return s;
 	}
 }
