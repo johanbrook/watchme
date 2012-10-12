@@ -152,7 +152,7 @@ public class MovieDetailsActivity extends Activity {
         		tags = tags + "," + cursor.getString(1);
         	}
         }
-        tagField.setText(tags.toString());
+        tagField.setText(tags);
     }
     
     /*
