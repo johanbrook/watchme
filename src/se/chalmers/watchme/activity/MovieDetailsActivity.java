@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -19,7 +20,9 @@ import se.chalmers.watchme.model.Tag;
 import se.chalmers.watchme.net.IMDBHandler;
 import se.chalmers.watchme.net.ImageDownloadTask;
 import se.chalmers.watchme.net.MovieSource;
+import se.chalmers.watchme.ui.DatePickerFragment;
 import se.chalmers.watchme.ui.ImageDialog;
+import se.chalmers.watchme.ui.DatePickerFragment.DatePickerListener;
 import se.chalmers.watchme.utils.DateTimeUtils;
 import se.chalmers.watchme.utils.MovieHelper;
 import android.os.AsyncTask;
@@ -48,12 +51,11 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.NavUtils;
 
-// TODO IMPORTANT! Minimum allowed API is 11 by resources used,
-// although it is specified as 8. Research and fix it
-@TargetApi(11)
-public class MovieDetailsActivity extends Activity {
+public class MovieDetailsActivity extends FragmentActivity implements DatePickerListener {
 	
 	public static final String MOVIE_EXTRA = "movie";
 	
@@ -70,6 +72,8 @@ public class MovieDetailsActivity extends Activity {
 	private ImageDialog dialog;
 	
 	private DatabaseAdapter db;
+	
+	private Calendar tempReleaseDate;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -129,6 +133,8 @@ public class MovieDetailsActivity extends Activity {
         // Populate various view fields from the Movie object
         populateFieldsFromMovie(this.movie);
         
+        tempReleaseDate = this.movie.getDate();
+        
     }
     
 	/**
@@ -144,11 +150,11 @@ public class MovieDetailsActivity extends Activity {
 		TextView noteField = (TextView) findViewById(R.id.note_field_details);
         RatingBar ratingBar = (RatingBar) findViewById(R.id.my_rating_bar);
         TextView tagField = (TextView) findViewById(R.id.tag_field_details);
-        TextView releaseDate = (TextView) findViewById(R.id.releaseDate);
+        TextView releaseDateLabel = (TextView) findViewById(R.id.releaseDate);
 		
     	noteField.setText(m.getNote());
         ratingBar.setRating(m.getRating());
-        releaseDate.setText(DateTimeUtils.toSimpleDate(m.getDate()));
+        releaseDateLabel.setText(DateTimeUtils.toSimpleDate(m.getDate()));
         
         String tags = MovieHelper.getCursorString(db.getAttachedTags(m));
         tagField.setText(tags.toString());
@@ -245,6 +251,22 @@ public class MovieDetailsActivity extends Activity {
         }
         return super.onOptionsItemSelected(item);
     }
+    
+    /**
+     * Click callback. Shows the date picker for a movie's release date
+     */
+    public void onDatePickerButtonClick(View v) {
+		DialogFragment datePickerFragment = new DatePickerFragment();
+        datePickerFragment.show(getSupportFragmentManager(),
+        		"datePicker");
+	}
+    
+	public void setDate(Calendar pickedDate) {
+		this.tempReleaseDate = pickedDate;
+		
+		TextView releaseDateLabel = (TextView) findViewById(R.id.releaseDate);
+		releaseDateLabel.setText(DateTimeUtils.toSimpleDate(tempReleaseDate));
+	}
 
 
     /**
@@ -340,12 +362,10 @@ public class MovieDetailsActivity extends Activity {
 
 		public void onClick(View v) {
 			
-			ImageView poster = (ImageView) findViewById(R.id.poster);
-			
 			AutoCompleteTextView title = (AutoCompleteTextView)
 					findViewById(R.id.title_field);
 			
-			TextView releaseDate = (TextView) findViewById(R.id.releaseDate);
+			
 			Button releaseDateButton = (Button) findViewById(R.id.release_date_button);
 			TextView genres = (TextView) findViewById(R.id.genres);
 			TextView duration = (TextView) findViewById(R.id.duration);
@@ -402,6 +422,8 @@ public class MovieDetailsActivity extends Activity {
 		}
     	
     }
+
+
     
     
     
