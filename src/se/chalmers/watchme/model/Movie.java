@@ -16,7 +16,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-public class Movie implements Serializable {
+import se.chalmers.watchme.notifications.Notifiable;
+
+public class Movie implements Serializable, Notifiable {
 	
 	/**
 	 * The JSON key for a movie's title
@@ -291,5 +293,13 @@ public class Movie implements Serializable {
 	@Override
 	public int hashCode() {
 		return this.title.hashCode();
+	}
+
+	public int getNotificationId() {
+		return this.hashCode();
+	}
+
+	public long getDateInMilliSeconds() {
+		return this.getDate().getTimeInMillis();
 	}
 }

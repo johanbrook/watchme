@@ -8,6 +8,10 @@
 
 package se.chalmers.watchme.notifications;
 
+import java.io.Serializable;
+
+import javax.net.ssl.ManagerFactoryParameters;
+
 import se.chalmers.watchme.activity.MainActivity;
 import se.chalmers.watchme.activity.MovieDetailsActivity;
 import se.chalmers.watchme.model.Movie;
@@ -51,7 +55,8 @@ public class NotifyService extends Service {
 	
 	@Override
 	public void onDestroy() {
-		this.manager.cancel(NOTIFICATION);
+		Log.i("Custom", "** Destroy notifications");
+		this.manager.cancelAll();
 	}
 	
 	@Override
@@ -72,17 +77,20 @@ public class NotifyService extends Service {
 	public IBinder onBind(Intent intent) {
 		return this.binder;
 	}
+
 	
-	private void showNotification(Movie movie) {
+	private void showNotification(Notifiable obj) {
+		
+		int id = obj.getNotificationId();
 
 		// The content of the notification box
 		CharSequence title = "Movie released";
-		CharSequence text = "'" + movie.getTitle() + "' is released!";
+		CharSequence text = "'" + obj.toString() + "' is released!";
 		int icon = R.drawable.ic_popup_reminder;
 		
 		// The intent to launch an activity if the user presses this notification
 		Intent detailsIntent = new Intent(this, MovieDetailsActivity.class);
-		detailsIntent.putExtra(MovieDetailsActivity.MOVIE_EXTRA, movie);
+		detailsIntent.putExtra(MovieDetailsActivity.MOVIE_EXTRA, (Serializable) obj);
 		
 		PendingIntent pending = PendingIntent.getActivity(this, 0, detailsIntent, 0);
 
@@ -98,9 +106,9 @@ public class NotifyService extends Service {
 			.build();
 		
 		// Send the notification to the system along with our id
-		this.manager.notify(NOTIFICATION, notification);
+		this.manager.notify(id, notification);
 		
-		Log.i("Custom", "Sent notification for movie "+ movie.getTitle());
+		Log.i("Custom", "Sent notification for movie "+ obj +", with id: "+id);
 	}
 
 }
