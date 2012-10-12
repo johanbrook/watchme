@@ -270,16 +270,34 @@ public class DatabaseAdapter {
 	 * Cursor.getString(6) contains the large poster.
 	 * Cursor.getString(7) contains the small poster.
 	 * 
-	 * @param tag The tag.
+	 * @param tagId The id of the Tag.
 	 * @return all Movies attached to the Tag.
 	 */
-	public Cursor getAttachedMovies(Tag tag) {
-		
+	public Cursor getAttachedMovies(long tagId) {
+
 		String selection = HasTagTable.TABLE_HAS_TAG + "." + 
-				HasTagTable.COLUMN_TAG_ID + " = " + tag.getId();
+				HasTagTable.COLUMN_TAG_ID + " = " + tagId;
 		
 		Cursor cursor = contentResolver.query(uri_has_tag, null, selection, null, null);
 		
 		return cursor;
+	}
+	
+	/**
+	 * Return a Cursor containing all Movies attached to a Tag.
+	 * Cursor.getString(0) contains the id.
+	 * Cursor.getString(1) contains the title.
+	 * Cursor.getString(2) contains the rating.
+	 * Cursor.getString(3) contains the note.
+	 * Cursor.getString(4) contains the timeInMillis.
+	 * Cursor.getString(5) contains the IMDb-id
+	 * Cursor.getString(6) contains the large poster.
+	 * Cursor.getString(7) contains the small poster.
+	 * 
+	 * @param tag The tag.
+	 * @return all Movies attached to the Tag.
+	 */
+	public Cursor getAttachedMovies(Tag tag) {
+		return getAttachedMovies(tag.getId());
 	}
 }
