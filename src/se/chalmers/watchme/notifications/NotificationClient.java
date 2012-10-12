@@ -11,6 +11,7 @@
 package se.chalmers.watchme.notifications;
 
 import se.chalmers.watchme.model.Movie;
+import android.app.NotificationManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -79,11 +80,36 @@ public class NotificationClient {
 	 * 
 	 * @param movie The movie
 	 */
-	public void setMovieNotification(Movie movie) {
+	public void setMovieNotification(Notifiable movie) {
 		
 		if(this.service != null){
 			Log.i("Custom", "Set date for notification");
 			this.service.setAlarmTaskForMovie(movie);
 		}
+	}
+	
+	/**
+	 * Cancel a notification for a notifiable object
+	 * 
+	 * @param obj The object to cancel notification for
+	 */
+	public void cancelNotification(Notifiable obj) {
+		cancelNotification(this.ctx, obj);
+	}
+	
+	/**
+	 * Cancel a notification for a notifiable object from
+	 * a certain context.
+	 * 
+	 * @param context The context
+	 * @param obj The object to cancel notification for
+	 */
+	public static void cancelNotification(Context context, Notifiable obj) {
+		NotificationManager manager = (NotificationManager) context.
+				getSystemService(Context.NOTIFICATION_SERVICE);
+		
+		int id = obj.getNotificationId();
+		manager.cancel(id);
+		Log.i("Custom", "** Notification "+id+" was cancelled");
 	}
 }
