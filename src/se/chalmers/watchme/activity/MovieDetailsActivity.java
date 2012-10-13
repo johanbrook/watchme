@@ -486,6 +486,17 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
 				Log.i("Custom", movie.getTitle() + " - detached Tags: " +
 						removedTags.toString());
 			}
+			
+			/*
+			 * Call the togglebuttons onClickListener to toggle it's state and
+			 * perform necessary actions
+			 */
+			((ToggleButton) findViewById(R.id.toggle_edit)).performClick();
+			
+			// TODO Save releaseDate
+			// TODO Save rating
+			// TODO Save note
+			
 		}
     }
     
