@@ -7,6 +7,7 @@ import java.net.URI;
 import java.net.URL;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.json.JSONArray;
@@ -69,8 +70,9 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
 	private final static int IMDB_FETCH_TIMEOUT = 10000;
 	
 	private ImageView poster;
-	
 	private ImageDialog dialog;
+	private EditText tagField;
+	private EditText noteField;
 	
 	private DatabaseAdapter db;
 	
@@ -90,6 +92,9 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
         
         this.poster = (ImageView) findViewById(R.id.poster);
         this.poster.setOnClickListener(new OnPosterClickListener());
+        
+        this.tagField = (EditText) findViewById(R.id.tag_field_details);
+        this.noteField = (EditText) findViewById(R.id.note_field_details);
         
         this.dialog = new ImageDialog(this);
         
@@ -157,20 +162,20 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
     	
 		setTitle(m.getTitle());
 		
-		TextView noteField = (TextView) findViewById(R.id.note_field_details);
         RatingBar ratingBar = (RatingBar) findViewById(R.id.my_rating_bar);
-        TextView tagField = (TextView) findViewById(R.id.tag_field_details);
         TextView releaseDateLabel = (TextView) findViewById(R.id.releaseDate);
 		
-    	noteField.setText(m.getNote());
+    	this.noteField.setText(m.getNote());
         ratingBar.setRating(m.getRating());
         releaseDateLabel.setText(DateTimeUtils.toSimpleDate(m.getDate()));
         
         db = new DatabaseAdapter(this.getContentResolver());
         String tags = MovieHelper.getCursorString(db.getAttachedTags(m));
+
         if(tags != null && !tags.isEmpty()) {
         	tagField.setText(tags);
         }
+        this.tagField.setText(tags.toString());
     }
     
     /*
@@ -241,9 +246,11 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.activity_movie_details, menu);
         
-        View itemView = menu.findItem(R.id.toggle_edit_menu).getActionView();
+        View toggleView = menu.findItem(R.id.toggle_edit_menu).getActionView();
+        toggleView.setOnClickListener(new OnEditClickListener());
         
-        itemView.setOnClickListener(new OnEditClickListener());
+        View saveView = menu.findItem(R.id.save_button_edit_menu).getActionView();
+        saveView.setOnClickListener(new OnSaveClickListener());
         
         this.menu = menu;	// Can't get reference outside of this method,
         					// reference needs to be stored here
@@ -253,16 +260,12 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
     
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
-    	Log.i("Custom-toggle", "Selected");
     	
     	switch (item.getItemId()) {
         
         	case android.R.id.home:
                 NavUtils.navigateUpFromSameTask(this);
                 return true;
-            
-        	case R.id.toggle_edit:
                 
         }
         return super.onOptionsItemSelected(item);
@@ -389,9 +392,6 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
 			TextView imdbRatinglabel = (TextView) findViewById(R.id.imdb_rating_label);
 			TextView imdbRating = (TextView) findViewById(R.id.imdb_rating_number_label);
 			
-			EditText tags = (EditText) findViewById(R.id.tag_field_details);
-			EditText note = (EditText) findViewById(R.id.note_field_details);
-			
 			TextView plotTitle = (TextView) findViewById(R.id.plot_title);
 			TextView plotContent = (TextView) findViewById(R.id.plot_content);
 			TextView castTitle = (TextView) findViewById(R.id.cast_title);
@@ -410,12 +410,12 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
 				 * time of writing there is no fix. setFocusableInTouchMode(true)
 				 * gets the job done for now.
 				 */
-				tags.setFocusableInTouchMode(true);
-				tags.setFocusable(true);
-				tags.setEnabled(true);
-				note.setFocusableInTouchMode(true);
-				note.setFocusable(true);
-				note.setEnabled(true);
+				tagField.setFocusableInTouchMode(true);
+				tagField.setFocusable(true);
+				tagField.setEnabled(true);
+				noteField.setFocusableInTouchMode(true);
+				noteField.setFocusable(true);
+				noteField.setEnabled(true);
     			
     		}
     		
@@ -430,20 +430,85 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
 				 * Both disallows the user from interacting with the text field
 				 * and removes the focus from it (if focus is 'set')  
 				 */
-				tags.setFocusableInTouchMode(false);
-				tags.setFocusable(false);
-				tags.setEnabled(false);
-				note.setFocusableInTouchMode(false);
-				note.setFocusable(false);
-				note.setEnabled(false);
+				tagField.setFocusableInTouchMode(false);
+				tagField.setFocusable(false);
+				tagField.setEnabled(false);
+				noteField.setFocusableInTouchMode(false);
+				noteField.setFocusable(false);
+				noteField.setEnabled(false);
 				
     		}
-			
 		}
-    	
     }
+    
+    /**
+     * Listener class for when user clicks the save button
+     * 
+     * Saves/Removes the tags that the user has added/removed 
+     * 
+     * @author Robin
+     *
+     */
+    private class OnSaveClickListener implements OnClickListener {
 
+		public void onClick(View v) {
+			
+			db = new DatabaseAdapter(getContentResolver());
+			
+			movie.setDate(tempReleaseDate);
+			movie.setNote(noteField.getText().toString());
+			
+			/* TODO The following code is almost the same as in
+			 * AddMovieActivity's addMove-method and DatabaseAdapter's
+			 * getMovie-method. Refactor code to a common method?
+			 * In Movie class' addTags-method perhaps?
+			 */
+			
+			/* 
+			 * Split the text input into separate strings input at
+			 * commas (",") from tag-field
+			 */
+			String [] tagStrings = tagField.getText().toString().split(",");
+			List<Tag> tempTags = new LinkedList<Tag>();
+			
+			for(String tagString : tagStrings) {
+				if (!tagString.equals("")) {
 
+					/*
+					 * Remove whitespaces from the beginning and end of each string
+					 * to allow for multi-word tags.
+					 */
+					tempTags.add(new Tag(tagString.trim()));
+				}
+			}
+			
+			/*
+			 * If there are some Tags in the new list that doesn't exist in the
+			 * old list, then those tags are new
+			 */
+			List<Tag> newTags = new LinkedList<Tag>(tempTags);
+			
+			if(newTags.removeAll(movie.getTags()) && !newTags.isEmpty()) {
+				db.attachTags(movie, newTags);
+				movie.addTags(newTags);
+				Log.i("Custom", movie.getTitle() + " - attached Tags: " +
+						newTags.toString());
+			}
+			
+			/*
+			 * If there are some Tags in the old list that doesn't exist in the
+			 * new list, then those tags have been removed
+			 */
+			List<Tag> removedTags = new LinkedList<Tag>(movie.getTags());
+			
+			if(removedTags.removeAll(tempTags) && !removedTags.isEmpty()) {
+				db.detachTags(movie, removedTags);
+				movie.removeTags(removedTags);
+				Log.i("Custom", movie.getTitle() + " - detached Tags: " +
+						removedTags.toString());
+			}
+		}
+    }
     
     
     

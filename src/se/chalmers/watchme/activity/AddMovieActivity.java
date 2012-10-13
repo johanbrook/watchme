@@ -166,7 +166,6 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
 		 * commas (",") from tag-field
 		 */
 		String [] tagStrings = tagField.getText().toString().split(",");
-		Tag tag;
 		
 		for(String tagString : tagStrings) {
 			if (!tagString.equals("")) {
@@ -175,7 +174,7 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
 				 * Remove whitespaces from the beginning and end of each string
 				 * to allow for multi-word tags.
 				 */
-				tag = new Tag(tagString.trim());
+				Tag tag = new Tag(tagString.trim());
 				db.attachTag(movie, tag);
 			}
 		}
