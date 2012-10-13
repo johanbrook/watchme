@@ -8,16 +8,11 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.Calendar;
 
-import event.Event;
-import event.EventBus;
-import event.EventHandler;
-
 import se.chalmers.watchme.R;
 import se.chalmers.watchme.activity.MovieDetailsActivity;
 import se.chalmers.watchme.database.DatabaseAdapter;
-import se.chalmers.watchme.database.HasTagTable;
 import se.chalmers.watchme.database.MoviesTable;
-import se.chalmers.watchme.database.TestCursorLoader;
+import se.chalmers.watchme.database.MyCursorLoader;
 import se.chalmers.watchme.database.WatchMeContentProvider;
 import se.chalmers.watchme.model.Movie;
 import se.chalmers.watchme.net.ImageDownloadTask;
@@ -28,7 +23,6 @@ import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.ContentObserver;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -36,10 +30,8 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v4.widget.SimpleCursorAdapter.ViewBinder;
@@ -56,7 +48,7 @@ import android.widget.Toast;
 
 // TODO Important! API level required does not match with what is used
 @TargetApi(11)
-public class MovieListFragment extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor>, EventHandler {
+public class MovieListFragment extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor> {
 	
 	private SimpleCursorAdapter adapter;
 	private DatabaseAdapter db;
@@ -67,15 +59,11 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
 	public MovieListFragment() {
 		super();
 		this.tagId = (long) -1;
-		System.out.println("----MovieListFragment(Cursor)----");
-		//EventBus.register(this);
 	}
 
 	public MovieListFragment(Long tagId) {
 		super();
-		//EventBus.register(this);
 		this.tagId = tagId;
-		System.out.println("----MovieListFragment(Cursor)----");
 		
 	}
 	
@@ -83,11 +71,6 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
 	public void onActivityCreated(Bundle b) {
 		super.onActivityCreated(b);
 		Thread.currentThread().setContextClassLoader(getActivity().getClassLoader());
-//		if(cursor == null) {
-//			db = new DatabaseAdapter(getActivity().getContentResolver());
-//			this.cursor = db.getAllMoviesCursor();
-//		}
-		// Set up cache
 		
 		final File cacheDir = getActivity().getBaseContext().getCacheDir();
 		ResponseCache.setDefault(new ImageCache(cacheDir));
@@ -163,8 +146,6 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
 		// Set up listeners to delete and view a movie
         this.getListView().setOnItemClickListener(new OnDetailsListener());
 	    this.getListView().setOnItemLongClickListener(new OnDeleteListener());
-	    
-	    System.out.println("----onActivityCreated()----");
 	}
 	
 	@Override
@@ -177,28 +158,12 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
 	@Override
 	public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
 		
-		System.out.println("--- onCreateLoader ---");
-		String[] projection = { 
-				MoviesTable.COLUMN_MOVIE_ID,
-				MoviesTable.COLUMN_TITLE, 
-				MoviesTable.COLUMN_RATING, 
-				MoviesTable.COLUMN_DATE,
-				MoviesTable.COLUMN_POSTER_SMALL};
-		
-		CursorLoader loader = new TestCursorLoader(getActivity(), 
-				WatchMeContentProvider.CONTENT_URI_MOVIES,
-				tagId,projection,null,null,null);
-		loader.forceLoad();
-		return loader;
-//	    return new CursorLoader(getActivity(),
-//	    		WatchMeContentProvider.CONTENT_URI_MOVIES, projection, 
-//	    		null, null, null);
-	    
+		return new MyCursorLoader(getActivity(), 
+				WatchMeContentProvider.CONTENT_URI_MOVIES,tagId,null);
 	}
 
 	@Override
 	public void onLoadFinished(Loader<Cursor> arg0, Cursor cursor) {
-		System.out.println("--- onLoadFinished ---");
 		adapter.swapCursor(cursor);
 		adapter.notifyDataSetChanged();
 	}
@@ -265,9 +230,6 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
                 	db = new DatabaseAdapter(getActivity().getContentResolver());
                 	db.removeMovie(movie);
                 	
-                	EventBus.publish(new Event(Event.Tag.MOVIE_TABLE_CHANGED, ""));
-                	EventBus.publish(new Event(Event.Tag.TAG_TABLE_CHANGED, ""));
-                	
                 	NotificationClient.cancelNotification(getActivity(), movie);
                     Toast.makeText(getActivity().getApplicationContext(), "\"" + movie.getTitle() + "\" was deleted" , Toast.LENGTH_SHORT).show();
                 }
@@ -281,17 +243,5 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
             alertbox.show();
 			return true;
 		}    	
-	}
-
-	@Override
-	public void onEvent(Event evt) {
-		/*System.out.println("--- EVENT RECIEVED ---");
-		if(evt.getTag() == Event.Tag.MOVIE_TABLE_CHANGED) {
-			System.out.println("--- MOVIE_TABLE_CHANGED ---");
-			adapter.notifyDataSetChanged();
-			System.out.println("Before invalidate");
-			this.getView().postInvalidate();
-			//getActivity().getContentResolver().registerContentObserver(WatchMeContentProvider.CONTENT_URI_MOVIES, true, new MyContentObserver(handler) );
-		}*/
 	}
 }

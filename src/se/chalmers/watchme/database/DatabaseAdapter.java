@@ -205,7 +205,7 @@ public class DatabaseAdapter {
 	 */
 	public List<Tag> getAllTags() {
 		List<Tag> tags = new ArrayList<Tag>();
-		Cursor cursor = contentResolver.query(uri_movies, null, null, null, null);
+		Cursor cursor = contentResolver.query(uri_tags, null, null, null, null);
 		
 		while(cursor.moveToNext()) {
 			long id = Long.parseLong(cursor.getString(0));
@@ -217,6 +217,25 @@ public class DatabaseAdapter {
 			tags.add(tag);
 		}
 		return tags;
+	}
+	
+	/**
+	 * Return a Cursor with all Tags in the Database.
+	 * 
+	 * @return all Tags in the Database.
+	 */
+	public Cursor getAllTagsCursor() {
+		return contentResolver.query(uri_tags, null, null, null, null);
+	}
+	
+	/**
+	 * Return a Cursor with all Tags in the Database in the specified order.
+	 * 
+	 * @param orderBy The attribute to order by.
+	 * @return all Tags in the Database in the specified order.
+	 */
+	public Cursor getAllTagsCursor(String orderBy) {
+		return contentResolver.query(uri_tags, null, null, null, orderBy);
 	}
 	
 	/**

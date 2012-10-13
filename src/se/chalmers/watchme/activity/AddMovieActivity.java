@@ -122,7 +122,6 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
         this.addButton.setEnabled(false);
     }
     
-    
     /**
      * Click callback. Create a new Movie object and set it on
      * the Intent, and then finish this Activity.
@@ -165,7 +164,6 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
 		
 		// Insert into database
 		db.addMovie(movie);
-		EventBus.publish(new Event(Event.Tag.MOVIE_TABLE_CHANGED, ""));
 		
 		/* 
 		 * Split the text input into separate strings input at
@@ -185,7 +183,6 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
 				db.attachTag(movie, tag);
 			}
 		}
-		EventBus.publish(new Event(Event.Tag.TAG_TABLE_CHANGED, ""));
 		
 		// Set a notification for the date picked
     	this.setNotification(movie);
@@ -205,13 +202,11 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
     		.show();
     }
     
-    
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.activity_add_movie, menu);
         return true;
     }
-    
     
     @Override
     protected void onStop() {
@@ -223,7 +218,6 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
     	
     	super.onStop();
     }
-
     
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -251,7 +245,6 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
         datePickerFragment.show(getSupportFragmentManager(),
         		"datePicker");
 	}
-
     
     private class AddButtonToggler implements TextWatcher {
         	
@@ -273,7 +266,6 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
 		}
 
     }
-    
     
     /**
      * Class responsible for listening to click events in the auto complete

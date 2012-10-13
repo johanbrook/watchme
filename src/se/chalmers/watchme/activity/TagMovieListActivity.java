@@ -13,29 +13,20 @@ import android.support.v4.app.NavUtils;
 import android.view.MenuItem;
 
 public class TagMovieListActivity extends FragmentActivity {
-
-	private DatabaseAdapter db;
 	
 	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getActionBar().setDisplayHomeAsUpEnabled(true);
         
-        db = new DatabaseAdapter(this.getContentResolver());
-        
         //Recieve tagId sent from TagListFragment
         Intent intent = getIntent();
         Long tagId = intent.getLongExtra(MainActivity.TAG_ID, -1);
-        System.out.println("TAGID: " + tagId);
         
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction ft = fragmentManager.beginTransaction();
         
-        //Put cursor as a parameter to a new MovieListFragment
-        MovieListFragment mlf = new MovieListFragment(tagId);
-        mlf.onCreate(savedInstanceState);
-        ft.add(android.R.id.content, mlf);
+        ft.add(android.R.id.content, new MovieListFragment(tagId));
         ft.commit();
-        //mlf.onLoadFinished(null, cursor);
 	}
 	
 	@Override

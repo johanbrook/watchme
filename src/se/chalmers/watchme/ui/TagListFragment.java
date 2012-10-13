@@ -1,26 +1,20 @@
 package se.chalmers.watchme.ui;
 
-import event.Event;
-import event.EventBus;
-import event.EventHandler;
 import se.chalmers.watchme.R;
 import se.chalmers.watchme.activity.MainActivity;
-import se.chalmers.watchme.activity.MovieDetailsActivity;
 import se.chalmers.watchme.activity.TagMovieListActivity;
 import se.chalmers.watchme.database.DatabaseAdapter;
 import se.chalmers.watchme.database.TagsTable;
+import se.chalmers.watchme.database.MyCursorLoader;
 import se.chalmers.watchme.database.WatchMeContentProvider;
-import se.chalmers.watchme.model.Movie;
 import se.chalmers.watchme.model.Tag;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.view.LayoutInflater;
@@ -31,7 +25,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemLongClickListener;
 
-public class TagListFragment extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor>, EventHandler {
+public class TagListFragment extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor> {
 	
 	private SimpleCursorAdapter adapter;
 	private DatabaseAdapter db;
@@ -40,9 +34,7 @@ public class TagListFragment extends ListFragment implements LoaderManager.Loade
 	public void onActivityCreated(Bundle b) {
 		super.onActivityCreated(b);
 		Thread.currentThread().setContextClassLoader(getActivity().getClassLoader());
-		
-		EventBus.register(this);
-		
+
 		String[] from = new String[] { TagsTable.COLUMN_TAG_ID, TagsTable.COLUMN_NAME };
 		int[] to = new int[] { android.R.id.text1 , android.R.id.text1 };
 		
@@ -62,22 +54,23 @@ public class TagListFragment extends ListFragment implements LoaderManager.Loade
 	}
 	
 	public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
+		Long tagId = (long) -1;
 		
-		
-		String[] projection = { TagsTable.COLUMN_TAG_ID, TagsTable.COLUMN_NAME };
-	    CursorLoader cursorLoader = new CursorLoader(getActivity(),
-	    		WatchMeContentProvider.CONTENT_URI_TAGS, projection, null, null, null);
-	    return cursorLoader;
+		return new MyCursorLoader(getActivity(), 
+				WatchMeContentProvider.CONTENT_URI_TAGS,
+				tagId,null);
 	}
 
 	public void onLoadFinished(Loader<Cursor> arg0, Cursor arg1) {
 		
-		adapter.swapCursor(arg1);		
+		adapter.swapCursor(arg1);	
+		adapter.notifyDataSetChanged();
 	}
 
 	public void onLoaderReset(Loader<Cursor> arg0) {
 		// data is not available anymore, delete reference
 	    adapter.swapCursor(null);
+	    adapter.notifyDataSetChanged();
 		
 	}
 	
@@ -107,7 +100,8 @@ public class TagListFragment extends ListFragment implements LoaderManager.Loade
     	public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
 			db = new DatabaseAdapter(getActivity().getContentResolver());
 			
-    		final Tag tag = db.getTag(id);
+			Cursor selectedTag = (Cursor) getListView().getItemAtPosition(position);
+    		final Tag tag = db.getTag(Long.parseLong(selectedTag.getString(0)));
     		
             AlertDialog.Builder alertbox = new AlertDialog.Builder(getActivity());
             alertbox.setMessage("Are you sure you want to delete the tag \"" + tag.getName() + "\"?");           
@@ -129,12 +123,5 @@ public class TagListFragment extends ListFragment implements LoaderManager.Loade
             alertbox.show();
 			return true;
 		}    	
-	}
-
-	@Override
-	public void onEvent(Event evt) {
-		if(evt.getTag() == Event.Tag.TAG_TABLE_CHANGED) {
-			adapter.notifyDataSetChanged();
-		}
 	}
 }

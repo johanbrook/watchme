@@ -17,56 +17,65 @@ import java.io.PrintWriter;
  * platforms prior to Android 3.0. When running on Android 3.0 or above, this
  * implementation is still used; it does not try to switch to the framework's
  * implementation. See the framework SDK documentation for a class overview.
+ * 
+ * A CursorLoader that uses the {@link se.chalmers.watchme DatabaseAdapter}
+ * to fetch data from the Database.
+ * 
+ * @lisastenberg
  */
 
-public class TestCursorLoader extends CursorLoader /*AsyncTaskLoader<Cursor>*/ {
+public class MyCursorLoader extends CursorLoader {
 
 	final ForceLoadContentObserver mObserver;
 	private Uri mUri;
-	DatabaseAdapter db;
+	private DatabaseAdapter db;
 
-	String[] mProjection;
-	String mSelection;
-	String[] mSelectionArgs;
-	String mSortOrder;
-	Long mTagId;
+	private String mSortOrder;
+	private Long mTagId;
 	
-	Cursor mCursor;
-	CancellationSignal mCancellationSignal;
+	private Cursor mCursor;
+	private CancellationSignal mCancellationSignal;
 
 	/* Runs on a worker thread */
 	@Override
 	public Cursor loadInBackground() {
         synchronized (this) {
-        	/*
-            if (isLoadInBackgroundCanceled()) {
-                throw new OperationCanceledException();
-            }
-            */
+        	//TODO: Unnecessary?
             mCancellationSignal = new CancellationSignal();
         }
         try {
         	db = new DatabaseAdapter(getContext().getContentResolver());
-            Cursor cursor = getCursor(mTagId);
+            Cursor cursor = getCursor();
             if (cursor != null) {
                 // Ensure the cursor window is filled
                 cursor.getCount();
-                System.out.println("LOADINBACKGROUND: " + cursor.getCount());
                 registerContentObserver(cursor, mObserver);
             }
             return cursor;
         } finally {
             synchronized (this) {
+            	//TODO: Unnecessary?
                 mCancellationSignal = null;
             }
         }
 	}
 	
-	private Cursor getCursor(Long tagId) {
-		if(tagId == -1) {
-			return db.getAllMoviesCursor();
+	/**
+	 * Asks the DatabaseAdapter for a Cursor depending on the Uri and the Id of 
+	 * the Tag.
+	 * 
+	 * @return a Cursor.
+	 */
+	private Cursor getCursor() {
+		if (mUri == WatchMeContentProvider.CONTENT_URI_MOVIES) {
+			if (mTagId == -1) {
+				return db.getAllMoviesCursor();
+			}
+			return db.getAttachedMovies(mTagId);
+		} else if(mUri == WatchMeContentProvider.CONTENT_URI_TAGS) {
+			return db.getAllTagsCursor();
 		}
-		return db.getAttachedMovies(tagId);
+		return null;
 	}
 
 	/**
@@ -74,7 +83,6 @@ public class TestCursorLoader extends CursorLoader /*AsyncTaskLoader<Cursor>*/ {
 	 * the cursor needs to be refreshed.
 	 */
 	void registerContentObserver(Cursor cursor, ContentObserver observer) {
-		System.out.println("-- registerContentObserver --");
 		cursor.registerContentObserver(mObserver);
 	}
 
@@ -93,7 +101,6 @@ public class TestCursorLoader extends CursorLoader /*AsyncTaskLoader<Cursor>*/ {
 		if (isStarted()) {
 			super.deliverResult(cursor);
 		}
-//		cursorr.unregisterContentObserver(mObserver);
 		if (oldCursor != null && oldCursor != cursor && !oldCursor.isClosed()) {
 			oldCursor.close();
 		}
@@ -104,7 +111,7 @@ public class TestCursorLoader extends CursorLoader /*AsyncTaskLoader<Cursor>*/ {
 	 * calls to {@link #setUri(Uri)}, {@link #setSelection(String)}, etc to
 	 * specify the query to perform.
 	 */
-	public TestCursorLoader(Context context) {
+	public MyCursorLoader(Context context) {
 		super(context);
 		mObserver = new ForceLoadContentObserver();
 	}
@@ -115,16 +122,12 @@ public class TestCursorLoader extends CursorLoader /*AsyncTaskLoader<Cursor>*/ {
 	 * ContentResolver.query()} for documentation on the meaning of the
 	 * parameters. These will be passed as-is to that call.
 	 */
-	public TestCursorLoader(Context context, Uri uri, Long tagId, String[] projection,
-			String selection, String[] selectionArgs, String sortOrder) {
+	public MyCursorLoader(Context context, Uri uri, Long tagId, String sortOrder) {
 		super(context);
 		mObserver = new ForceLoadContentObserver();
 		mUri = uri;
 		mTagId = tagId;
 		
-		mProjection = projection;
-		mSelection = selection;
-		mSelectionArgs = selectionArgs;
 		mSortOrder = sortOrder;
 	}
 
@@ -175,42 +178,22 @@ public class TestCursorLoader extends CursorLoader /*AsyncTaskLoader<Cursor>*/ {
 		mCursor = null;
 	}
 
+	@Override
 	public Uri getUri() {
         return mUri;
     }
 
+	@Override
     public void setUri(Uri uri) {
         this.mUri = uri;
     }
-	
-	public String[] getProjection() {
-		return mProjection;
-	}
 
-	public void setProjection(String[] projection) {
-		mProjection = projection;
-	}
-
-	public String getSelection() {
-		return mSelection;
-	}
-
-	public void setSelection(String selection) {
-		mSelection = selection;
-	}
-
-	public String[] getSelectionArgs() {
-		return mSelectionArgs;
-	}
-
-	public void setSelectionArgs(String[] selectionArgs) {
-		mSelectionArgs = selectionArgs;
-	}
-
+	@Override
 	public String getSortOrder() {
 		return mSortOrder;
 	}
 
+	@Override
 	public void setSortOrder(String sortOrder) {
 		mSortOrder = sortOrder;
 	}
@@ -219,20 +202,12 @@ public class TestCursorLoader extends CursorLoader /*AsyncTaskLoader<Cursor>*/ {
 	public void dump(String prefix, FileDescriptor fd, PrintWriter writer,
 			String[] args) {
 		super.dump(prefix, fd, writer, args);
-		// writer.print(prefix); writer.print("mUri="); writer.println(mUri);
-		// writer.print(prefix); writer.print("mProjection=");
-		// writer.println(Arrays.toString(mProjection));
-		// writer.print(prefix); writer.print("mSelection=");
-		// writer.println(mSelection);
-		// writer.print(prefix); writer.print("mSelectionArgs=");
-		// writer.println(Arrays.toString(mSelectionArgs));
-		// writer.print(prefix); writer.print("mSortOrder=");
-		// writer.println(mSortOrder);
-		// writer.print(prefix); writer.print("mCursor=");
-		// writer.println(cursor);
-		// writer.print(prefix);
-		// writer.print("mContentChanged=");
-		// // writer.println(mContentChanged);
+		writer.print(prefix); writer.print("mUri="); writer.println(mUri);
+		writer.print(prefix); writer.print("mSortOrder=");
+		writer.println(mSortOrder);
+		writer.print(prefix); writer.print("mCursor=");
+		writer.println(mCursor);
+		writer.print(prefix);
 	}
 
 }
