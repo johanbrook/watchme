@@ -275,6 +275,18 @@ public class DatabaseAdapter {
 	}
 	
 	/**
+	 * Detach Tags from a movie.
+	 * 
+	 * @param movie The Movie.
+	 * @param tags A list of Tags to be detached.
+	 */
+	public void detachTags(Movie movie, List<Tag> tags) {
+		for(Tag tag : tags) {
+			detachTag(movie, tag);
+		}
+	}
+	
+	/**
 	 * Return a Cursor containing all Tags attached to a Movie. 
 	 * Cursor.getString(0) contains the id of the Tag.
 	 * Cursor.getString(1) contains the name of the Tag.
