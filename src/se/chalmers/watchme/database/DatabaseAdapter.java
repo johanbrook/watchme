@@ -132,8 +132,23 @@ public class DatabaseAdapter {
 		return movies;
 	}
 	
+	/**
+	 * Return a Cursor with all Movies in the Database.
+	 * 
+	 * @return all Movies in the Database.
+	 */
 	public Cursor getAllMoviesCursor() {
 		return contentResolver.query(uri_movies, null, null, null, null);
+	}
+	
+	/**
+	 * Return a Cursor with all Movies in the Database in the specified order.
+	 * 
+	 * @param orderBy The attribute to order by.
+	 * @return all Movies in the Database in the specified order.
+	 */
+	public Cursor getAllMoviesCursor(String orderBy) {
+		return contentResolver.query(uri_movies, null, null, null, orderBy);
 	}
 	
 	/**

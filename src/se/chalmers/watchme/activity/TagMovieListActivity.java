@@ -26,15 +26,12 @@ public class TagMovieListActivity extends FragmentActivity {
         Intent intent = getIntent();
         Long tagId = intent.getLongExtra(MainActivity.TAG_ID, -1);
         System.out.println("TAGID: " + tagId);
-        Cursor cursor = db.getAttachedMovies(tagId);
-        
-        System.out.println("CURSORCOUNT: " + cursor.getCount());
         
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction ft = fragmentManager.beginTransaction();
         
         //Put cursor as a parameter to a new MovieListFragment
-        MovieListFragment mlf = new MovieListFragment(cursor);
+        MovieListFragment mlf = new MovieListFragment(tagId);
         mlf.onCreate(savedInstanceState);
         ft.add(android.R.id.content, mlf);
         ft.commit();

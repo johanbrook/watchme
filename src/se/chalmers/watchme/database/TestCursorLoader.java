@@ -21,8 +21,6 @@ import java.io.PrintWriter;
 
 public class TestCursorLoader extends CursorLoader /*AsyncTaskLoader<Cursor>*/ {
 
-	
-	//private Cursor cursor;
 	final ForceLoadContentObserver mObserver;
 	private Uri mUri;
 	DatabaseAdapter db;
@@ -31,6 +29,7 @@ public class TestCursorLoader extends CursorLoader /*AsyncTaskLoader<Cursor>*/ {
 	String mSelection;
 	String[] mSelectionArgs;
 	String mSortOrder;
+	Long mTagId;
 	
 	Cursor mCursor;
 	CancellationSignal mCancellationSignal;
@@ -48,7 +47,7 @@ public class TestCursorLoader extends CursorLoader /*AsyncTaskLoader<Cursor>*/ {
         }
         try {
         	db = new DatabaseAdapter(getContext().getContentResolver());
-            Cursor cursor = db.getAllMoviesCursor();
+            Cursor cursor = getCursor(mTagId);
             if (cursor != null) {
                 // Ensure the cursor window is filled
                 cursor.getCount();
@@ -62,19 +61,21 @@ public class TestCursorLoader extends CursorLoader /*AsyncTaskLoader<Cursor>*/ {
             }
         }
 	}
+	
+	private Cursor getCursor(Long tagId) {
+		if(tagId == -1) {
+			return db.getAllMoviesCursor();
+		}
+		return db.getAttachedMovies(tagId);
+	}
 
 	/**
 	 * Registers an observer to get notifications from the content provider when
 	 * the cursor needs to be refreshed.
 	 */
-	boolean has = false;
 	void registerContentObserver(Cursor cursor, ContentObserver observer) {
 		System.out.println("-- registerContentObserver --");
-//		if(has){
-//			cursor.unregisterContentObserver(mObserver);
-//		}
-		cursor.registerContentObserver(observer);
-		has = true;
+		cursor.registerContentObserver(mObserver);
 	}
 
 	/* Runs on the UI thread */
@@ -114,14 +115,14 @@ public class TestCursorLoader extends CursorLoader /*AsyncTaskLoader<Cursor>*/ {
 	 * ContentResolver.query()} for documentation on the meaning of the
 	 * parameters. These will be passed as-is to that call.
 	 */
-	public TestCursorLoader(Context context, Uri uri, Cursor c, String[] projection,
+	public TestCursorLoader(Context context, Uri uri, Long tagId, String[] projection,
 			String selection, String[] selectionArgs, String sortOrder) {
 		super(context);
 		mObserver = new ForceLoadContentObserver();
-		this.mUri = uri;
+		mUri = uri;
+		mTagId = tagId;
 		
 		mProjection = projection;
-		//cursor = c;
 		mSelection = selection;
 		mSelectionArgs = selectionArgs;
 		mSortOrder = sortOrder;
