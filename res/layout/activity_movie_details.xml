@@ -43,7 +43,7 @@
 		    	android:layout_toRightOf="@+id/releaseDate"
 		    	android:text="@string/release_date_button"
 		    	android:layout_alignBaseline="@+id/releaseDate"
-		    	android:enabled="false"
+		    	android:visibility="gone"
 		        android:onClick="onDatePickerButtonClick" />
 		    
 		    <TextView

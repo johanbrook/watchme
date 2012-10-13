@@ -74,6 +74,8 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
 	private EditText tagField;
 	private EditText noteField;
 	
+	private RatingBar myRatingBar;
+	
 	private DatabaseAdapter db;
 	
 	private Calendar tempReleaseDate;
@@ -95,6 +97,9 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
         
         this.tagField = (EditText) findViewById(R.id.tag_field_details);
         this.noteField = (EditText) findViewById(R.id.note_field_details);
+        
+        myRatingBar = (RatingBar) findViewById(R.id.my_rating_bar);
+        myRatingBar.setEnabled(false);	// Unable to do this in XML (?)
         
         this.dialog = new ImageDialog(this);
         
@@ -401,8 +406,9 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
 				
 				
 				saveMenuButton.setVisible(true);
-				releaseDateButton.setEnabled(true);
+				releaseDateButton.setVisibility(Button.VISIBLE);
 				myRatingBar.setIsIndicator(false);
+				myRatingBar.setEnabled(true);
 				
 				/*
 				 * setFocusable(true) does not work on EditText if it were
@@ -423,8 +429,9 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
 				
     			saveMenuButton.setVisible(false);
     			
-    			releaseDateButton.setEnabled(false);
+    			releaseDateButton.setVisibility(Button.GONE);
 				myRatingBar.setIsIndicator(true);
+				myRatingBar.setEnabled(false);
 				
 				/*
 				 * Both disallows the user from interacting with the text field
