@@ -372,11 +372,9 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
 		public void onClick(View v) {
 			
 			MenuItem saveMenuButton = menu.findItem(R.id.save_button_edit_menu);
-			
 			Button releaseDateButton = (Button) findViewById(R.id.release_date_button);
 			
 			if(((ToggleButton) v).isChecked()) {
-				
 				
 				saveMenuButton.setVisible(true);
 				releaseDateButton.setVisibility(Button.VISIBLE);

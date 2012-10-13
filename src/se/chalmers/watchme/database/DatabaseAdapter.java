@@ -9,6 +9,7 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
+import android.util.Log;
 
 import se.chalmers.watchme.model.Movie;
 import se.chalmers.watchme.model.Tag;
@@ -75,14 +76,25 @@ public class DatabaseAdapter {
 			// TODO Seems weird to use the MovieHelper to get the string with
 			// tags. Why isn't it done in this class' method already?
 			
-			// Doesn't work:
-			// int tagID = Integer.parseInt(getAttachedTags(movie).getString(0));
-			// String tagName = getAttachedTags(movie).getString(1);
+			Cursor tempCursor = getAttachedTags(movie);
+			tempCursor.moveToFirst();
 			
-			String[] tagStrings = MovieHelper.
-				getCursorString(getAttachedTags(movie)).split(",");
+			List<Tag> tags = new LinkedList<Tag>();
 			
-			movie.addTags(MovieHelper.stringArrayToTagList(tagStrings));
+			/*
+			 * Move cursor to new row and create tag objects from fetched data
+			 * until there is no more rows (i.e. no more tags)
+			 */
+			do {
+				// Create new tag with title from database, then set id
+				Tag tag = new Tag(tempCursor.getString(1));	
+				tag.setId(Integer.parseInt(tempCursor.getString(0)));
+				
+				tags.add(tag);
+				
+			} while(tempCursor.moveToNext());
+			
+			movie.addTags(tags);
 			
 			return movie;
 		}
