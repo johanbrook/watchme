@@ -94,7 +94,7 @@ public class Movie implements Serializable {
 				releaseDate.get(Calendar.DAY_OF_MONTH),
 				0, 0, 0);
 		
-		tags = new LinkedList<Tag>();
+		this.tags = new LinkedList<Tag>();
 	}
 	
 	/**
@@ -103,7 +103,7 @@ public class Movie implements Serializable {
 	 * @param tag The tag you want to add.
 	 */
 	public void addTag(Tag tag) {
-		tags.add(tag);
+		this.tags.add(tag);
 	}
 	
 	/**
@@ -122,21 +122,32 @@ public class Movie implements Serializable {
 	 * @return true if the removal went through.
 	 */
 	public boolean removeTag(Tag tag) {
-		return tags.remove(tag);
+		return this.tags.remove(tag);
+	}
+	
+	/**
+	 * Removes all tags from the movie's list that is equals to the tags in the
+	 * forwarded list 
+	 * 
+	 * @param tags The list of tags that are to be removed from the movie's tags
+	 * @return true if the movie's list has changed as a result of the call.
+	 */
+	public boolean removeTags(List<Tag> tags) {
+		return this.tags.removeAll(tags);
 	}
 	
 	/**
 	 * @return A list of tags connected to the Movie.
 	 */
 	public List<Tag> getTags() {
-		return tags;
+		return this.tags;
 	}
 	
 	/**
 	 * @return the ID of the Movie.
 	 */
 	public long getId() {
-		return id;
+		return this.id;
 	}
 	
 	/**
@@ -151,14 +162,14 @@ public class Movie implements Serializable {
 	 * @return The title of the Movie.
 	 */
 	public String getTitle() {
-		return title;
+		return this.title;
 	}
 	
 	/**
 	 * @return The note of the Movie.
 	 */
 	public String getNote() {
-		return note;
+		return this.note;
 	}
 	
 	/**
@@ -173,7 +184,7 @@ public class Movie implements Serializable {
 	 * @return The rating of the Movie.
 	 */
 	public int getRating() {
-		return rating;
+		return this.rating;
 	}
 	
 	/**
@@ -269,9 +280,10 @@ public class Movie implements Serializable {
 		this.posters.putAll(posters);
 	}
 	
+	// TODO Include more in toString!
 	@Override
 	public String toString() {
-		return title;
+		return this.title;
 	}
 	
 	@Override
