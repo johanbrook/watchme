@@ -13,6 +13,9 @@ import java.util.Map;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import event.Event;
+import event.EventBus;
+
 import se.chalmers.watchme.database.DatabaseAdapter;
 import se.chalmers.watchme.database.WatchMeContentProvider;
 import se.chalmers.watchme.model.Movie;
@@ -162,6 +165,7 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
 		
 		// Insert into database
 		db.addMovie(movie);
+		EventBus.publish(new Event(Event.Tag.MOVIE_TABLE_CHANGED, ""));
 		
 		/* 
 		 * Split the text input into separate strings input at
@@ -181,6 +185,7 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
 				db.attachTag(movie, tag);
 			}
 		}
+		EventBus.publish(new Event(Event.Tag.TAG_TABLE_CHANGED, ""));
 		
 		// Set a notification for the date picked
     	this.setNotification(movie);

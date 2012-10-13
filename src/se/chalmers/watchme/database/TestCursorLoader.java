@@ -5,6 +5,8 @@ import android.database.ContentObserver;
 import android.database.Cursor;
 import android.net.Uri;
 import android.support.v4.content.AsyncTaskLoader;
+import android.support.v4.content.CursorLoader;
+
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
 
@@ -16,10 +18,11 @@ import java.io.PrintWriter;
  * implementation. See the framework SDK documentation for a class overview.
  */
 
-public class TestCursorLoader extends AsyncTaskLoader<Cursor> {
+public class TestCursorLoader extends CursorLoader /*AsyncTaskLoader<Cursor>*/ {
 
 	public Cursor cursor;
 	final ForceLoadContentObserver mObserver;
+	private Uri uri;
 
 	String[] mProjection;
 	String mSelection;
@@ -87,10 +90,12 @@ public class TestCursorLoader extends AsyncTaskLoader<Cursor> {
 	 * ContentResolver.query()} for documentation on the meaning of the
 	 * parameters. These will be passed as-is to that call.
 	 */
-	public TestCursorLoader(Context context, Cursor c, String[] projection,
+	public TestCursorLoader(Context context, Uri uri, Cursor c, String[] projection,
 			String selection, String[] selectionArgs, String sortOrder) {
 		super(context);
 		mObserver = new ForceLoadContentObserver();
+		this.uri = uri;
+		
 		mProjection = projection;
 		cursor = c;
 		mSelection = selection;
@@ -145,6 +150,14 @@ public class TestCursorLoader extends AsyncTaskLoader<Cursor> {
 		cursor = null;
 	}
 
+	public Uri getUri() {
+        return uri;
+    }
+
+    public void setUri(Uri uri) {
+        this.uri = uri;
+    }
+	
 	public String[] getProjection() {
 		return mProjection;
 	}

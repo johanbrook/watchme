@@ -1,5 +1,8 @@
 package se.chalmers.watchme.ui;
 
+import event.Event;
+import event.EventBus;
+import event.EventHandler;
 import se.chalmers.watchme.R;
 import se.chalmers.watchme.activity.MainActivity;
 import se.chalmers.watchme.activity.MovieDetailsActivity;
@@ -28,7 +31,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemLongClickListener;
 
-public class TagListFragment extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class TagListFragment extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor>, EventHandler {
 	
 	private SimpleCursorAdapter adapter;
 	private DatabaseAdapter db;
@@ -37,6 +40,8 @@ public class TagListFragment extends ListFragment implements LoaderManager.Loade
 	public void onActivityCreated(Bundle b) {
 		super.onActivityCreated(b);
 		Thread.currentThread().setContextClassLoader(getActivity().getClassLoader());
+		
+		EventBus.register(this);
 		
 		String[] from = new String[] { TagsTable.COLUMN_TAG_ID, TagsTable.COLUMN_NAME };
 		int[] to = new int[] { android.R.id.text1 , android.R.id.text1 };
@@ -124,5 +129,12 @@ public class TagListFragment extends ListFragment implements LoaderManager.Loade
             alertbox.show();
 			return true;
 		}    	
+	}
+
+	@Override
+	public void onEvent(Event evt) {
+		if(evt.getTag() == Event.Tag.TAG_TABLE_CHANGED) {
+			adapter.notifyDataSetChanged();
+		}
 	}
 }
