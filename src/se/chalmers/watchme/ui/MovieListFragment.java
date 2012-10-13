@@ -183,9 +183,10 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
 				MoviesTable.COLUMN_DATE,
 				MoviesTable.COLUMN_POSTER_SMALL};
 		
-		TestCursorLoader t = new TestCursorLoader(getActivity(), 
+		CursorLoader t = new TestCursorLoader(getActivity(), 
 				WatchMeContentProvider.CONTENT_URI_MOVIES,
 				cursor,projection,null,null,null);
+		t.forceLoad();
 		return t;
 //	    return new CursorLoader(getActivity(),
 //	    		WatchMeContentProvider.CONTENT_URI_MOVIES, projection, 
@@ -284,22 +285,13 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
 
 	@Override
 	public void onEvent(Event evt) {
-		System.out.println("--- EVENT RECIEVED ---");
+		/*System.out.println("--- EVENT RECIEVED ---");
 		if(evt.getTag() == Event.Tag.MOVIE_TABLE_CHANGED) {
 			System.out.println("--- MOVIE_TABLE_CHANGED ---");
 			adapter.notifyDataSetChanged();
 			System.out.println("Before invalidate");
 			this.getView().postInvalidate();
 			//getActivity().getContentResolver().registerContentObserver(WatchMeContentProvider.CONTENT_URI_MOVIES, true, new MyContentObserver(handler) );
-		}
+		}*/
 	}
-
-	private class MyContentObserver extends ContentObserver {
-
-		public MyContentObserver(Handler handler) {
-			super(handler);
-			// TODO Auto-generated constructor stub
-		}
-	}
-
 }

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.ContentObserver;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.CancellationSignal;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.CursorLoader;
 
@@ -20,24 +21,46 @@ import java.io.PrintWriter;
 
 public class TestCursorLoader extends CursorLoader /*AsyncTaskLoader<Cursor>*/ {
 
-	public Cursor cursor;
+	
+	//private Cursor cursor;
 	final ForceLoadContentObserver mObserver;
-	private Uri uri;
+	private Uri mUri;
+	DatabaseAdapter db;
 
 	String[] mProjection;
 	String mSelection;
 	String[] mSelectionArgs;
 	String mSortOrder;
+	
+	Cursor mCursor;
+	CancellationSignal mCancellationSignal;
 
 	/* Runs on a worker thread */
 	@Override
 	public Cursor loadInBackground() {
-		if (cursor != null) {
-			// Ensure the cursor window is filled
-			cursor.getCount();
-			registerContentObserver(cursor, mObserver);
-		}
-		return cursor;
+        synchronized (this) {
+        	/*
+            if (isLoadInBackgroundCanceled()) {
+                throw new OperationCanceledException();
+            }
+            */
+            mCancellationSignal = new CancellationSignal();
+        }
+        try {
+        	db = new DatabaseAdapter(getContext().getContentResolver());
+            Cursor cursor = db.getAllMoviesCursor();
+            if (cursor != null) {
+                // Ensure the cursor window is filled
+                cursor.getCount();
+                System.out.println("LOADINBACKGROUND: " + cursor.getCount());
+                registerContentObserver(cursor, mObserver);
+            }
+            return cursor;
+        } finally {
+            synchronized (this) {
+                mCancellationSignal = null;
+            }
+        }
 	}
 
 	/**
@@ -46,30 +69,31 @@ public class TestCursorLoader extends CursorLoader /*AsyncTaskLoader<Cursor>*/ {
 	 */
 	boolean has = false;
 	void registerContentObserver(Cursor cursor, ContentObserver observer) {
-		if(has){
-			cursor.unregisterContentObserver(mObserver);
-		}
-		cursor.registerContentObserver(mObserver);
+		System.out.println("-- registerContentObserver --");
+//		if(has){
+//			cursor.unregisterContentObserver(mObserver);
+//		}
+		cursor.registerContentObserver(observer);
 		has = true;
 	}
 
 	/* Runs on the UI thread */
 	@Override
-	public void deliverResult(Cursor cursorr) {
+	public void deliverResult(Cursor cursor) {
 		if (isReset()) {
 			// An async query came in while the loader is stopped
-			if (cursorr != null) {
-				cursorr.close();
+			if (cursor != null) {
+				cursor.close();
 			}
 			return;
 		}
-		Cursor oldCursor = cursor;
-		cursor = cursorr;
+		Cursor oldCursor = mCursor;
+		mCursor = cursor;
 		if (isStarted()) {
-			super.deliverResult(cursorr);
+			super.deliverResult(cursor);
 		}
 //		cursorr.unregisterContentObserver(mObserver);
-		if (oldCursor != null && oldCursor != cursorr && !oldCursor.isClosed()) {
+		if (oldCursor != null && oldCursor != cursor && !oldCursor.isClosed()) {
 			oldCursor.close();
 		}
 	}
@@ -94,10 +118,10 @@ public class TestCursorLoader extends CursorLoader /*AsyncTaskLoader<Cursor>*/ {
 			String selection, String[] selectionArgs, String sortOrder) {
 		super(context);
 		mObserver = new ForceLoadContentObserver();
-		this.uri = uri;
+		this.mUri = uri;
 		
 		mProjection = projection;
-		cursor = c;
+		//cursor = c;
 		mSelection = selection;
 		mSelectionArgs = selectionArgs;
 		mSortOrder = sortOrder;
@@ -113,12 +137,12 @@ public class TestCursorLoader extends CursorLoader /*AsyncTaskLoader<Cursor>*/ {
 	 */
 	@Override
 	protected void onStartLoading() {
-//		if (cursor != null) {
-//			deliverResult(cursor);
-//		}
-//		if (takeContentChanged() || cursor == null) {
+		if (mCursor != null) {
+			deliverResult(mCursor);
+		}
+		if (takeContentChanged() || mCursor == null) {
 			forceLoad();
-//		}
+		}
 	}
 
 	/**
@@ -144,18 +168,18 @@ public class TestCursorLoader extends CursorLoader /*AsyncTaskLoader<Cursor>*/ {
 		// Ensure the loader is stopped
 		onStopLoading();
 
-		if (cursor != null && !cursor.isClosed()) {
-			cursor.close();
+		if (mCursor != null && !mCursor.isClosed()) {
+			mCursor.close();
 		}
-		cursor = null;
+		mCursor = null;
 	}
 
 	public Uri getUri() {
-        return uri;
+        return mUri;
     }
 
     public void setUri(Uri uri) {
-        this.uri = uri;
+        this.mUri = uri;
     }
 	
 	public String[] getProjection() {
