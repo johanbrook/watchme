@@ -13,11 +13,7 @@ import java.util.Map;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import event.Event;
-import event.EventBus;
-
 import se.chalmers.watchme.database.DatabaseAdapter;
-import se.chalmers.watchme.database.WatchMeContentProvider;
 import se.chalmers.watchme.model.Movie;
 import se.chalmers.watchme.model.Movie.PosterSize;
 import se.chalmers.watchme.R;
