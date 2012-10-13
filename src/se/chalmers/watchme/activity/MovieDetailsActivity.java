@@ -1,12 +1,6 @@
 package se.chalmers.watchme.activity;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URL;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -15,47 +9,38 @@ import org.json.JSONObject;
 
 import se.chalmers.watchme.R;
 import se.chalmers.watchme.database.DatabaseAdapter;
-import se.chalmers.watchme.database.WatchMeContentProvider;
 import se.chalmers.watchme.model.Movie;
 import se.chalmers.watchme.model.Tag;
 import se.chalmers.watchme.net.IMDBHandler;
 import se.chalmers.watchme.net.ImageDownloadTask;
 import se.chalmers.watchme.net.MovieSource;
 import se.chalmers.watchme.ui.DatePickerFragment;
-import se.chalmers.watchme.ui.ImageDialog;
 import se.chalmers.watchme.ui.DatePickerFragment.DatePickerListener;
+import se.chalmers.watchme.ui.ImageDialog;
 import se.chalmers.watchme.utils.DateTimeUtils;
 import se.chalmers.watchme.utils.MovieHelper;
+import android.app.ProgressDialog;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.annotation.TargetApi;
-import android.app.Activity;
-import android.app.Dialog;
-import android.app.ProgressDialog;
-import android.content.Intent;
-import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.text.InputType;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.NavUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RatingBar;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.NavUtils;
 
 public class MovieDetailsActivity extends FragmentActivity implements DatePickerListener {
 	
@@ -389,18 +374,6 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
 			MenuItem saveMenuButton = menu.findItem(R.id.save_button_edit_menu);
 			
 			Button releaseDateButton = (Button) findViewById(R.id.release_date_button);
-			TextView genres = (TextView) findViewById(R.id.genres);
-			TextView duration = (TextView) findViewById(R.id.duration);
-			
-			TextView myRatingLabel = (TextView) findViewById(R.id.my_rating_label);
-			RatingBar myRatingBar = (RatingBar) findViewById(R.id.my_rating_bar);
-			TextView imdbRatinglabel = (TextView) findViewById(R.id.imdb_rating_label);
-			TextView imdbRating = (TextView) findViewById(R.id.imdb_rating_number_label);
-			
-			TextView plotTitle = (TextView) findViewById(R.id.plot_title);
-			TextView plotContent = (TextView) findViewById(R.id.plot_content);
-			TextView castTitle = (TextView) findViewById(R.id.cast_title);
-			TextView castList = (TextView) findViewById(R.id.cast_list);
 			
 			if(((ToggleButton) v).isChecked()) {
 				
@@ -464,12 +437,6 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
 			
 			movie.setDate(tempReleaseDate);
 			movie.setNote(noteField.getText().toString());
-			
-			/* TODO The following code is almost the same as in
-			 * AddMovieActivity's addMove-method and DatabaseAdapter's
-			 * getMovie-method. Refactor code to a common method?
-			 * In Movie class' addTags-method perhaps?
-			 */
 			
 			/* 
 			 * Split the text input into separate strings input at
