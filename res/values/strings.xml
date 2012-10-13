@@ -32,5 +32,6 @@
     <string name="tab_tags">Tags</string>
     <string name="share_movie_list">Share list</string>
     <string name="title_activity_tagmovielist">Tags</string>
-
+	<string name="sort_button">Sort</string>
+    
 </resources>

@@ -6,4 +6,9 @@
         android:icon="@drawable/add"
         android:showAsAction="ifRoom|withText" android:title="@string/add_movie_button"></item>
     
+    <item android:id="@+id/sort_menu"
+        android:title="@string/sort_button"
+        android:showAsAction="ifRoom|withText" 
+        ></item>
+    
 </menu>

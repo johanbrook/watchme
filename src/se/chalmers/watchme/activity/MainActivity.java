@@ -6,12 +6,15 @@ import java.util.List;
 import se.chalmers.watchme.R;
 import se.chalmers.watchme.database.DatabaseAdapter;
 import se.chalmers.watchme.model.Movie;
+import se.chalmers.watchme.notifications.NotificationClient;
 import se.chalmers.watchme.ui.MovieListFragment;
 import se.chalmers.watchme.ui.TagListFragment;
 import se.chalmers.watchme.utils.DateTimeUtils;
 import android.app.ActionBar;
+import android.app.AlertDialog;
 import android.app.ActionBar.Tab;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -21,6 +24,7 @@ import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 
 
@@ -32,7 +36,6 @@ public class MainActivity extends FragmentActivity {
 	public static final String MOVIE_DETAILS_NOTE = "se.chalmers.watchme.DETAILS_NOTE";
 	
 	//TODO: Correct to put key values for Intent.putExtra() here? 
-	public static final String EXTRA_CURSOR = "se.chalmers.watchme.CURSOR";
 	public static final String TAG_ID = "se.chalmers.watchme.TAG_ID";
 	
 	private ViewPager viewPager;
@@ -70,7 +73,7 @@ public class MainActivity extends FragmentActivity {
     }
     
     /**
-     * When the user clicks the 'Add Movie' button in the Action bar.
+     * When the user clicks on a button in the Action bar.
      */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -87,6 +90,9 @@ public class MainActivity extends FragmentActivity {
     		sendEmail();
     		return true;
     		
+    	case R.id.sort_menu:
+    		sortList();
+    		return true;
     	default:
     		return super.onOptionsItemSelected(item);
     	}
@@ -110,6 +116,29 @@ public class MainActivity extends FragmentActivity {
     	
     	// Let the user choose email app to mail from
     	startActivity(Intent.createChooser(emailIntent, "Send the movie list in:"));
+    }
+    
+    private void sortList() {
+    	List<String> alternatives = new ArrayList<String>();;
+    	
+    	Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.vPager);
+    	if(fragment.getClass() == MovieListFragment.class) {
+    		alternatives.add("Title");
+    		alternatives.add("Date");
+    		alternatives.add("Rating");
+    	} else if(fragment.getClass() == TagListFragment.class) {
+    		
+    	}
+    	
+    	AlertDialog.Builder alertbox = new AlertDialog.Builder(this);
+        alertbox.setMessage("Order by: ");
+        alertbox.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface arg0, int arg1) {
+            	
+            }
+        });
+        
+        alertbox.show();
     }
         
     @Override
