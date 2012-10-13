@@ -9,6 +9,7 @@
 package se.chalmers.watchme.utils;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -17,6 +18,7 @@ import org.json.JSONObject;
 import android.database.Cursor;
 import android.util.Log;
 import se.chalmers.watchme.model.Movie;
+import se.chalmers.watchme.model.Tag;
 
 public class MovieHelper {
 	
@@ -139,5 +141,33 @@ public class MovieHelper {
 			s = "";
 		}
 		return s;
+	}
+	
+	// TODO Shorter name for method?
+	/**
+	 * Helper method for converting a stringArray with tag names to a list with
+	 * Tag objects
+	 * 
+	 * @param tagStrings The array with tag-titles to be converted to tags
+	 * @return A list with Tag objects
+	 */
+	public static List<Tag> stringArrayToTagList(String[] tagStrings) {
+		
+		Log.i("Custom", "stringArrayToTagList");
+		
+		List<Tag> tags = new LinkedList<Tag>();
+		
+		for(String tagString : tagStrings) {
+			if (!tagString.equals("")) {
+
+				/*
+				 * Remove whitespaces from the beginning and end of each string
+				 * to allow for multi-word tags.
+				 */
+				tags.add(new Tag(tagString.trim()));
+			}
+		}
+		
+		return tags;
 	}
 }
