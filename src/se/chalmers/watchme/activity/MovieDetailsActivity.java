@@ -397,6 +397,17 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
     		}
     		
     		else {
+    			
+    			/*
+    			 *  TODO Set flags to allow conditional statement so that
+    			 * populateFieldsFromMovie doesn't has to be executed if nothing
+    			 * has changed
+    			 */
+    			
+    			/*
+    			 * Restore visual elements to reflect a saved state
+    			 */
+    			populateFieldsFromMovie(movie);
 				
     			saveMenuButton.setVisible(false);
     			
@@ -453,7 +464,7 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
 				
 				/*
 				 * TODO How to avoid doing the same thing in two different places?
-				 * Skip Movie model altogeter or make Movie model communicate
+				 * Skip Movie model altogether or make Movie model communicate
 				 * with database instead of doing these calls all over the place!
 				 * Same problem in next conditional statement.
 				 */
