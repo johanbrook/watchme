@@ -2,6 +2,7 @@ package se.chalmers.watchme.database;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.LinkedList;
 import java.util.List;
 
 import android.content.ContentResolver;
@@ -11,6 +12,7 @@ import android.net.Uri;
 
 import se.chalmers.watchme.model.Movie;
 import se.chalmers.watchme.model.Tag;
+import se.chalmers.watchme.utils.MovieHelper;
 
 /**
  * Adapter to the Content Provider.
@@ -48,16 +50,48 @@ public class DatabaseAdapter {
 	public Movie getMovie(long id) {
 		String selection = MoviesTable.COLUMN_MOVIE_ID + " = " + id; 
 		Cursor cursor = contentResolver.query(uri_movies, null, selection, null, null);
+		
 		if(cursor.moveToFirst()) {
+			
 			String title = cursor.getString(1);
+			
 			Calendar calendar = Calendar.getInstance();
 			calendar.setTimeInMillis(Long.parseLong(cursor.getString(4)));
+			
 			int rating = Integer.parseInt(cursor.getString(2));
+			
 			String note = cursor.getString(3);
 			
 			Movie movie = new Movie(title, calendar, rating, note);
 			movie.setId(id);
 			movie.setApiID(Integer.parseInt(cursor.getString(5)));
+			
+			/* 
+			 * Add the tags to the movie object
+			 * Split the string with tags into separate strings seperated by
+			 * commas (",")
+			 */
+			
+			// TODO Seems weird to use the MovieHelper to get the string with
+			// tags. Why isn't it done in this class' method already?
+			String [] tagStrings = MovieHelper.
+				getCursorString(getAttachedTags(movie)).split(",");
+			
+			List<Tag> tags = new LinkedList<Tag>();
+			
+			for(String tagString : tagStrings) {
+				if (!tagString.equals("")) {
+
+					/*
+					 * Remove whitespaces from the beginning and end of each string
+					 * to allow for multi-word tags.
+					 */
+					
+					tags.add(new Tag(tagString.trim()));
+				}
+			}
+			
+			movie.addTags(tags);
 			
 			return movie;
 		}
