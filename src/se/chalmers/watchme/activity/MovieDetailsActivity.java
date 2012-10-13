@@ -476,18 +476,7 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
 			 * commas (",") from tag-field
 			 */
 			String [] tagStrings = tagField.getText().toString().split(",");
-			List<Tag> tempTags = new LinkedList<Tag>();
-			
-			for(String tagString : tagStrings) {
-				if (!tagString.equals("")) {
-
-					/*
-					 * Remove whitespaces from the beginning and end of each string
-					 * to allow for multi-word tags.
-					 */
-					tempTags.add(new Tag(tagString.trim()));
-				}
-			}
+			List<Tag> tempTags = MovieHelper.stringArrayToTagList(tagStrings);
 			
 			/*
 			 * If there are some Tags in the new list that doesn't exist in the
@@ -496,6 +485,13 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
 			List<Tag> newTags = new LinkedList<Tag>(tempTags);
 			
 			if(newTags.removeAll(movie.getTags()) && !newTags.isEmpty()) {
+				
+				/*
+				 * TODO How to avoid doing the same thing in two different places?
+				 * Skip Movie model altogeter or make Movie model communicate
+				 * with database instead of doing these calls all over the place!
+				 * Same problem in next conditional statement.
+				 */
 				db.attachTags(movie, newTags);
 				movie.addTags(newTags);
 				Log.i("Custom", movie.getTitle() + " - attached Tags: " +
@@ -507,7 +503,7 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
 			 * new list, then those tags have been removed
 			 */
 			List<Tag> removedTags = new LinkedList<Tag>(movie.getTags());
-			
+
 			if(removedTags.removeAll(tempTags) && !removedTags.isEmpty()) {
 				db.detachTags(movie, removedTags);
 				movie.removeTags(removedTags);

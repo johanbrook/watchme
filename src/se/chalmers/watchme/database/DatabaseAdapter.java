@@ -74,24 +74,15 @@ public class DatabaseAdapter {
 			
 			// TODO Seems weird to use the MovieHelper to get the string with
 			// tags. Why isn't it done in this class' method already?
-			String [] tagStrings = MovieHelper.
+			
+			// Doesn't work:
+			// int tagID = Integer.parseInt(getAttachedTags(movie).getString(0));
+			// String tagName = getAttachedTags(movie).getString(1);
+			
+			String[] tagStrings = MovieHelper.
 				getCursorString(getAttachedTags(movie)).split(",");
 			
-			List<Tag> tags = new LinkedList<Tag>();
-			
-			for(String tagString : tagStrings) {
-				if (!tagString.equals("")) {
-
-					/*
-					 * Remove whitespaces from the beginning and end of each string
-					 * to allow for multi-word tags.
-					 */
-					
-					tags.add(new Tag(tagString.trim()));
-				}
-			}
-			
-			movie.addTags(tags);
+			movie.addTags(MovieHelper.stringArrayToTagList(tagStrings));
 			
 			return movie;
 		}

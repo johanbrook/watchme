@@ -167,17 +167,8 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
 		 */
 		String [] tagStrings = tagField.getText().toString().split(",");
 		
-		for(String tagString : tagStrings) {
-			if (!tagString.equals("")) {
-
-				/*
-				 * Remove whitespaces from the beginning and end of each string
-				 * to allow for multi-word tags.
-				 */
-				Tag tag = new Tag(tagString.trim());
-				db.attachTag(movie, tag);
-			}
-		}
+		// TODO Shouldn't the tags be added to database in the addMovie-method?
+		db.attachTags(movie, MovieHelper.stringArrayToTagList(tagStrings));
 		
 		// Set a notification for the date picked
     	this.setNotification(movie);
