@@ -38,7 +38,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			"DELETE ON " + TagsTable.TABLE_TAGS +
 			" FOR EACH ROW BEGIN " +
 			"DELETE FROM " + HasTagTable.TABLE_HAS_TAG + " WHERE " +
-			HasTagTable.COLUMN_TAG_ID + " = old." + TagsTable.COLUMN_TAG_ID;
+			HasTagTable.COLUMN_TAG_ID + " = old." + TagsTable.COLUMN_TAG_ID +
+			"; END;";
 	
 	// TODO Delete if we don't get it to work correctly
 	private static final String CREATE_TRIGGER_DELETETAG = "CREATE TRIGGER deleteTag AFTER " +

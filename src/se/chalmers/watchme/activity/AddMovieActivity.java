@@ -14,7 +14,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import se.chalmers.watchme.database.DatabaseAdapter;
-import se.chalmers.watchme.database.WatchMeContentProvider;
 import se.chalmers.watchme.model.Movie;
 import se.chalmers.watchme.model.Movie.PosterSize;
 import se.chalmers.watchme.R;
@@ -119,7 +118,6 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
         this.addButton.setEnabled(false);
     }
     
-    
     /**
      * Click callback. Create a new Movie object and set it on
      * the Intent, and then finish this Activity.
@@ -200,13 +198,11 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
     		.show();
     }
     
-    
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.activity_add_movie, menu);
         return true;
     }
-    
     
     @Override
     protected void onStop() {
@@ -218,7 +214,6 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
     	
     	super.onStop();
     }
-
     
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -246,7 +241,6 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
         datePickerFragment.show(getSupportFragmentManager(),
         		"datePicker");
 	}
-
     
     private class AddButtonToggler implements TextWatcher {
         	
@@ -268,7 +262,6 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
 		}
 
     }
-    
     
     /**
      * Class responsible for listening to click events in the auto complete

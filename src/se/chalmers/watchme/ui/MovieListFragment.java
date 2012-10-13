@@ -12,9 +12,11 @@ import se.chalmers.watchme.R;
 import se.chalmers.watchme.activity.MovieDetailsActivity;
 import se.chalmers.watchme.database.DatabaseAdapter;
 import se.chalmers.watchme.database.MoviesTable;
+import se.chalmers.watchme.database.MyCursorLoader;
 import se.chalmers.watchme.database.WatchMeContentProvider;
 import se.chalmers.watchme.model.Movie;
 import se.chalmers.watchme.net.ImageDownloadTask;
+import se.chalmers.watchme.notifications.NotificationClient;
 import se.chalmers.watchme.utils.DateTimeUtils;
 import se.chalmers.watchme.utils.ImageCache;
 import android.annotation.TargetApi;
@@ -30,7 +32,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v4.widget.SimpleCursorAdapter.ViewBinder;
@@ -53,23 +54,23 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
 	private DatabaseAdapter db;
 	
 	private AsyncTask<String, Void, Bitmap> imageTask;
-	private String cursor;
+	private Long tagId;
 	
 	public MovieListFragment() {
 		super();
+		this.tagId = (long) -1;
 	}
 
-	public MovieListFragment(String cursor) {
+	public MovieListFragment(Long tagId) {
 		super();
-		this.cursor = cursor;
+		this.tagId = tagId;
+		
 	}
 	
 	@Override
 	public void onActivityCreated(Bundle b) {
 		super.onActivityCreated(b);
 		Thread.currentThread().setContextClassLoader(getActivity().getClassLoader());
-		
-		// Set up cache
 		
 		final File cacheDir = getActivity().getBaseContext().getCacheDir();
 		ResponseCache.setDefault(new ImageCache(cacheDir));
@@ -88,7 +89,7 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
 				R.id.date,
 				R.id.poster};
 		
-		getActivity().getSupportLoaderManager().initLoader(0, null, this);
+		getActivity().getSupportLoaderManager().initLoader(2, null, this);
 		adapter = new SimpleCursorAdapter(getActivity(), R.layout.list_item_movie , null, from, to, 0);
 		
 		/**
@@ -141,12 +142,6 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
 		});
 		
 		setListAdapter(adapter);
-		
-		if (cursor != null) {
-			//If a cursor has been sent into the constructor of this, 
-			//swap to it. 
-			System.out.println("--- Cursor swapped ---");
-		}
 	    
 		// Set up listeners to delete and view a movie
         this.getListView().setOnItemClickListener(new OnDetailsListener());
@@ -160,31 +155,26 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
 		return inflater.inflate(R.layout.movie_list_fragment_view, container, false);
 	}
 	
+	@Override
 	public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
-		String[] projection = { 
-				MoviesTable.COLUMN_MOVIE_ID,
-				MoviesTable.COLUMN_TITLE, 
-				MoviesTable.COLUMN_RATING, 
-				MoviesTable.COLUMN_DATE,
-				MoviesTable.COLUMN_POSTER_SMALL};
 		
-	    CursorLoader cursorLoader = new CursorLoader(getActivity(),
-	    		WatchMeContentProvider.CONTENT_URI_MOVIES, projection, 
-	    		null, null, null);
-	    
-	    return cursorLoader;
+		return new MyCursorLoader(getActivity(), 
+				WatchMeContentProvider.CONTENT_URI_MOVIES,tagId,null);
 	}
 
-	public void onLoadFinished(Loader<Cursor> arg0, Cursor arg1) {
-		adapter.swapCursor(arg1);		
+	@Override
+	public void onLoadFinished(Loader<Cursor> arg0, Cursor cursor) {
+		adapter.swapCursor(cursor);
+		adapter.notifyDataSetChanged();
 	}
 
+	@Override
 	public void onLoaderReset(Loader<Cursor> arg0) {
 		// data is not available anymore, delete reference
 	    adapter.swapCursor(null);
+	    adapter.notifyDataSetChanged();
 		
 	}
-	
 	
 	/**
      * Listener for when the user clicks an item in the list
@@ -197,13 +187,16 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
 
 		public void onItemClick(AdapterView<?> parent, View view, int position,
 				long id) {
+			
 			db = new DatabaseAdapter(getActivity().getContentResolver());
 			
 			if(imageTask != null && imageTask.getStatus() == AsyncTask.Status.RUNNING) {
 				imageTask.cancel(true);
 			}
 			
-			final Movie movie = db.getMovie(id);
+			Cursor selectedMovie = (Cursor) getListView().getItemAtPosition(position);
+			Movie movie = db.getMovie(Long.parseLong(selectedMovie.getString(0)));
+			
 			Intent intent = new Intent(getActivity(), MovieDetailsActivity.class);
 			
 			// TODO Fetch all data from database in DetailsActivity instead?
@@ -212,8 +205,6 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
 			startActivity(intent);
 			
 		}
-    	
-    	
     }
 	
 	 /**
@@ -228,7 +219,8 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
     	public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
 			db = new DatabaseAdapter(getActivity().getContentResolver());
 			
-    		final Movie movie = db.getMovie(id);
+			Cursor selectedMovie = (Cursor) getListView().getItemAtPosition(position);
+    		final Movie movie = db.getMovie(Long.parseLong(selectedMovie.getString(0)));
     		
             AlertDialog.Builder alertbox = new AlertDialog.Builder(getActivity());
             alertbox.setMessage("Are you sure you want to delete the movie \"" + movie.getTitle() + "\"?");           
@@ -238,6 +230,7 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
                 	db = new DatabaseAdapter(getActivity().getContentResolver());
                 	db.removeMovie(movie);
                 	
+                	NotificationClient.cancelNotification(getActivity(), movie);
                     Toast.makeText(getActivity().getApplicationContext(), "\"" + movie.getTitle() + "\" was deleted" , Toast.LENGTH_SHORT).show();
                 }
             });
@@ -251,8 +244,4 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
 			return true;
 		}    	
 	}
-
-	
-	
-
 }

@@ -67,27 +67,19 @@ public class WatchMeContentProvider extends ContentProvider {
 			 */
 			
 			String movieSel = selection.split(MoviesTable.COLUMN_MOVIE_ID)[1];
-			
-			System.out.println("MOVIESELECTION: " + movieSel);
-			
 			Cursor movieCursor = sqlDB.query(HasTagTable.TABLE_HAS_TAG, null, 
 					HasTagTable.COLUMN_MOVIE_ID + movieSel, null, 
 					null, null, null);
 			
-			System.out.println("NBR OF TAGS ( BD ): " + movieCursor.getCount());
-			
 			deletedRows = sqlDB.delete(MoviesTable.TABLE_MOVIES, selection, 
 					selectionArgs);
 			
-			System.out.println("NBR OF TAGS: ( AD ) " + movieCursor.getCount());
 			while (movieCursor.moveToNext()) {
 				String tagSel = " = " + movieCursor.getString(1);
-				System.out.println("TAGSEL: " + tagSel);
 
 				Cursor tagCursor = sqlDB.query(HasTagTable.TABLE_HAS_TAG, null,
 						HasTagTable.COLUMN_TAG_ID + tagSel, null, null,
 						null, null);
-				System.out.println("NBR OF MOVIES ( BD ): " + tagCursor.getCount());
 				
 				if (!tagCursor.moveToFirst()) {
 					// If the tag isn't connected to any Movie, delete it.
@@ -138,10 +130,13 @@ public class WatchMeContentProvider extends ContentProvider {
 			break;
 		default:
 			throw new IllegalArgumentException("Unknown URI " + uri);
+			
 		}
 		
-		//Called as a courtesy
-		getContext().getContentResolver().notifyChange(uri, null);
+		// Notify Observers
+		getContext().getContentResolver().notifyChange(CONTENT_URI_MOVIES, null);
+		getContext().getContentResolver().notifyChange(CONTENT_URI_TAGS, null);
+		getContext().getContentResolver().notifyChange(CONTENT_URI_HAS_TAG, null);
 		return deletedRows;
 	}
 
@@ -197,6 +192,7 @@ public class WatchMeContentProvider extends ContentProvider {
 			
 			// TODO: FIX THIS SMELLY CODE
 			id = values.getAsLong(MoviesTable.COLUMN_MOVIE_ID) + tagId;
+			
 			break;
 		case TAGS:
 			/*
@@ -209,9 +205,10 @@ public class WatchMeContentProvider extends ContentProvider {
 			throw new IllegalArgumentException("Unknown URI" + uri);
 		}
 		
-		//Called as a courtesy
-		getContext().getContentResolver().notifyChange(uri, null);
-		
+		// Notify Observers
+		getContext().getContentResolver().notifyChange(CONTENT_URI_MOVIES, null);
+		getContext().getContentResolver().notifyChange(CONTENT_URI_TAGS, null);
+		getContext().getContentResolver().notifyChange(CONTENT_URI_HAS_TAG, null);
 	    return Uri.parse(BASE_PATH_MOVIES + "/" + id);
 	}
 
@@ -300,8 +297,10 @@ public class WatchMeContentProvider extends ContentProvider {
 			throw new IllegalArgumentException("Unknown URI " + uri);
 		}
 		
-		//Called as a courtesy
-		getContext().getContentResolver().notifyChange(uri, null);
+		// Notify Observers
+		getContext().getContentResolver().notifyChange(CONTENT_URI_MOVIES, null);
+		getContext().getContentResolver().notifyChange(CONTENT_URI_TAGS, null);
+		getContext().getContentResolver().notifyChange(CONTENT_URI_HAS_TAG, null);
 		return updatedRows;
 	}
 

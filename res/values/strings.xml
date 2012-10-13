@@ -32,6 +32,7 @@
     <string name="details_menu_save">Save</string>
     <string name="tab_movies">Movies</string>
     <string name="tab_tags">Tags</string>
-    
+    <string name="share_movie_list">Share list</string>
+    <string name="title_activity_tagmovielist">Tags</string>
 
 </resources>

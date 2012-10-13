@@ -118,7 +118,17 @@ public class MovieTest extends TestCase {
 
 		compareObject = new Movie("batman");
 		assertTrue(batman.equals(compareObject));
+	}
+	
+	public void testHashCode() {
+		Movie otherMovie = new Movie("batman");
+		Movie notSameMovie = new Movie("spiderman");
 		
+		assertTrue(batman.equals(otherMovie));
+		assertEquals(batman.hashCode(), otherMovie.hashCode());
+		
+		assertFalse(batman.equals(notSameMovie));
+		assertFalse(batman.hashCode() == notSameMovie.hashCode());
 	}
 	
 	/*
