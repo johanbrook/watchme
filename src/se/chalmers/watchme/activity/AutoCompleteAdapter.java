@@ -66,8 +66,6 @@ public class AutoCompleteAdapter extends ArrayAdapter<JSONObject> implements Fil
 	@Override
 	public Filter getFilter() {
 		
-		Log.i("Custom", "GET FILTER");
-		
 		return new Filter() {
 
 			/*

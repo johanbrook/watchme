@@ -5,6 +5,7 @@ package se.chalmers.watchme.utils;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import se.chalmers.watchme.R;
 
 /**
  * A utility class for converting date's to common formats
@@ -15,18 +16,28 @@ public class DateTimeUtils {
 	
 	/**
 	 * Recieves a calendar instance and returns a String with simple
-	 * date format(dd-MM-yyyy)
+	 * date format ("d MMM, yyyy" = "14 Oct, 2012")
 	 * 
 	 * @param calendar The calendar object to be used to create the string
-	 * @returns A simple string representing a date in the format: dd-MM-yyyy
+	 * @returns A simple string representing a date in the format: "d MMM, yyyy"
 	 */
 	public static String toSimpleDate(Calendar calendar) {
-		
-		SimpleDateFormat simpleDate = new SimpleDateFormat("dd-MM-yyyy");
+		return toSimpleDate(calendar, "d MMM, yyyy");
+	}
+	
+	/**
+	 * Format a calendar date to a string with a certain format.
+	 * 
+	 * @param calendar The date
+	 * @param format The format
+	 * @return A formatted string according to 'format'
+	 * @see SimpleDateFormat
+	 */
+	public static String toSimpleDate(Calendar calendar, String format) {
+		SimpleDateFormat simpleDate = new SimpleDateFormat(format);
 		String simpleDateString = simpleDate.format(calendar.getTime());
 		
 		return simpleDateString;
-		
 	}
 	
 	/**
@@ -42,50 +53,4 @@ public class DateTimeUtils {
 		return hours+":" + ((remainingMinutes < 10) ? "0"+remainingMinutes : remainingMinutes);
 	}
 	
-	
-	/* TODO Is it okay to require the string to be formated in a specific way?
-	 * Is this a place for pre-condition?
-	 */
-	
-	/**
-	 * Receives a String in the format "MM/dd/yyyy" and returns a Calendar object
-	 * 
-	 * @param string The string to convert to a Calendar object
-	 * @returns Calendar object set to the recieved date
-	 */
-	public static Calendar toCalendar(String simpleDateString) {
-		
-		int month = 1;
-		int day = 1;
-		int year = 2000;
-		
-		/* TODO Feels like super-ugly code. But this will have to do for now.
-		 * Use token to select substring according to slash (/) signs?
-		 * Better ideas?
-		 */
-		
-		// Try to convert the date in the string to integers
-		try {
-			month = Integer.parseInt(simpleDateString.substring(0, 1));
-			day = Integer.parseInt(simpleDateString.substring(3, 4));
-			year = Integer.parseInt(simpleDateString.substring(6, 9));
-		}
-		
-		catch(NumberFormatException e) {
-			System.err.println("Parse exception: " + e.toString());
-			e.printStackTrace();
-		}
-		
-		catch(IndexOutOfBoundsException e) {
-			System.err.println("String formatted wrong " + e.toString());
-			e.printStackTrace();
-		}
-		
-		Calendar calendar = Calendar.getInstance();
-		calendar.set(year, month, day);
-		
-		return calendar;
-		
-	}
-
 }

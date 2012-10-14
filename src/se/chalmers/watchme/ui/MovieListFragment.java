@@ -48,6 +48,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -58,8 +59,6 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
 	
 	private SimpleCursorAdapter adapter;
 	private DatabaseAdapter db;
-	
-	private MenuItem sortItem;
 	
 	private AsyncTask<String, Void, Bitmap> imageTask;
 	private Long tagId;
@@ -127,6 +126,17 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
 				}
 				
 				/*
+				 * Handle rating bar conversion
+				 */
+				else if (columnIndex == cursor.getColumnIndexOrThrow(MoviesTable.COLUMN_RATING)) {
+					int rating = cursor.getInt(columnIndex);
+					RatingBar bar = (RatingBar) view;
+					bar.setRating(rating);
+					
+					return true;
+				}
+				
+				/*
 				 * Handle poster images
 				 */
 				
@@ -163,10 +173,24 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
 	    this.getListView().setOnItemLongClickListener(new OnDeleteListener());
 	}
 	
+	/*
+	 * Show the Share and Sort buttons while movie list view
+	 */
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-		sortItem = menu.findItem(R.id.menu_sort_button);
+		MenuItem sortItem = menu.findItem(R.id.menu_sort_button);
+		MenuItem shareItem = menu.findItem(R.id.menu_send_email_button);
+		
 		sortItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+		shareItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+		
+		// If there aren't any movies in the list, disable the "Share list" button
+		int count = new DatabaseAdapter(getActivity().getContentResolver()).getMovieCount();
+    	
+    	if(count == 0) {
+    		shareItem.setEnabled(false);
+    	}
+		
 		super.onCreateOptionsMenu(menu, inflater);
 	}
 	
@@ -219,7 +243,7 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
     	db = new DatabaseAdapter(getActivity().getContentResolver());
     	
     	AlertDialog.Builder alertbox = new AlertDialog.Builder(getActivity());
-    	alertbox.setTitle("Order by");
+    	alertbox.setTitle(getString(R.string.order_dialog_title));
     	alertbox.setSingleChoiceItems(alternatives, 0,
     			new DialogInterface.OnClickListener() {
     			public void onClick(DialogInterface dialog, int item) {
@@ -295,8 +319,8 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
     		final Movie movie = db.getMovie(Long.parseLong(selectedMovie.getString(0)));
     		
             AlertDialog.Builder alertbox = new AlertDialog.Builder(getActivity());
-            alertbox.setMessage("Are you sure you want to delete the movie \"" + movie.getTitle() + "\"?");           
-            alertbox.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            alertbox.setMessage(getString(R.string.delete_dialog_text) + " \"" + movie.getTitle() + "\"?");           
+            alertbox.setPositiveButton(getString(R.string.delete_button_positive), new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface arg0, int arg1) {
                 	
                 	db = new DatabaseAdapter(getActivity().getContentResolver());
@@ -306,7 +330,7 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
                     Toast.makeText(getActivity().getApplicationContext(), "\"" + movie.getTitle() + "\" was deleted" , Toast.LENGTH_SHORT).show();
                 }
             });
-            alertbox.setNeutralButton("Cancel", new DialogInterface.OnClickListener() {
+            alertbox.setNeutralButton(getString(R.string.delete_button_negative), new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface arg0, int arg1) {
                     
                 }

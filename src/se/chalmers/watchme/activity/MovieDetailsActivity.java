@@ -193,7 +193,7 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
     	
     	int runtime = json.optInt("runtime");
     	if(runtime != 0) {
-    		duration.setText(DateTimeUtils.minutesToHuman(runtime));
+    		duration.setText(getString(R.string.movie_detail_runtime)+ " "+ DateTimeUtils.minutesToHuman(runtime));
     	}
     	
     	
@@ -296,7 +296,7 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
     	
     	@Override
     	protected void onPreExecute() {
-    		this.dialog.setMessage("Loading from IMDb ...");
+    		this.dialog.setMessage(getString(R.string.imdb_loading_text));
     		this.dialog.show();
     	}
     	
@@ -304,7 +304,7 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
 		public void onCancelled() {
     		this.dialog.dismiss();
     		Toast.makeText(getBaseContext(), 
-					"An error occurred while fetching from IMDb", 
+					getString(R.string.imdb_fetch_error_text), 
 					Toast.LENGTH_SHORT)
 			.show();
 		}
@@ -328,7 +328,7 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
 			}
 			else {
 				Toast.makeText(getBaseContext(), 
-						"An error occurred while fetching from IMDb", 
+						R.string.imdb_fetch_error_text, 
 						Toast.LENGTH_LONG)
 				.show();
 			}
