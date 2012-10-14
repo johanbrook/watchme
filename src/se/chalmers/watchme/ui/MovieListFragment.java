@@ -48,6 +48,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -121,6 +122,17 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
 					String formattedDate = DateTimeUtils.toSimpleDate(cal);
 					
 					textView.setText(formattedDate);
+					return true;
+				}
+				
+				/*
+				 * Handle rating bar conversion
+				 */
+				else if (columnIndex == cursor.getColumnIndexOrThrow(MoviesTable.COLUMN_RATING)) {
+					int rating = cursor.getInt(columnIndex);
+					RatingBar bar = (RatingBar) view;
+					bar.setRating(rating);
+					
 					return true;
 				}
 				
