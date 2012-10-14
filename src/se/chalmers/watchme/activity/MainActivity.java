@@ -6,20 +6,25 @@ import java.util.List;
 import se.chalmers.watchme.R;
 import se.chalmers.watchme.database.DatabaseAdapter;
 import se.chalmers.watchme.model.Movie;
+import se.chalmers.watchme.notifications.NotificationClient;
 import se.chalmers.watchme.ui.MovieListFragment;
 import se.chalmers.watchme.ui.TagListFragment;
 import se.chalmers.watchme.utils.DateTimeUtils;
 import android.app.ActionBar;
+import android.app.AlertDialog;
 import android.app.ActionBar.Tab;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 
 
@@ -31,7 +36,6 @@ public class MainActivity extends FragmentActivity {
 	public static final String MOVIE_DETAILS_NOTE = "se.chalmers.watchme.DETAILS_NOTE";
 	
 	//TODO: Correct to put key values for Intent.putExtra() here? 
-	public static final String EXTRA_CURSOR = "se.chalmers.watchme.CURSOR";
 	public static final String TAG_ID = "se.chalmers.watchme.TAG_ID";
 	
 	private ViewPager viewPager;
@@ -70,7 +74,7 @@ public class MainActivity extends FragmentActivity {
     	int count = new DatabaseAdapter(getContentResolver()).getMovieCount();
     	
     	if(count == 0) {
-    		menu.findItem(R.id.send_email_button).setEnabled(false);
+    		menu.findItem(R.id.menu_send_email_button).setEnabled(false);
     	}
     	
     	return super.onPrepareOptionsMenu(menu);
@@ -83,21 +87,23 @@ public class MainActivity extends FragmentActivity {
     }
     
     /**
-     * When the user clicks the 'Add Movie' button in the Action bar.
+     * When the user clicks on a button in the Action bar.
      */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         
+    	Log.i("Custom", "Event, id: "+ item.getItemId() + ", Add: "+R.id.add_movie_button+ ", Email: "+R.id.menu_send_email_button);
+    	
     	switch(item.getItemId()) {
-    	case R.id.add_movie_menu:
+    	case R.id.menu_add_movie:
     		Intent intent = new Intent(this, AddMovieActivity.class);
             startActivity(intent);
             return true;
     		
-    	case R.id.send_email_button:
+    	case R.id.menu_send_email_button:
     		sendEmail();
     		return true;
-    		
+
     	default:
     		return super.onOptionsItemSelected(item);
     	}

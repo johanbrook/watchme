@@ -59,7 +59,7 @@ public class TagListFragment extends ListFragment implements LoaderManager.Loade
 	 */
 	@Override
 	public void onPrepareOptionsMenu(Menu menu) {
-		menu.findItem(R.id.send_email_button).setEnabled(false);
+		menu.findItem(R.id.menu_send_email_button).setEnabled(false);
 		super.onPrepareOptionsMenu(menu);
 	}
 	

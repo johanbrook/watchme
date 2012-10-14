@@ -30,7 +30,8 @@ public class MyCursorLoader extends CursorLoader {
 	private Uri mUri;
 	private DatabaseAdapter db;
 
-	private String mSortOrder;
+	// Set default to order by Date
+	private String mSortOrder = MoviesTable.COLUMN_DATE;
 	private Long mTagId;
 	
 	private Cursor mCursor;
@@ -69,7 +70,7 @@ public class MyCursorLoader extends CursorLoader {
 	private Cursor getCursor() {
 		if (mUri == WatchMeContentProvider.CONTENT_URI_MOVIES) {
 			if (mTagId == -1) {
-				return db.getAllMoviesCursor();
+				return db.getAllMoviesCursor(mSortOrder);
 			}
 			return db.getAttachedMovies(mTagId);
 		} else if(mUri == WatchMeContentProvider.CONTENT_URI_TAGS) {
