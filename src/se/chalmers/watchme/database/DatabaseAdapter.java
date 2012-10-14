@@ -40,6 +40,24 @@ public class DatabaseAdapter {
 	}
 	
 	/**
+	 * The total number of movies.
+	 * 
+	 * @return The number of existing movies
+	 */
+	public int getMovieCount() {
+		return this.getCount(uri_movies);
+	}
+	
+	/**
+	 * The total number of tags.
+	 * 
+	 * @return The number of existing tags
+	 */
+	public int getTagCount() {
+		return this.getCount(uri_tags);
+	}
+	
+	/**
 	 * Returns the specified Movie.
 	 * 
 	 * @param id The id of the Movie.
@@ -348,5 +366,15 @@ public class DatabaseAdapter {
 	 */
 	public Cursor getAttachedMovies(Tag tag) {
 		return getAttachedMovies(tag.getId());
+	}
+	
+	/**
+	 * Get the number of rows for a specified database table.
+	 * 
+	 * @param table The table in the database
+	 * @return The total number of rows
+	 */
+	private int getCount(Uri table) {
+		return contentResolver.query(table, null, null, null, null).getCount();
 	}
 }

@@ -84,6 +84,9 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
 		setHasOptionsMenu(true);
 		Thread.currentThread().setContextClassLoader(getActivity().getClassLoader());
 		
+		// We want to participate in customizing the Action bar options menu
+		this.setHasOptionsMenu(true);
+		
 		final File cacheDir = getActivity().getBaseContext().getCacheDir();
 		ResponseCache.setDefault(new ImageCache(cacheDir));
 
