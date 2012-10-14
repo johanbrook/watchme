@@ -461,8 +461,9 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
 			 * If there are some Tags in the new list that doesn't exist in the
 			 * old list, then those tags are new
 			 */
+			newTags.removeAll(movie.getTags());
 			
-			if(newTags.removeAll(movie.getTags()) && !newTags.isEmpty()) {
+			if(!newTags.isEmpty()) {
 				
 				/*
 				 * TODO How to avoid doing the same thing in two different places?
@@ -471,7 +472,6 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
 				 * Same problem in next conditional statement.
 				 */
 				db.attachTags(movie, newTags);
-				movie.addTags(newTags);
 				Log.i("Custom", movie.getTitle() + " - attached Tags: " +
 						newTags.toString());
 			}
@@ -482,9 +482,10 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
 			 * If there are some Tags in the old list that doesn't exist in the
 			 * new list, then those tags have been removed
 			 */
-			if(removedTags.removeAll(tempTags) && !removedTags.isEmpty()) {
+			removedTags.removeAll(tempTags);
+			
+			if(!removedTags.isEmpty()) {
 				db.detachTags(movie, removedTags);
-				movie.removeTags(removedTags);
 				Log.i("Custom", movie.getTitle() + " - detached Tags: " +
 						removedTags.toString());
 			}
@@ -495,7 +496,14 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
 			 */
 			((ToggleButton) findViewById(R.id.toggle_edit)).performClick();
 			
-			db.updateMovie(movie);
+			db.updateMovie(movie);	// Updates release date, rating and note
+			
+			/*
+			 * Fetches a new instance of the movie straight from the database to
+			 * avoid having two different versions. Also vital because new Tags
+			 * id's are not set before this update.
+			 */
+			movie = db.getMovie(movie.getId()); 		
 			
 		}
     }
