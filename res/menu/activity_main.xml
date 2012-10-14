@@ -2,6 +2,8 @@
     
     <item android:id="@+id/send_email_button" android:title="@string/share_movie_list" android:showAsAction="always|withText"></item>
     
+    <item android:id="@+id/sort_button" android:title="@string/sort" android:showAsAction="never|withText"></item>
+    
     <item android:id="@+id/add_movie_menu" 
         android:icon="@drawable/add"
         android:showAsAction="always|withText" android:title="@string/add_movie_button"></item>

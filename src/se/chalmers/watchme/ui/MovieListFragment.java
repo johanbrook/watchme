@@ -162,8 +162,7 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
 	
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-		System.out.println("--- MovieListFragment: onCreateOptionsMenu ---");
-		sortItem = menu.add("Sort");
+		sortItem = menu.findItem(R.id.sort_button);
 		sortItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 		super.onCreateOptionsMenu(menu, inflater);
 	}
@@ -177,8 +176,6 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
 	
 	@Override
 	public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
-		
-		System.out.println("onCreateLoader: orderBy " + orderBy);
 		
 		return new MyCursorLoader(getActivity(), 
 				WatchMeContentProvider.CONTENT_URI_MOVIES,tagId,orderBy);
@@ -201,11 +198,13 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
     	
-    	if(item.getItemId() == sortItem.getItemId()) {
+    	switch(item.getItemId()) {
+    	case R.id.sort_button:
     		sortList();
-    		return true;
+    		break;
+    	default:
+    		break;
     	}
-    	
     	return super.onOptionsItemSelected(item);
     }
     
@@ -235,8 +234,10 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
     				default:
     					break;
     				}
+    				// Change the cursor
     				Cursor cursor = db.getAllMoviesCursor(orderBy);
     				adapter.changeCursor(cursor);
+    				
     				dialog.dismiss();
     			}
     			});
