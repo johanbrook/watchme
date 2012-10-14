@@ -89,10 +89,7 @@ public class MainActivity extends FragmentActivity {
     	case R.id.send_email_button:
     		sendEmail();
     		return true;
-    		
-    	case R.id.sort_menu:
-    		sortList();
-    		return true;
+
     	default:
     		return super.onOptionsItemSelected(item);
     	}
@@ -116,29 +113,6 @@ public class MainActivity extends FragmentActivity {
     	
     	// Let the user choose email app to mail from
     	startActivity(Intent.createChooser(emailIntent, "Send the movie list in:"));
-    }
-    
-    private void sortList() {
-    	List<String> alternatives = new ArrayList<String>();;
-    	
-    	Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.vPager);
-    	if(fragment.getClass() == MovieListFragment.class) {
-    		alternatives.add("Title");
-    		alternatives.add("Date");
-    		alternatives.add("Rating");
-    	} else if(fragment.getClass() == TagListFragment.class) {
-    		
-    	}
-    	
-    	AlertDialog.Builder alertbox = new AlertDialog.Builder(this);
-        alertbox.setMessage("Order by: ");
-        alertbox.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface arg0, int arg1) {
-            	
-            }
-        });
-        
-        alertbox.show();
     }
         
     @Override

@@ -9,6 +9,7 @@ import java.net.URLConnection;
 import java.util.Calendar;
 
 import se.chalmers.watchme.R;
+import se.chalmers.watchme.activity.AddMovieActivity;
 import se.chalmers.watchme.activity.MovieDetailsActivity;
 import se.chalmers.watchme.database.DatabaseAdapter;
 import se.chalmers.watchme.database.MoviesTable;
@@ -30,12 +31,17 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v4.widget.SimpleCursorAdapter.ViewBinder;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -53,8 +59,11 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
 	private SimpleCursorAdapter adapter;
 	private DatabaseAdapter db;
 	
+	private MenuItem sortItem;
+	
 	private AsyncTask<String, Void, Bitmap> imageTask;
 	private Long tagId;
+	private String orderBy;
 	
 	public MovieListFragment() {
 		super();
@@ -70,6 +79,9 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
 	@Override
 	public void onActivityCreated(Bundle b) {
 		super.onActivityCreated(b);
+		
+		// TODO: Has to be done in onCreate instead?
+		setHasOptionsMenu(true);
 		Thread.currentThread().setContextClassLoader(getActivity().getClassLoader());
 		
 		final File cacheDir = getActivity().getBaseContext().getCacheDir();
@@ -149,6 +161,14 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
 	}
 	
 	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		System.out.println("--- MovieListFragment: onCreateOptionsMenu ---");
+		sortItem = menu.add("Sort");
+		sortItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+		super.onCreateOptionsMenu(menu, inflater);
+	}
+	
+	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		
@@ -158,8 +178,10 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
 	@Override
 	public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
 		
+		System.out.println("onCreateLoader: orderBy " + orderBy);
+		
 		return new MyCursorLoader(getActivity(), 
-				WatchMeContentProvider.CONTENT_URI_MOVIES,tagId,null);
+				WatchMeContentProvider.CONTENT_URI_MOVIES,tagId,orderBy);
 	}
 
 	@Override
@@ -175,6 +197,52 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
 	    adapter.notifyDataSetChanged();
 		
 	}
+	
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+    	
+    	if(item.getItemId() == sortItem.getItemId()) {
+    		sortList();
+    		return true;
+    	}
+    	
+    	return super.onOptionsItemSelected(item);
+    }
+    
+    /**
+     * Show a Dialog Box with choices of attributes to order the Movies by.
+     */
+    private void sortList() {
+    	final String[] alternatives = { "Date", "Rating", "Title" };
+    	db = new DatabaseAdapter(getActivity().getContentResolver());
+    	
+    	AlertDialog.Builder alertbox = new AlertDialog.Builder(getActivity());
+    	alertbox.setTitle("Order by");
+    	alertbox.setSingleChoiceItems(alternatives, 0,
+    			new DialogInterface.OnClickListener() {
+    			public void onClick(DialogInterface dialog, int item) {
+
+    				switch(item) {
+    				case 0:
+    					orderBy = MoviesTable.COLUMN_DATE;
+    					break;
+    				case 1:
+    					orderBy = MoviesTable.COLUMN_RATING;
+    					break;
+    				case 2:
+    					orderBy = MoviesTable.COLUMN_TITLE;
+    					break;
+    				default:
+    					break;
+    				}
+    				Cursor cursor = db.getAllMoviesCursor(orderBy);
+    				adapter.changeCursor(cursor);
+    				dialog.dismiss();
+    			}
+    			});
+        
+        alertbox.show();
+    }
 	
 	/**
      * Listener for when the user clicks an item in the list

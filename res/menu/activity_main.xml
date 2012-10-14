@@ -1,14 +1,9 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     
-    <item android:id="@+id/send_email_button" android:title="@string/share_movie_list" android:showAsAction="ifRoom|withText"></item>
+    <item android:id="@+id/send_email_button" android:title="@string/share_movie_list" android:showAsAction="always|withText"></item>
     
     <item android:id="@+id/add_movie_menu" 
         android:icon="@drawable/add"
-        android:showAsAction="ifRoom|withText" android:title="@string/add_movie_button"></item>
-    
-    <item android:id="@+id/sort_menu"
-        android:title="@string/sort_button"
-        android:showAsAction="ifRoom|withText" 
-        ></item>
+        android:showAsAction="always|withText" android:title="@string/add_movie_button"></item>
     
 </menu>
