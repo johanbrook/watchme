@@ -446,6 +446,7 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
 			
 			movie.setDate(tempReleaseDate);
 			movie.setNote(noteField.getText().toString());
+			movie.setRating((int) myRatingBar.getRating());
 			
 			/* 
 			 * Split the text input into separate strings input at
@@ -493,9 +494,7 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
 			 */
 			((ToggleButton) findViewById(R.id.toggle_edit)).performClick();
 			
-			// TODO Save releaseDate
-			// TODO Save rating
-			// TODO Save note
+			db.updateMovie(movie);
 			
 		}
     }
