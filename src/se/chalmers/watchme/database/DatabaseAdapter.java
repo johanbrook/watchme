@@ -77,23 +77,19 @@ public class DatabaseAdapter {
 			// tags. Why isn't it done in this class' method already?
 			
 			Cursor tempCursor = getAttachedTags(movie);
-			tempCursor.moveToFirst();
 			
 			List<Tag> tags = new LinkedList<Tag>();
 			
 			/*
-			 * Move cursor to new row and create tag objects from fetched data
+			 * Move through cursor and create tag objects from fetched data
 			 * until there is no more rows (i.e. no more tags)
 			 */
-			do {
-				// Create new tag with title from database, then set id
+			while(tempCursor.moveToNext()) {
 				Tag tag = new Tag(tempCursor.getString(1));	
 				tag.setId(Integer.parseInt(tempCursor.getString(0)));
 				
 				tags.add(tag);
-				
-			} while(tempCursor.moveToNext());
-			
+			}
 			movie.addTags(tags);
 			
 			return movie;
@@ -126,11 +122,32 @@ public class DatabaseAdapter {
 	 * Delete a Movie from the database.
 	 * 
 	 * @param movie The movie to be removed.
+	 * @return The number of rows affected
 	 */
-	public void removeMovie(Movie movie) {
+	public int removeMovie(Movie movie) {
 		String where = MoviesTable.COLUMN_MOVIE_ID + " = " + movie.getId();
 		
-		contentResolver.delete(uri_movies, where, null);
+		return contentResolver.delete(uri_movies, where, null);
+	}
+	
+	/**
+	 * Updates information about a Movie.
+	 * 
+	 * @param movie The Movie to be updated.
+	 * @return The number of rows affected
+	 */
+	public int updateMovie(Movie movie) {
+		ContentValues values = new ContentValues();
+	    values.put(MoviesTable.COLUMN_TITLE, movie.getTitle());
+	    values.put(MoviesTable.COLUMN_RATING, movie.getRating());
+	    values.put(MoviesTable.COLUMN_NOTE, movie.getNote());
+	    values.put(MoviesTable.COLUMN_DATE, movie.getDate().getTimeInMillis());
+	    values.put(MoviesTable.COLUMN_IMDB_ID, movie.getApiID());
+	    values.put(MoviesTable.COLUMN_POSTER_LARGE, movie.getPosterURL(Movie.PosterSize.MID));
+	    values.put(MoviesTable.COLUMN_POSTER_SMALL, movie.getPosterURL(Movie.PosterSize.THUMB));
+	    
+		String where = MoviesTable.COLUMN_MOVIE_ID + " = " + movie.getId();
+		return contentResolver.update(uri_movies, values, where, null);
 	}
 	
 	/**
