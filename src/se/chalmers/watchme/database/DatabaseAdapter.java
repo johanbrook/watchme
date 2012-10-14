@@ -91,24 +91,41 @@ public class DatabaseAdapter {
 			 * commas (",")
 			 */
 			
-			// TODO Seems weird to use the MovieHelper to get the string with
-			// tags. Why isn't it done in this class' method already?
-			
 			Cursor tempCursor = getAttachedTags(movie);
-			
-			List<Tag> tags = new LinkedList<Tag>();
+
+			// TODO getCount() doesn't return 0 when it should, why?!
+			// Implementing try-catch method as solution for now
+			try{
+				
+				// Don't try to fetch tags if none are attached to movie				
+				if(tempCursor.getCount() > 0) {
+					
+					List<Tag> tags = new LinkedList<Tag>();
+					
+					/*
+					 * Move through cursor and create tag objects from fetched data
+					 * until there is no more rows (i.e. no more tags)
+					 */
+					while(tempCursor.moveToNext()) {
+						Tag tag = new Tag(tempCursor.getString(1));	
+						tag.setId(Integer.parseInt(tempCursor.getString(0)));
+						
+						tags.add(tag);
+					}
+				
+					movie.addTags(tags);
+				
+				}
+				
+			}
 			
 			/*
-			 * Move through cursor and create tag objects from fetched data
-			 * until there is no more rows (i.e. no more tags)
+			 * Should not happen, but does when no tags are attached to movie.
+			 * Somehow tempCursor.getCount() returns 1 when it should be 0
 			 */
-			while(tempCursor.moveToNext()) {
-				Tag tag = new Tag(tempCursor.getString(1));	
-				tag.setId(Integer.parseInt(tempCursor.getString(0)));
-				
-				tags.add(tag);
+			catch(NullPointerException e) {
+				e.printStackTrace();
 			}
-			movie.addTags(tags);
 			
 			return movie;
 		}

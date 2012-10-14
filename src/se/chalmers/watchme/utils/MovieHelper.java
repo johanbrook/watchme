@@ -153,8 +153,6 @@ public class MovieHelper {
 	 */
 	public static List<Tag> stringArrayToTagList(String[] tagStrings) {
 		
-		Log.i("Custom", "stringArrayToTagList");
-		
 		List<Tag> tags = new LinkedList<Tag>();
 		
 		for(String tagString : tagStrings) {
