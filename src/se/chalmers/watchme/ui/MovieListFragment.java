@@ -162,7 +162,7 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
 	
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-		sortItem = menu.findItem(R.id.sort_button);
+		sortItem = menu.findItem(R.id.menu_sort_button);
 		sortItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 		super.onCreateOptionsMenu(menu, inflater);
 	}
@@ -199,7 +199,7 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
     public boolean onOptionsItemSelected(MenuItem item) {
     	
     	switch(item.getItemId()) {
-    	case R.id.sort_button:
+    	case R.id.menu_sort_button:
     		sortList();
     		break;
     	default:

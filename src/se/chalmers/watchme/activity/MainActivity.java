@@ -78,15 +78,15 @@ public class MainActivity extends FragmentActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         
-    	Log.i("Custom", "Event, id: "+ item.getItemId() + ", Add: "+R.id.add_movie_button+ ", Email: "+R.id.send_email_button);
+    	Log.i("Custom", "Event, id: "+ item.getItemId() + ", Add: "+R.id.add_movie_button+ ", Email: "+R.id.menu_send_email_button);
     	
     	switch(item.getItemId()) {
-    	case R.id.add_movie_menu:
+    	case R.id.menu_add_movie:
     		Intent intent = new Intent(this, AddMovieActivity.class);
             startActivity(intent);
             return true;
     		
-    	case R.id.send_email_button:
+    	case R.id.menu_send_email_button:
     		sendEmail();
     		return true;
 
