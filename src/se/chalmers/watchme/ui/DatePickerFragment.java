@@ -74,7 +74,7 @@ public class DatePickerFragment extends DialogFragment
 	
 	/**
 	 * Interface for sending the date back to the activity that initialized it.
-	 * Observe, that activity must implement this interface. 
+	 * Observe - that activity must implement this interface. 
 	 */
 	public interface DatePickerListener {
 		
