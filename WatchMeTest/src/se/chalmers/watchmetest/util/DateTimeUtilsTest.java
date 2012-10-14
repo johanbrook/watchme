@@ -21,7 +21,7 @@ public class DateTimeUtilsTest extends TestCase {
 		cal.set(2012, 9, 14);
 		
 		// Don't forget the correct locale
-		assertEquals("14 okt, 2012", DateTimeUtils.toSimpleDate(cal));
+		assertEquals("14 Oct, 2012", DateTimeUtils.toSimpleDate(cal));
 	}
 	
 	public void testToSimpleDateFormat() {
