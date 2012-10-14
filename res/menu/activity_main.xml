@@ -1,11 +1,25 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     
-    <item android:id="@+id/menu_send_email_button" android:title="@string/share_movie_list" android:showAsAction="never|withText"></item>
+    <item 
+        android:id="@+id/menu_send_email_button" 
+        android:title="@string/share_movie_list" 
+        android:showAsAction="never|withText" 
+        android:icon="@drawable/ic_action_send">
+        
+    </item>
     
-    <item android:id="@+id/menu_sort_button" android:title="@string/sort" android:showAsAction="never|withText"></item>
+    <item 
+        android:id="@+id/menu_sort_button" 
+        android:title="@string/sort" 
+        android:icon="@drawable/ic_action_paste"
+        android:showAsAction="never|withText">
+    </item>
     
-    <item android:id="@+id/menu_add_movie" 
+    <item 
+        android:id="@+id/menu_add_movie" 
         android:icon="@drawable/add"
-        android:showAsAction="always|withText" android:title="@string/add_movie_button"></item>
+        android:showAsAction="always|withText" 
+        android:title="@string/add_movie_button">
+    </item>
     
 </menu>
