@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.ImageView;
 import android.widget.Toast;
+import se.chalmers.watchme.R;
 
 public class ImageDialog extends Dialog {
 
@@ -66,7 +67,7 @@ public class ImageDialog extends Dialog {
 		super.show();
 		
 		// Show a quick info message about how to dimiss the dialog
-		Toast.makeText(this.getContext(), "Tap poster to dimiss", Toast.LENGTH_LONG).show();
+		Toast.makeText(this.getContext(), getContext().getString(R.string.poster_dialog_dismiss_text), Toast.LENGTH_LONG).show();
 	}
 	
 	/**

@@ -243,7 +243,7 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
     	db = new DatabaseAdapter(getActivity().getContentResolver());
     	
     	AlertDialog.Builder alertbox = new AlertDialog.Builder(getActivity());
-    	alertbox.setTitle("Order by");
+    	alertbox.setTitle(getString(R.string.order_dialog_title));
     	alertbox.setSingleChoiceItems(alternatives, 0,
     			new DialogInterface.OnClickListener() {
     			public void onClick(DialogInterface dialog, int item) {
@@ -319,8 +319,8 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
     		final Movie movie = db.getMovie(Long.parseLong(selectedMovie.getString(0)));
     		
             AlertDialog.Builder alertbox = new AlertDialog.Builder(getActivity());
-            alertbox.setMessage("Are you sure you want to delete the movie \"" + movie.getTitle() + "\"?");           
-            alertbox.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            alertbox.setMessage(getString(R.string.delete_dialog_text) + " \"" + movie.getTitle() + "\"?");           
+            alertbox.setPositiveButton(getString(R.string.delete_button_positive), new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface arg0, int arg1) {
                 	
                 	db = new DatabaseAdapter(getActivity().getContentResolver());
@@ -330,7 +330,7 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
                     Toast.makeText(getActivity().getApplicationContext(), "\"" + movie.getTitle() + "\" was deleted" , Toast.LENGTH_SHORT).show();
                 }
             });
-            alertbox.setNeutralButton("Cancel", new DialogInterface.OnClickListener() {
+            alertbox.setNeutralButton(getString(R.string.delete_button_negative), new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface arg0, int arg1) {
                     
                 }

@@ -192,7 +192,7 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
     private void setNotification(Movie movie) {
     	this.notifications.setMovieNotification(movie);
     	Toast.makeText(this, 
-    			"Notification set for " + 
+    			R.string.notification_prefix_text + 
     			DateTimeUtils.toSimpleDate(movie.getDate()), 
     			Toast.LENGTH_LONG)
     		.show();
@@ -245,7 +245,7 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
     private class AddButtonToggler implements TextWatcher {
         	
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-           	if(s.toString().equals("")) {
+           	if(s.toString().isEmpty()) {
            		addButton.setEnabled(false);
            	} else {
            		addButton.setEnabled(true);

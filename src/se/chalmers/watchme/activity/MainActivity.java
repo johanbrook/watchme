@@ -78,8 +78,6 @@ public class MainActivity extends FragmentActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         
-    	Log.i("Custom", "Event, id: "+ item.getItemId() + ", Add: "+R.id.add_movie_button+ ", Email: "+R.id.menu_send_email_button);
-    	
     	switch(item.getItemId()) {
     	case R.id.menu_add_movie:
     		Intent intent = new Intent(this, AddMovieActivity.class);
@@ -108,11 +106,11 @@ public class MainActivity extends FragmentActivity {
     		movieString += m.getTitle() + " ("+DateTimeUtils.toSimpleDate(m.getDate()) + ")\n";
     	}
     	
-    	emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "WatchMe Movie List");
+    	emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, R.string.email_subject);
     	emailIntent.putExtra(android.content.Intent.EXTRA_TEXT, movieString);  
     	
     	// Let the user choose email app to mail from
-    	startActivity(Intent.createChooser(emailIntent, "Send the movie list in:"));
+    	startActivity(Intent.createChooser(emailIntent, getString(R.string.choose_message_app)));
     }
         
     @Override

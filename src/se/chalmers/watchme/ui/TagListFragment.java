@@ -110,8 +110,8 @@ public class TagListFragment extends ListFragment implements LoaderManager.Loade
     		final Tag tag = db.getTag(Long.parseLong(selectedTag.getString(0)));
     		
             AlertDialog.Builder alertbox = new AlertDialog.Builder(getActivity());
-            alertbox.setMessage("Are you sure you want to delete the tag \"" + tag.getName() + "\"?");           
-            alertbox.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            alertbox.setMessage(getString(R.string.delete_dialog_text) +" \"" + tag.getName() + "\"?");           
+            alertbox.setPositiveButton(getString(R.string.delete_button_positive), new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface arg0, int arg1) {
                 	
                 	db = new DatabaseAdapter(getActivity().getContentResolver());
@@ -120,7 +120,7 @@ public class TagListFragment extends ListFragment implements LoaderManager.Loade
                     Toast.makeText(getActivity().getApplicationContext(), "\"" + tag.getName() + "\" was deleted" , Toast.LENGTH_SHORT).show();
                 }
             });
-            alertbox.setNeutralButton("Cancel", new DialogInterface.OnClickListener() {
+            alertbox.setNeutralButton(getString(R.string.delete_button_negative), new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface arg0, int arg1) {
                     
                 }

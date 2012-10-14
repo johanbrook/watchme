@@ -52,7 +52,6 @@ public class TagMovieListActivity extends FragmentActivity {
 	@Override
 	public void onBackPressed() {
 	    this.finish();
-	    System.out.println("--- H€R ----");
 	    overridePendingTransition(R.anim.right_slide_in, R.anim.right_slide_out);
 	    return;
 	}
