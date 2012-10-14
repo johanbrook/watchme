@@ -18,7 +18,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -37,7 +36,7 @@ public class MainActivity extends FragmentActivity {
 	
 	private ViewPager viewPager;
 	private TabsAdapter tabsAdapter;
-	ActionBar actionBar;
+	private ActionBar actionBar;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -62,7 +61,21 @@ public class MainActivity extends FragmentActivity {
 		}	
 
     }
-
+    
+    /*
+     * If no movies exist, disable the "Share list" action bar item
+     */
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+    	int count = new DatabaseAdapter(getContentResolver()).getMovieCount();
+    	
+    	if(count == 0) {
+    		menu.findItem(R.id.send_email_button).setEnabled(false);
+    	}
+    	
+    	return super.onPrepareOptionsMenu(menu);
+    }
+    
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.activity_main, menu);
@@ -75,8 +88,6 @@ public class MainActivity extends FragmentActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         
-    	Log.i("Custom", "Event, id: "+ item.getItemId() + ", Add: "+R.id.add_movie_button+ ", Email: "+R.id.send_email_button);
-    	
     	switch(item.getItemId()) {
     	case R.id.add_movie_menu:
     		Intent intent = new Intent(this, AddMovieActivity.class);
@@ -120,7 +131,9 @@ public class MainActivity extends FragmentActivity {
 	
     //TODO: stolen from http://developer.android.com/reference/android/support/v4/view/ViewPager.html
     //need license or something?
-	public static class TabsAdapter extends FragmentPagerAdapter implements ActionBar.TabListener, ViewPager.OnPageChangeListener {
+	public static class TabsAdapter extends FragmentPagerAdapter 
+		implements ActionBar.TabListener, ViewPager.OnPageChangeListener {
+		
 		private final Context context;
 		private final ActionBar actionBar;
 		private final ViewPager viewPager;
