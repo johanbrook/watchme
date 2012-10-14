@@ -66,20 +66,6 @@ public class MainActivity extends FragmentActivity {
 
     }
     
-    /*
-     * If no movies exist, disable the "Share list" action bar item
-     */
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-    	int count = new DatabaseAdapter(getContentResolver()).getMovieCount();
-    	
-    	if(count == 0) {
-    		menu.findItem(R.id.menu_send_email_button).setEnabled(false);
-    	}
-    	
-    	return super.onPrepareOptionsMenu(menu);
-    }
-    
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.activity_main, menu);

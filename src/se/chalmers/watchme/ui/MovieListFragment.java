@@ -59,8 +59,6 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
 	private SimpleCursorAdapter adapter;
 	private DatabaseAdapter db;
 	
-	private MenuItem sortItem;
-	
 	private AsyncTask<String, Void, Bitmap> imageTask;
 	private Long tagId;
 	private String orderBy;
@@ -163,10 +161,24 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
 	    this.getListView().setOnItemLongClickListener(new OnDeleteListener());
 	}
 	
+	/*
+	 * Show the Share and Sort buttons while movie list view
+	 */
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-		sortItem = menu.findItem(R.id.menu_sort_button);
+		MenuItem sortItem = menu.findItem(R.id.menu_sort_button);
+		MenuItem shareItem = menu.findItem(R.id.menu_send_email_button);
+		
 		sortItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+		shareItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+		
+		// If there aren't any movies in the list, disable the "Share list" button
+		int count = new DatabaseAdapter(getActivity().getContentResolver()).getMovieCount();
+    	
+    	if(count == 0) {
+    		shareItem.setEnabled(false);
+    	}
+		
 		super.onCreateOptionsMenu(menu, inflater);
 	}
 	

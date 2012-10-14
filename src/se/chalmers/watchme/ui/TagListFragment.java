@@ -52,17 +52,6 @@ public class TagListFragment extends ListFragment implements LoaderManager.Loade
 		this.setHasOptionsMenu(true);
 	}
 	
-	
-	/*
-	 * Always disable the "Share list" action bar option when
-	 * viewing the tag list
-	 */
-	@Override
-	public void onPrepareOptionsMenu(Menu menu) {
-		menu.findItem(R.id.menu_send_email_button).setEnabled(false);
-		super.onPrepareOptionsMenu(menu);
-	}
-	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
