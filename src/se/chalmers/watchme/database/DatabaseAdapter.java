@@ -2,15 +2,18 @@ package se.chalmers.watchme.database;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.LinkedList;
 import java.util.List;
 
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
+import android.util.Log;
 
 import se.chalmers.watchme.model.Movie;
 import se.chalmers.watchme.model.Tag;
+import se.chalmers.watchme.utils.MovieHelper;
 
 /**
  * Adapter to the Content Provider.
@@ -66,16 +69,63 @@ public class DatabaseAdapter {
 	public Movie getMovie(long id) {
 		String selection = MoviesTable.COLUMN_MOVIE_ID + " = " + id; 
 		Cursor cursor = contentResolver.query(uri_movies, null, selection, null, null);
+		
 		if(cursor.moveToFirst()) {
+			
 			String title = cursor.getString(1);
+			
 			Calendar calendar = Calendar.getInstance();
 			calendar.setTimeInMillis(Long.parseLong(cursor.getString(4)));
+			
 			int rating = Integer.parseInt(cursor.getString(2));
+			
 			String note = cursor.getString(3);
 			
 			Movie movie = new Movie(title, calendar, rating, note);
 			movie.setId(id);
 			movie.setApiID(Integer.parseInt(cursor.getString(5)));
+			
+			/* 
+			 * Add the tags to the movie object
+			 * Split the string with tags into separate strings seperated by
+			 * commas (",")
+			 */
+			
+			Cursor tempCursor = getAttachedTags(movie);
+
+			// TODO getCount() doesn't return 0 when it should, why?!
+			// Implementing try-catch method as solution for now
+			try{
+				
+				// Don't try to fetch tags if none are attached to movie				
+				if(tempCursor.getCount() > 0) {
+					
+					List<Tag> tags = new LinkedList<Tag>();
+					
+					/*
+					 * Move through cursor and create tag objects from fetched data
+					 * until there is no more rows (i.e. no more tags)
+					 */
+					while(tempCursor.moveToNext()) {
+						Tag tag = new Tag(tempCursor.getString(1));	
+						tag.setId(Integer.parseInt(tempCursor.getString(0)));
+						
+						tags.add(tag);
+					}
+				
+					movie.addTags(tags);
+				
+				}
+				
+			}
+			
+			/*
+			 * Should not happen, but does when no tags are attached to movie.
+			 * Somehow tempCursor.getCount() returns 1 when it should be 0
+			 */
+			catch(NullPointerException e) {
+				e.printStackTrace();
+			}
 			
 			return movie;
 		}
@@ -107,11 +157,32 @@ public class DatabaseAdapter {
 	 * Delete a Movie from the database.
 	 * 
 	 * @param movie The movie to be removed.
+	 * @return The number of rows affected
 	 */
-	public void removeMovie(Movie movie) {
+	public int removeMovie(Movie movie) {
 		String where = MoviesTable.COLUMN_MOVIE_ID + " = " + movie.getId();
 		
-		contentResolver.delete(uri_movies, where, null);
+		return contentResolver.delete(uri_movies, where, null);
+	}
+	
+	/**
+	 * Updates information about a Movie.
+	 * 
+	 * @param movie The Movie to be updated.
+	 * @return The number of rows affected
+	 */
+	public int updateMovie(Movie movie) {
+		ContentValues values = new ContentValues();
+	    values.put(MoviesTable.COLUMN_TITLE, movie.getTitle());
+	    values.put(MoviesTable.COLUMN_RATING, movie.getRating());
+	    values.put(MoviesTable.COLUMN_NOTE, movie.getNote());
+	    values.put(MoviesTable.COLUMN_DATE, movie.getDate().getTimeInMillis());
+	    values.put(MoviesTable.COLUMN_IMDB_ID, movie.getApiID());
+	    values.put(MoviesTable.COLUMN_POSTER_LARGE, movie.getPosterURL(Movie.PosterSize.MID));
+	    values.put(MoviesTable.COLUMN_POSTER_SMALL, movie.getPosterURL(Movie.PosterSize.THUMB));
+	    
+		String where = MoviesTable.COLUMN_MOVIE_ID + " = " + movie.getId();
+		return contentResolver.update(uri_movies, values, where, null);
 	}
 	
 	/**
@@ -294,6 +365,18 @@ public class DatabaseAdapter {
 				" AND " + HasTagTable.COLUMN_TAG_ID + " = " + tag.getId();
 		
 		contentResolver.delete(uri_has_tag, where, null);
+	}
+	
+	/**
+	 * Detach Tags from a movie.
+	 * 
+	 * @param movie The Movie.
+	 * @param tags A list of Tags to be detached.
+	 */
+	public void detachTags(Movie movie, List<Tag> tags) {
+		for(Tag tag : tags) {
+			detachTag(movie, tag);
+		}
 	}
 	
 	/**

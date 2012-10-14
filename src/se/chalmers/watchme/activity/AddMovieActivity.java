@@ -98,8 +98,8 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
         this.dateField.setText(DateTimeUtils.toSimpleDate(this.releaseDate));
         
         this.titleField = (AutoCompleteTextView) findViewById(R.id.title_field);
-        this.noteField = (TextView) findViewById(R.id.note_field);
-        this.tagField = (TextView) findViewById(R.id.tag_field);
+        this.noteField = (TextView) findViewById(R.id.note_field_addmovie);
+        this.tagField = (TextView) findViewById(R.id.tag_field_addmovie);
         
         // The progress bar when fetching IMDb movies
         this.progressSpinner = (ProgressBar) findViewById(R.id.title_progress);
@@ -166,19 +166,9 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
 		 * commas (",") from tag-field
 		 */
 		String [] tagStrings = tagField.getText().toString().split(",");
-		Tag tag;
 		
-		for(String tagString : tagStrings) {
-			if (!tagString.equals("")) {
-
-				/*
-				 * Remove whitespaces from the beginning and end of each string
-				 * to allow for multi-word tags.
-				 */
-				tag = new Tag(tagString.trim());
-				db.attachTag(movie, tag);
-			}
-		}
+		// TODO Shouldn't the tags be added to database in the addMovie-method?
+		db.attachTags(movie, MovieHelper.stringArrayToTagList(tagStrings));
 		
 		// Set a notification for the date picked
     	this.setNotification(movie);

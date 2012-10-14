@@ -7,7 +7,7 @@
         android:id="@+id/title_field"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/tag_field"
+        android:layout_alignLeft="@+id/tag_field_addmovie"
         android:layout_alignParentTop="true"
         android:layout_alignRight="@+id/rating_bar"
         android:layout_marginTop="20dp"
@@ -66,7 +66,7 @@
 	</LinearLayout>
     
     <EditText
-     	android:id="@+id/tag_field"
+     	android:id="@+id/tag_field_addmovie"
         android:layout_width="fill_parent"
 	    android:layout_height="wrap_content"
 	    android:layout_below="@+id/release_date_area"
@@ -81,10 +81,10 @@
 	    android:background="@drawable/tagfield" />
     
 	<EditText
-     	android:id="@+id/note_field"
+     	android:id="@+id/note_field_addmovie"
         android:layout_width="fill_parent"
 	    android:layout_height="wrap_content"
-	    android:layout_below="@+id/tag_field"
+	    android:layout_below="@+id/tag_field_addmovie"
         android:ems="8"
 	    android:layout_marginLeft="10dip"
 	    android:layout_marginRight="10dip"
@@ -101,7 +101,7 @@
         android:onClick="onAddButtonClick"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/note_field"
+        android:layout_below="@+id/note_field_addmovie"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="10dp"
         android:text="@string/add_movie_button" />
