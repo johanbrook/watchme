@@ -17,7 +17,10 @@ import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SimpleCursorAdapter;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -44,8 +47,22 @@ public class TagListFragment extends ListFragment implements LoaderManager.Loade
 		
 		// Set up listener to delete a Tag.
 		this.getListView().setOnItemLongClickListener(new OnDeleteListener());
+		
+		// We want to participate in manipulating the Action bar options menu
+		this.setHasOptionsMenu(true);
 	}
-
+	
+	
+	/*
+	 * Always disable the "Share list" action bar option when
+	 * viewing the tag list
+	 */
+	@Override
+	public void onPrepareOptionsMenu(Menu menu) {
+		menu.findItem(R.id.send_email_button).setEnabled(false);
+		super.onPrepareOptionsMenu(menu);
+	}
+	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
