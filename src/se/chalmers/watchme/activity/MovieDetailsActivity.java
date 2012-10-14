@@ -161,7 +161,7 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
         
         db = new DatabaseAdapter(this.getContentResolver());
         String tags = MovieHelper.getCursorString(db.getAttachedTags(m));
-
+        
         if(tags != null && !tags.isEmpty()) {
         	tagField.setText(tags);
         }
@@ -455,11 +455,12 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
 			String [] tagStrings = tagField.getText().toString().split(",");
 			List<Tag> tempTags = MovieHelper.stringArrayToTagList(tagStrings);
 			
+			List<Tag> newTags = new LinkedList<Tag>(tempTags);
+			
 			/*
 			 * If there are some Tags in the new list that doesn't exist in the
 			 * old list, then those tags are new
 			 */
-			List<Tag> newTags = new LinkedList<Tag>(tempTags);
 			
 			if(newTags.removeAll(movie.getTags()) && !newTags.isEmpty()) {
 				
@@ -475,12 +476,12 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
 						newTags.toString());
 			}
 			
+			List<Tag> removedTags = new LinkedList<Tag>(movie.getTags());
+
 			/*
 			 * If there are some Tags in the old list that doesn't exist in the
 			 * new list, then those tags have been removed
 			 */
-			List<Tag> removedTags = new LinkedList<Tag>(movie.getTags());
-
 			if(removedTags.removeAll(tempTags) && !removedTags.isEmpty()) {
 				db.detachTags(movie, removedTags);
 				movie.removeTags(removedTags);
@@ -498,7 +499,5 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
 			
 		}
     }
-    
-    
     
 }
