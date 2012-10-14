@@ -16,18 +16,28 @@ public class DateTimeUtils {
 	
 	/**
 	 * Recieves a calendar instance and returns a String with simple
-	 * date format(dd-MM-yyyy)
+	 * date format ("d MMM, yyyy" = "14 Oct, 2012")
 	 * 
 	 * @param calendar The calendar object to be used to create the string
-	 * @returns A simple string representing a date in the format: dd-MM-yyyy
+	 * @returns A simple string representing a date in the format: "d MMM, yyyy"
 	 */
 	public static String toSimpleDate(Calendar calendar) {
-		
-		SimpleDateFormat simpleDate = new SimpleDateFormat("dd-MM-yyyy");
+		return toSimpleDate(calendar, "d MMM, yyyy");
+	}
+	
+	/**
+	 * Format a calendar date to a string with a certain format.
+	 * 
+	 * @param calendar The date
+	 * @param format The format
+	 * @return A formatted string according to 'format'
+	 * @see SimpleDateFormat
+	 */
+	public static String toSimpleDate(Calendar calendar, String format) {
+		SimpleDateFormat simpleDate = new SimpleDateFormat(format);
 		String simpleDateString = simpleDate.format(calendar.getTime());
 		
 		return simpleDateString;
-		
 	}
 	
 	/**
