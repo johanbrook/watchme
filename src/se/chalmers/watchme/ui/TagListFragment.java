@@ -24,7 +24,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.PopupMenu;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemLongClickListener;
 
@@ -95,7 +97,23 @@ public class TagListFragment extends ListFragment implements LoaderManager.Loade
     private void search() {
     	db = new DatabaseAdapter(getActivity().getContentResolver());
     	
-    	
+    	AlertDialog.Builder alertbox = new AlertDialog.Builder(getActivity());
+    	alertbox.setTitle(getString(R.string.search));
+    	final EditText ed = new EditText(this.getActivity());
+    	alertbox.setView(ed);
+		alertbox.setPositiveButton("Search!",
+				new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						Cursor cursor = db.searchForTags(ed.getText().toString());
+						
+						adapter.changeCursor(cursor);
+	    				adapter.notifyDataSetChanged();
+						
+						dialog.dismiss();
+					}
+				});
+		alertbox.show();
     }
 	
 	@Override
