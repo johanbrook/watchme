@@ -31,7 +31,7 @@ public class MyCursorLoader extends CursorLoader {
 	private DatabaseAdapter db;
 
 	// Set default to order by Date
-	private String mSortOrder = MoviesTable.COLUMN_DATE;
+	private String mSortOrder;
 	private Long mTagId;
 	
 	private Cursor mCursor;
@@ -48,8 +48,9 @@ public class MyCursorLoader extends CursorLoader {
         	db = new DatabaseAdapter(getContext().getContentResolver());
             Cursor cursor = getCursor();
             if (cursor != null) {
+            	
                 // Ensure the cursor window is filled
-                cursor.getCount();
+            	cursor.getCount();
                 registerContentObserver(cursor, mObserver);
             }
             return cursor;
