@@ -1,4 +1,4 @@
-cursor.getCount();cursor.getCount();cursor.getCount();<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
     
     <item 
         android:id="@+id/menu_send_email_button" 
@@ -15,7 +15,7 @@ cursor.getCount();cursor.getCount();cursor.getCount();<menu xmlns:android="http:
         android:showAsAction="never|withText">
     </item>
     
-    <item android:id="@+id/search_button" android:icon="@drawable/ic_action_search" android:title="@string/search" android:showAsAction="never|withText"></item><item 
+    <item android:id="@+id/menu_search_button" android:icon="@drawable/ic_action_search" android:title="@string/search" android:showAsAction="never|always"></item><item 
         android:id="@+id/menu_add_movie" 
         android:icon="@drawable/add"
         android:showAsAction="always|withText" 

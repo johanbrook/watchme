@@ -80,6 +80,24 @@ public class TagListFragment extends ListFragment implements LoaderManager.Loade
 		
 	}
 	
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+    	
+    	switch(item.getItemId()) {
+    	case R.id.menu_search_button:
+    		search();
+    	default:
+    		break;
+    	}
+    	return super.onOptionsItemSelected(item);
+    }
+    
+    private void search() {
+    	db = new DatabaseAdapter(getActivity().getContentResolver());
+    	
+    	
+    }
+	
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
 		/**

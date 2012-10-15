@@ -233,6 +233,8 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
     	case R.id.menu_sort_button:
     		sortList();
     		break;
+    	case R.id.menu_search_button:
+    		search();
     	default:
     		break;
     	}
@@ -276,6 +278,10 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
     			});
         
         alertbox.show();
+    }
+    
+    private void search() {
+    	
     }
 	
 	/**

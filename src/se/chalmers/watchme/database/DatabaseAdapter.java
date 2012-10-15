@@ -328,6 +328,18 @@ public class DatabaseAdapter {
 	}
 	
 	/**
+	 * Search for tags with the given name.
+	 * 
+	 * @param tagName the name of the Tag.
+	 * @return a Cursor with all tags that has the requested name.
+	 */
+	public Cursor searchForTags(String tagName) {
+		String where = TagsTable.COLUMN_NAME + " = " + tagName;
+		
+		return contentResolver.query(uri_tags, null, where, null, null);
+	}
+	
+	/**
 	 * Attach a Tag to a Movie.
 	 * 
 	 * @param movie The Movie.
