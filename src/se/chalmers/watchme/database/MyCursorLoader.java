@@ -45,12 +45,15 @@ public class MyCursorLoader extends CursorLoader {
             mCancellationSignal = new CancellationSignal();
         }
         try {
+        	
         	db = new DatabaseAdapter(getContext().getContentResolver());
             Cursor cursor = getCursor();
             if (cursor != null) {
             	
                 // Ensure the cursor window is filled
-            	cursor.getCount();
+            	
+            	int c = cursor.getCount();
+            	System.out.println("CL " + mUri.getLastPathSegment() + ": loadInBackground: count: " + c);
                 registerContentObserver(cursor, mObserver);
             }
             return cursor;
@@ -60,6 +63,11 @@ public class MyCursorLoader extends CursorLoader {
                 mCancellationSignal = null;
             }
         }
+	}
+	
+	public void changeCursor(String orderBy) {
+		mSortOrder = orderBy;
+		loadInBackground();
 	}
 	
 	/**

@@ -61,6 +61,7 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
 	
 	private SimpleCursorAdapter adapter;
 	private DatabaseAdapter db;
+	private MyCursorLoader cursorLoader;
 	
 	private AsyncTask<String, Void, Bitmap> imageTask;
 	private Long tagId;
@@ -215,6 +216,7 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
 
 	@Override
 	public void onLoadFinished(Loader<Cursor> arg0, Cursor cursor) {
+		System.out.println("MLF: onLoadFinished: count: " + cursor.getCount());
 		adapter.swapCursor(cursor);
 		adapter.notifyDataSetChanged();
 	}
@@ -271,7 +273,7 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
     				sortOrder = item;
     				// Change the cursor
     				Cursor cursor = db.getAllMoviesCursor(orderBy);
-    				adapter.changeCursor(cursor);
+    				onLoadFinished(cursorLoader, cursor);
     				adapter.notifyDataSetChanged();
     				
     				dialog.dismiss();
@@ -294,7 +296,8 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
 					public void onClick(DialogInterface dialog, int which) {
 						Cursor cursor = db.searchForMovies(ed.getText().toString());
 						
-						adapter.changeCursor(cursor);
+						onLoadFinished(cursorLoader, cursor);
+						adapter.swapCursor(cursor);
 	    				adapter.notifyDataSetChanged();
 						
 						dialog.dismiss();

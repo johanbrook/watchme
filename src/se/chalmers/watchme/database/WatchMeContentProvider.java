@@ -156,19 +156,21 @@ public class WatchMeContentProvider extends ContentProvider {
 		switch(sUriMatcher.match(uri)) {
 		case MOVIES:
 			
+			System.out.println("CP: insertMovie");
+			
 			// TODO It should not be possible to add the same movie twice
 			String movieTitle = values.getAsString(MoviesTable.COLUMN_TITLE);
 			Cursor movieCursor = sqlDB.query(MoviesTable.TABLE_MOVIES, null, 
 					MoviesTable.COLUMN_TITLE + " = \"" + 
 			movieTitle + "\"", null, null, null, null);
 			
-			if(movieCursor.moveToFirst()) {
-				// If the Movie already exist. Get the Id. 
-				//id = Long.parseLong(movieCursor.getString(0));
-			} else {
+			movieCursor.getCount();
+			
+			// If the Movie doesn't exist, create it.
+			if(!movieCursor.moveToFirst()) {
 				id = sqlDB.insert(MoviesTable.TABLE_MOVIES, null, values);
 			}
-			System.out.println("CP: insertMovie");
+			
 			break;
 		case HAS_TAG: 
 			// Check if the Tag exists. If it doesn't exist. insert into database

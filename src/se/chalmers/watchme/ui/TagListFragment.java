@@ -34,6 +34,7 @@ public class TagListFragment extends ListFragment implements LoaderManager.Loade
 	
 	private SimpleCursorAdapter adapter;
 	private DatabaseAdapter db;
+	private MyCursorLoader cursorLoader;
 	
 	@Override
 	public void onActivityCreated(Bundle b) {
@@ -64,9 +65,11 @@ public class TagListFragment extends ListFragment implements LoaderManager.Loade
 	public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
 		Long tagId = (long) -1;
 		
-		return new MyCursorLoader(getActivity(), 
+		cursorLoader = new MyCursorLoader(getActivity(), 
 				WatchMeContentProvider.CONTENT_URI_TAGS,
 				tagId,null);
+		
+		return cursorLoader;
 	}
 
 	public void onLoadFinished(Loader<Cursor> arg0, Cursor arg1) {
@@ -107,7 +110,7 @@ public class TagListFragment extends ListFragment implements LoaderManager.Loade
 					public void onClick(DialogInterface dialog, int which) {
 						Cursor cursor = db.searchForTags(ed.getText().toString());
 						
-						adapter.changeCursor(cursor);
+						onLoadFinished(cursorLoader, cursor);
 	    				adapter.notifyDataSetChanged();
 						
 						dialog.dismiss();
