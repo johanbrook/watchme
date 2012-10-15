@@ -241,6 +241,18 @@ public class DatabaseAdapter {
 	}
 	
 	/**
+	 * Search for movies with the given name.
+	 * 
+	 * @param movieTitle the title of the Movie.
+	 * @return a Cursor with all movies that has the requested name.
+	 */
+	public Cursor searchForMovies(String movieTitle) {
+		String where = MoviesTable.COLUMN_TITLE + " = " + "'" + movieTitle + "'";
+		
+		return contentResolver.query(uri_movies, null, where, null, null);
+	}
+	
+	/**
 	 * Returns the specified Tag.
 	 * 
 	 * @param id The id of the Tag.
