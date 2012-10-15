@@ -35,6 +35,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v4.content.Loader.ForceLoadContentObserver;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v4.widget.SimpleCursorAdapter.ViewBinder;
 import android.util.Log;
@@ -62,7 +63,10 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
 	
 	private AsyncTask<String, Void, Bitmap> imageTask;
 	private Long tagId;
-	private String orderBy;
+	
+	// TODO combine!
+	private String orderBy = MoviesTable.COLUMN_DATE;
+	private int sortOrder = 0;
 	
 	public MovieListFragment() {
 		super();
@@ -239,12 +243,12 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
      * Show a Dialog Box with choices of attributes to order the Movies by.
      */
     private void sortList() {
-    	final String[] alternatives = { "Date", "Rating", "Title" };
+    	final String[] alternatives = { "Date" , "Rating", "Title" };
     	db = new DatabaseAdapter(getActivity().getContentResolver());
     	
     	AlertDialog.Builder alertbox = new AlertDialog.Builder(getActivity());
     	alertbox.setTitle(getString(R.string.order_dialog_title));
-    	alertbox.setSingleChoiceItems(alternatives, 0,
+    	alertbox.setSingleChoiceItems(alternatives, sortOrder,
     			new DialogInterface.OnClickListener() {
     			public void onClick(DialogInterface dialog, int item) {
 
@@ -253,7 +257,7 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
     					orderBy = MoviesTable.COLUMN_DATE;
     					break;
     				case 1:
-    					orderBy = MoviesTable.COLUMN_RATING;
+    					orderBy = MoviesTable.COLUMN_RATING + " DESC";
     					break;
     				case 2:
     					orderBy = MoviesTable.COLUMN_TITLE;
@@ -261,9 +265,11 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
     				default:
     					break;
     				}
+    				sortOrder = item;
     				// Change the cursor
     				Cursor cursor = db.getAllMoviesCursor(orderBy);
     				adapter.changeCursor(cursor);
+    				adapter.notifyDataSetChanged();
     				
     				dialog.dismiss();
     			}
