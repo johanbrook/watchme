@@ -65,11 +65,13 @@ public class WatchMeContentProvider extends ContentProvider {
 			/*
 			 * movieSel is supposed to contain: " = <movieId>"
 			 */
+			System.out.println("CP: deleteMovie: sel " + selection);
 			
 			String movieSel = selection.split(MoviesTable.COLUMN_MOVIE_ID)[1];
 			Cursor movieCursor = sqlDB.query(HasTagTable.TABLE_HAS_TAG, null, 
 					HasTagTable.COLUMN_MOVIE_ID + movieSel, null, 
 					null, null, null);
+			movieCursor.getCount();
 			
 			deletedRows = sqlDB.delete(MoviesTable.TABLE_MOVIES, selection, 
 					selectionArgs);
@@ -122,6 +124,7 @@ public class WatchMeContentProvider extends ContentProvider {
 			Cursor tagCursor = sqlDB.query(HasTagTable.TABLE_HAS_TAG, null, 
 					HasTagTable.COLUMN_TAG_ID + tagSelection, null, 
 					null, null, null);
+			
 			if(!tagCursor.moveToFirst()) {
 				//If the tag isn't connected to any Movie, delete it.
 				sqlDB.delete(TagsTable.TABLE_TAGS, TagsTable.COLUMN_TAG_ID +
@@ -165,6 +168,7 @@ public class WatchMeContentProvider extends ContentProvider {
 			} else {
 				id = sqlDB.insert(MoviesTable.TABLE_MOVIES, null, values);
 			}
+			System.out.println("CP: insertMovie");
 			break;
 		case HAS_TAG: 
 			// Check if the Tag exists. If it doesn't exist. insert into database
