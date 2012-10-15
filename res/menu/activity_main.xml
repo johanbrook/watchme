@@ -15,7 +15,13 @@
         android:showAsAction="never|withText">
     </item>
     
-    <item android:id="@+id/menu_search_button" android:icon="@drawable/ic_action_search" android:title="@string/search" android:showAsAction="never|always"></item><item 
+    <item 
+        android:id="@+id/menu_search_button" 
+        android:icon="@drawable/ic_action_search" 
+        android:title="@string/search" 
+        android:showAsAction="never|always"></item>
+    
+    <item 
         android:id="@+id/menu_add_movie" 
         android:icon="@drawable/add"
         android:showAsAction="always|withText" 
