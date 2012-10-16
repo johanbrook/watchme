@@ -17,6 +17,8 @@ import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SimpleCursorAdapter;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -103,6 +105,30 @@ public class TagListFragment extends ListFragment implements LoaderManager.Loade
     	AlertDialog.Builder alertbox = new AlertDialog.Builder(getActivity());
     	alertbox.setTitle(getString(R.string.search));
     	final EditText ed = new EditText(this.getActivity());
+    	ed.addTextChangedListener(new TextWatcher() {
+
+			@Override
+			public void afterTextChanged(Editable e) {
+				Cursor cursor = db.searchForTags(e.toString());
+				
+				onLoadFinished(cursorLoader, cursor);
+				adapter.notifyDataSetChanged();
+			}
+
+			@Override
+			public void beforeTextChanged(CharSequence arg0, int arg1,
+					int arg2, int arg3) {
+			}
+
+			@Override
+			public void onTextChanged(CharSequence arg0, int arg1, int arg2,
+					int arg3) {
+				// TODO Auto-generated method stub
+				
+			}
+    		
+    	});
+
     	alertbox.setView(ed);
 		alertbox.setPositiveButton("Search!",
 				new DialogInterface.OnClickListener() {
