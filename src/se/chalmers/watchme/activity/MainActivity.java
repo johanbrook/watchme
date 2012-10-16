@@ -118,8 +118,5 @@ public class MainActivity extends FragmentActivity {
         super.onSaveInstanceState(outState);
         outState.putInt("tab", getActionBar().getSelectedNavigationIndex());
     }
-	
-    public TabsAdapter getTabsAdapter() {
-    	return tabsAdapter;
-    }
+
 }
