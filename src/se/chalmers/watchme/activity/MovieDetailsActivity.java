@@ -513,6 +513,11 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
 			 */
 			movie = db.getMovie(movie.getId()); 		
 			
+			// Show status toast when saved
+			Toast.makeText(MovieDetailsActivity.this, "\""+ movie.getTitle() +"\" "+ 
+						getString(R.string.movie_updated_toast_suffix), 
+						Toast.LENGTH_SHORT)
+				.show();
 		}
     }
     
