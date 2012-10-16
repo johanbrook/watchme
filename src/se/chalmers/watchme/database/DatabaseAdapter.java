@@ -247,7 +247,7 @@ public class DatabaseAdapter {
 	 * @return a Cursor with all movies that has the requested name.
 	 */
 	public Cursor searchForMovies(String movieTitle) {
-		String where = MoviesTable.COLUMN_TITLE + " = " + "'" + movieTitle + "'";
+		String where = MoviesTable.COLUMN_TITLE + " like " + "'%" + movieTitle + "%'";
 		
 		return contentResolver.query(uri_movies, null, where, null, null);
 	}
@@ -346,7 +346,7 @@ public class DatabaseAdapter {
 	 * @return a Cursor with all tags that has the requested name.
 	 */
 	public Cursor searchForTags(String tagName) {
-		String where = TagsTable.COLUMN_NAME + " = " + "'" + tagName + "'";
+		String where = TagsTable.COLUMN_NAME + " like " + "'%" + tagName + "%'";
 		
 		return contentResolver.query(uri_tags, null, where, null, null);
 	}
