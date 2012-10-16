@@ -49,5 +49,6 @@
 	<string name="delete_dialog_text">Are you sure you want to delete</string>
 	<string name="datetime_format">dd-MM-yyyy</string>
 	<string name="movie_detail_runtime">Runtime:</string>
+	<string name="movie_updated_toast_suffix">updated</string>
     
 </resources>
