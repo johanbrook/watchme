@@ -20,6 +20,9 @@ public class TabsAdapterTest extends ActivityInstrumentationTestCase2<MainActivi
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
+		//TODO: Add mainActivity, actionBar, etc., as instance variables?
+		// Lesser repeating of code but bad reusing same stuff for different
+		// tests? (think Joacim von Hacht said that)...
 	}
 	
 	//TODO fix api level
@@ -74,6 +77,19 @@ public class TabsAdapterTest extends ActivityInstrumentationTestCase2<MainActivi
 		tabsAdapter.onTabSelected(tab1, null);
 		assertTrue(viewPager.getCurrentItem() == 0);
 		
+	}
+	
+	//TODO: fix api level
+	@TargetApi(11)
+	@UiThreadTest
+	public void testGetItem() {
+		MainActivity mainActivity = this.getActivity();
+		ActionBar actionBar = mainActivity.getActionBar();
+		TabsAdapter tabsAdapter = new TabsAdapter(mainActivity, new ViewPager(mainActivity));
+		
+		Tab tab = actionBar.newTab().setText("tab");
+		tabsAdapter.addTab(tab, MovieListFragment.class, null);
+		assertTrue(tabsAdapter.getItem(0).getClass() == MovieListFragment.class);
 	}
 
 }
