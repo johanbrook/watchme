@@ -1,3 +1,11 @@
+/**
+*	MovieDetailsActivity.java
+*
+*	@author Robin Andersson
+*	@copyright (c) 2012 Robin Andersson
+*	@license MIT
+*/
+
 package se.chalmers.watchme.activity;
 
 import java.text.SimpleDateFormat;
