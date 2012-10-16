@@ -59,7 +59,7 @@ import android.widget.Toast;
 
 // TODO Important! API level required does not match with what is used
 @TargetApi(11)
-public class MovieListFragment extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class MovieListFragment extends MyListFragment {
 	
 	private SimpleCursorAdapter adapter;
 	private DatabaseAdapter db;
@@ -238,8 +238,7 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
     	case R.id.menu_sort_button:
     		sortList();
     		break;
-    	case R.id.menu_search_button:
-    		search();
+    		
     	default:
     		break;
     	}
@@ -285,50 +284,13 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
         alertbox.show();
     }
     
-    private void search() {
+    @Override
+    public void filter(String search) {
     	db = new DatabaseAdapter(getActivity().getContentResolver());
-    	
-    	AlertDialog.Builder alertbox = new AlertDialog.Builder(getActivity());
-    	alertbox.setTitle(getString(R.string.search));
-    	final EditText ed = new EditText(this.getActivity());
-    	ed.addTextChangedListener(new TextWatcher() {
-
-			@Override
-			public void afterTextChanged(Editable e) {
-				Cursor cursor = db.searchForTags(e.toString());
-				
-				onLoadFinished(cursorLoader, cursor);
-				adapter.notifyDataSetChanged();
-			}
-
-			@Override
-			public void beforeTextChanged(CharSequence arg0, int arg1,
-					int arg2, int arg3) {
-			}
-
-			@Override
-			public void onTextChanged(CharSequence arg0, int arg1, int arg2,
-					int arg3) {
-				// TODO Auto-generated method stub
-				
-			}
-    		
-    	});
-    	alertbox.setView(ed);
-		alertbox.setPositiveButton("Search!",
-				new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						Cursor cursor = db.searchForMovies(ed.getText().toString());
-						
-						onLoadFinished(cursorLoader, cursor);
-						adapter.swapCursor(cursor);
-	    				adapter.notifyDataSetChanged();
-						
-						dialog.dismiss();
-					}
-				});
-		alertbox.show();
+    	Cursor cursor = db.searchForMovies(search);
+		
+		onLoadFinished(cursorLoader, cursor);
+		adapter.notifyDataSetChanged();
     }
 	
 	/**

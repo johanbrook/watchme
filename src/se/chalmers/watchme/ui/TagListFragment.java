@@ -19,7 +19,9 @@ import android.support.v4.content.Loader;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.text.method.KeyListener;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -27,12 +29,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.EditText;
+import android.widget.Filter;
 import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemLongClickListener;
 
-public class TagListFragment extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class TagListFragment extends MyListFragment {
 	
 	private SimpleCursorAdapter adapter;
 	private DatabaseAdapter db;
@@ -87,63 +90,14 @@ public class TagListFragment extends ListFragment implements LoaderManager.Loade
 		
 	}
 	
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-    	
-    	switch(item.getItemId()) {
-    	case R.id.menu_search_button:
-    		search();
-    	default:
-    		break;
-    	}
-    	return super.onOptionsItemSelected(item);
-    }
-    
-    private void search() {
-    	db = new DatabaseAdapter(getActivity().getContentResolver());
-    	
-    	AlertDialog.Builder alertbox = new AlertDialog.Builder(getActivity());
-    	alertbox.setTitle(getString(R.string.search));
-    	final EditText ed = new EditText(this.getActivity());
-    	ed.addTextChangedListener(new TextWatcher() {
-
-			@Override
-			public void afterTextChanged(Editable e) {
-				Cursor cursor = db.searchForTags(e.toString());
-				
-				onLoadFinished(cursorLoader, cursor);
-				adapter.notifyDataSetChanged();
-			}
-
-			@Override
-			public void beforeTextChanged(CharSequence arg0, int arg1,
-					int arg2, int arg3) {
-			}
-
-			@Override
-			public void onTextChanged(CharSequence arg0, int arg1, int arg2,
-					int arg3) {
-				// TODO Auto-generated method stub
-				
-			}
-    		
-    	});
-
-    	alertbox.setView(ed);
-		alertbox.setPositiveButton("Search!",
-				new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						Cursor cursor = db.searchForTags(ed.getText().toString());
-						
-						onLoadFinished(cursorLoader, cursor);
-	    				adapter.notifyDataSetChanged();
-						
-						dialog.dismiss();
-					}
-				});
-		alertbox.show();
-    }
+	@Override
+	public void filter(String search) {
+		db = new DatabaseAdapter(this.getActivity().getContentResolver());
+		Cursor cursor = db.searchForTags(search);
+		
+		onLoadFinished(cursorLoader, cursor);
+		adapter.notifyDataSetChanged();
+	}
 	
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
