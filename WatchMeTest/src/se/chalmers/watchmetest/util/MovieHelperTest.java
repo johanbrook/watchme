@@ -23,14 +23,4 @@ public class MovieHelperTest extends TestCase {
 		super.setUp();
 	}
 	
-	@SmallTest
-	public void testParseYearFromDate() {
-		String correctDate = "2012-03-03";
-		assertEquals(MovieHelper.parseYearFromDate(correctDate), "2012");
-		
-		String incorrectDate = "2012/03/03";
-		assertEquals(MovieHelper.parseYearFromDate(incorrectDate), incorrectDate);
-		
-		assertNull(MovieHelper.parseYearFromDate(null), null);
-	}
 }
