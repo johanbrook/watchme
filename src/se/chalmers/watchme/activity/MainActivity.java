@@ -35,7 +35,8 @@ public class MainActivity extends FragmentActivity {
 	public static final String MOVIE_DETAILS_RATING = "se.chalmers.watchme.DETAILS_RATING";
 	public static final String MOVIE_DETAILS_NOTE = "se.chalmers.watchme.DETAILS_NOTE";
 	
-	//TODO: Correct to put key values for Intent.putExtra() here? 
+	//TODO: Correct to put key values for Intent.putExtra() here? possibly better
+	// putting it in class where it is used
 	public static final String TAG_ID = "se.chalmers.watchme.TAG_ID";
 	
 	private ViewPager viewPager;
