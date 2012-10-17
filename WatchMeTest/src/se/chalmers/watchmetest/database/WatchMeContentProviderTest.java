@@ -71,8 +71,10 @@ public class WatchMeContentProviderTest extends ProviderTestCase2<WatchMeContent
 		catch(IllegalArgumentException e) {}
 		
 		try {
-			contentResolver.query(uri_invalid, null, null, null, null);
-			Assert.fail("query: Should have thrown IllegalArgumentException");
+			Cursor c = contentResolver.query(uri_invalid, null, null, null, null);
+			
+			Assert.fail("query: Should have thrown IllegalArgumentException\n" +
+					"c: " + c);
 		}
 		catch(IllegalArgumentException e) {}
 		
@@ -243,7 +245,9 @@ public class WatchMeContentProviderTest extends ProviderTestCase2<WatchMeContent
 		
 		ContentValues values = new ContentValues();
 		
-		// Test movie-uri
+		/*
+		 * Delete a movie without a tag
+		 */
 		values.put(MoviesTable.COLUMN_TITLE, "batman");
 		values.put(MoviesTable.COLUMN_RATING, 1);
 	    values.put(MoviesTable.COLUMN_NOTE, "");
@@ -257,6 +261,110 @@ public class WatchMeContentProviderTest extends ProviderTestCase2<WatchMeContent
 		
 		int deletedRows = contentResolver.delete(uri_movies, "_id = " + movieId, null);
 		assertEquals(deletedRows, 1);
+		
+		/*
+		 * Delete a movie with a tag
+		 */
+		values = new ContentValues();
+		
+		values.put(MoviesTable.COLUMN_TITLE, "batman");
+		values.put(MoviesTable.COLUMN_RATING, 1);
+	    values.put(MoviesTable.COLUMN_NOTE, "");
+	    values.put(MoviesTable.COLUMN_DATE, 0);
+	    values.put(MoviesTable.COLUMN_IMDB_ID, 0);
+	    values.put(MoviesTable.COLUMN_POSTER_LARGE, "");
+	    values.put(MoviesTable.COLUMN_POSTER_SMALL, "");
+		
+		tmpUri = contentResolver.insert(uri_movies, values);
+		movieId = Long.parseLong(tmpUri.getLastPathSegment());
+		
+		values = new ContentValues();
+		
+		values.put(MoviesTable.COLUMN_MOVIE_ID, movieId);
+		values.put(TagsTable.COLUMN_NAME, "tag");
+		contentResolver.insert(uri_hastag, values);
+		
+		/* Confirms that the movie was deleted and that the tag was attached 
+		 * from the movie
+		 */
+		deletedRows = contentResolver.delete(uri_movies, 
+				MoviesTable.COLUMN_MOVIE_ID + " = "+ movieId, null);
+		assertEquals(deletedRows, 1);
+		
+		// Confirms that the tag was deleted completely
+		Cursor cursor = contentResolver.query(uri_tags, null, null, null, null);
+		assertEquals(cursor.getCount(), 0);
+		
+		/*
+		 * Detach a tag (delete from hastag)
+		 */
+		values = new ContentValues();
+		
+		values.put(MoviesTable.COLUMN_TITLE, "batman");
+		values.put(MoviesTable.COLUMN_RATING, 1);
+	    values.put(MoviesTable.COLUMN_NOTE, "");
+	    values.put(MoviesTable.COLUMN_DATE, 0);
+	    values.put(MoviesTable.COLUMN_IMDB_ID, 0);
+	    values.put(MoviesTable.COLUMN_POSTER_LARGE, "");
+	    values.put(MoviesTable.COLUMN_POSTER_SMALL, "");
+		
+		tmpUri = contentResolver.insert(uri_movies, values);
+		movieId = Long.parseLong(tmpUri.getLastPathSegment());
+		
+		values = new ContentValues();
+		
+		values.put(MoviesTable.COLUMN_MOVIE_ID, movieId);
+		values.put(TagsTable.COLUMN_NAME, "tag");
+		tmpUri = contentResolver.insert(uri_hastag, values);
+		long tagId = Long.parseLong(tmpUri.getLastPathSegment());
+		
+		deletedRows = contentResolver.delete(uri_hastag, 
+				HasTagTable.COLUMN_MOVIE_ID + " = "+ movieId + " AND " +
+						HasTagTable.COLUMN_TAG_ID + " = " + tagId, null);
+		assertEquals(deletedRows, 1);
+		
+		/*
+		 * The tag should also be detached from the movie, but this can't
+		 * be tested since this is forced by a TRIGGER in the DatabaseHelper
+		 * and not in the CP
+		 */
+		
+		// Confirms that the tag was deleted completely
+		cursor = contentResolver.query(uri_tags, null, null, null, null);
+		assertEquals(cursor.getCount(), 0);
+		
+		/*
+		 * Delete tag 
+		 */
+		values = new ContentValues();
+		
+		values.put(MoviesTable.COLUMN_TITLE, "batman");
+		values.put(MoviesTable.COLUMN_RATING, 1);
+	    values.put(MoviesTable.COLUMN_NOTE, "");
+	    values.put(MoviesTable.COLUMN_DATE, 0);
+	    values.put(MoviesTable.COLUMN_IMDB_ID, 0);
+	    values.put(MoviesTable.COLUMN_POSTER_LARGE, "");
+	    values.put(MoviesTable.COLUMN_POSTER_SMALL, "");
+		
+		tmpUri = contentResolver.insert(uri_movies, values);
+		movieId = Long.parseLong(tmpUri.getLastPathSegment());
+		
+		values = new ContentValues();
+		
+		values.put(MoviesTable.COLUMN_MOVIE_ID, movieId);
+		values.put(TagsTable.COLUMN_NAME, "tag");
+		tmpUri = contentResolver.insert(uri_hastag, values);
+		tagId = Long.parseLong(tmpUri.getLastPathSegment());
+		
+		deletedRows = contentResolver.delete(uri_tags, 
+						TagsTable.COLUMN_TAG_ID + " = " + tagId, null);
+		assertEquals(deletedRows, 1);
+		
+		/*
+		 * The tag should also be detached from the movie, but this can't
+		 * be tested since this is forced by a TRIGGER in the DatabaseHelper
+		 * and not in the CP
+		 */
 	}
 	
 }
