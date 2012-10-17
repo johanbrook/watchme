@@ -260,7 +260,7 @@ public class WatchMeContentProvider extends ContentProvider {
 			queryBuilder.setTables(tables);		
 			break;
 	    default:
-	        throw new IllegalArgumentException("Unknown URI");
+	        throw new IllegalArgumentException("Unknown URI " + uri);
 	    }
 	    Cursor cursor = queryBuilder.query(sqlDB,
 	            projection, selection, selectionArgs, null, null, sortOrder);
