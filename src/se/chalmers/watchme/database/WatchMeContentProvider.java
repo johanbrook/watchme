@@ -180,6 +180,20 @@ public class WatchMeContentProvider extends ContentProvider {
 			if(tagCursor.moveToFirst()) {
 				// If the Tag already exist. Get the Id. 
 				id = Long.parseLong(tagCursor.getString(0));
+				
+				/*
+				 * Check if the tag is already attached to the movie.
+				 * Return 0 as id.
+				 */
+				Cursor cursor = sqlDB.query(HasTagTable.TABLE_HAS_TAG, null, 
+						HasTagTable.COLUMN_MOVIE_ID + " = " + 
+						values.getAsLong(MoviesTable.COLUMN_MOVIE_ID) + " AND " +
+						HasTagTable.COLUMN_TAG_ID + " = " + id , 
+						null, null, null, null);
+				if(cursor.moveToFirst()) {
+					id = 0;
+					break;
+				}
 			} else {
 				ContentValues tagValues = new ContentValues();
 				tagValues.put(TagsTable.COLUMN_NAME, tagName);
