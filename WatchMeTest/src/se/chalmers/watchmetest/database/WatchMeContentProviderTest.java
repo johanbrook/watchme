@@ -162,7 +162,7 @@ public class WatchMeContentProviderTest extends ProviderTestCase2<WatchMeContent
 		 */
 		values = new ContentValues();
 		
-		values.put(MoviesTable.COLUMN_MOVIE_ID, 1);
+		values.put(MoviesTable.COLUMN_MOVIE_ID, movieId);
 		values.put(TagsTable.COLUMN_NAME, "tag");
 		tmpUri = contentResolver.insert(uri_hastag, values);
 		long tagId = Long.parseLong(tmpUri.getLastPathSegment());
@@ -173,8 +173,7 @@ public class WatchMeContentProviderTest extends ProviderTestCase2<WatchMeContent
 		assertEquals(cursor.getCount(), 1);
 		
 		/*
-		 * It should not be possible to attach a tag to a movie it is already
-		 * attached to.
+		 * Attach a tag to a movie it is already attached to.
 		 */
 		tmpUri = contentResolver.insert(uri_hastag, values);
 		zeroId = Long.parseLong(tmpUri.getLastPathSegment());
@@ -199,7 +198,9 @@ public class WatchMeContentProviderTest extends ProviderTestCase2<WatchMeContent
 		
 		ContentValues values = new ContentValues();
 		
-		// Test movie-uri
+		/*
+		 * Update movie
+		 */
 		values.put(MoviesTable.COLUMN_TITLE, "batman");
 		values.put(MoviesTable.COLUMN_RATING, 1);
 	    values.put(MoviesTable.COLUMN_NOTE, "");
@@ -214,6 +215,24 @@ public class WatchMeContentProviderTest extends ProviderTestCase2<WatchMeContent
 		values = new ContentValues();
 		values.put(MoviesTable.COLUMN_NOTE, "updated");
 		int updatedRows = contentResolver.update(uri_movies, values, "_id = " + movieId, null);
+		assertEquals(updatedRows, 1);
+		
+		/*
+		 * Update attachment between movie and tag not necessary for WatchMe
+		 */
+		
+		/*
+		 * Update tag
+		 */
+		values = new ContentValues();
+		values.put(MoviesTable.COLUMN_MOVIE_ID, movieId);
+		values.put(TagsTable.COLUMN_NAME, "tag");
+		
+		tmpUri = contentResolver.insert(uri_hastag, values);
+		long tagId = Long.parseLong(tmpUri.getLastPathSegment());
+		
+		updatedRows = contentResolver.update(uri_tags, values, 
+				TagsTable.COLUMN_TAG_ID + " = " + tagId, null);
 		assertEquals(updatedRows, 1);
 	}
 	
