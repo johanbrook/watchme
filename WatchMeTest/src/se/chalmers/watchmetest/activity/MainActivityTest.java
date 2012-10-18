@@ -13,9 +13,13 @@ import android.support.v4.view.ViewPager;
 import android.test.ActivityInstrumentationTestCase2;
 import android.test.UiThreadTest;
 
+import com.jayway.android.robotium.solo.Solo;
+
 public class MainActivityTest extends
 		ActivityInstrumentationTestCase2<MainActivity> {
 
+	private Solo solo;
+	
 	public MainActivityTest() {
 		super(MainActivity.class);
 	}
@@ -23,6 +27,7 @@ public class MainActivityTest extends
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
+		solo = new Solo(getInstrumentation(), getActivity());
 	}
 	
 	//TODO: API fix
@@ -42,12 +47,14 @@ public class MainActivityTest extends
 		TabsAdapter tabsAdapter = (TabsAdapter) viewPager.getAdapter();
 		Fragment currentlyViewedFragment = (Fragment) tabsAdapter.instantiateItem(viewPager, itemViewedIndex);
 		
+		System.out.println("--------------------" + currentlyViewedFragment.getTag());
 		assertTrue(currentlyViewedFragment.getClass() == TagListFragment.class);
 		
 		tab1.select();
 		
 		itemViewedIndex = viewPager.getCurrentItem();
 		currentlyViewedFragment = (Fragment) tabsAdapter.instantiateItem(viewPager, itemViewedIndex);
+		System.out.println("--------------------" + currentlyViewedFragment.getTag());
 		
 		assertTrue(currentlyViewedFragment.getClass() == MovieListFragment.class);
 	}
@@ -62,5 +69,23 @@ public class MainActivityTest extends
 		
 		assertTrue(actionBar.getNavigationMode() == ActionBar.NAVIGATION_MODE_TABS);
 	}
+	
+	public void testActivity() {
+		MainActivity mainActivity = this.getActivity();
+		ViewPager viewPager = (ViewPager) mainActivity.findViewById(R.id.vPager);
+		int viewPagerId = viewPager.getId();
+		
+		solo.assertCurrentActivity("Check on first activity", MainActivity.class);
+		
+		assertTrue(solo.waitForFragmentByTag("android:switcher:" + viewPagerId + ":1"));
+		solo.clickOnText("Tags");
+		
+		assertTrue(solo.waitForFragmentByTag("android:switcher:" + viewPagerId + ":0"));
+		solo.clickOnText("Movies");
+		
+		
+	}
+	
+	
 
 }
