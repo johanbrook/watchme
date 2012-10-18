@@ -346,4 +346,8 @@ public class MovieListFragment extends ListFragment implements LoaderManager.Loa
 			return true;
 		}    	
 	}
+    
+    public long getTagId() {
+    	return tagId;
+    }
 }
