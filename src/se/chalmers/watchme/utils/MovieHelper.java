@@ -127,7 +127,6 @@ public class MovieHelper {
 		return s;
 	}
 	
-	// TODO Shorter name for method?
 	/**
 	 * Helper method for converting a stringArray with tag names to a list with
 	 * Tag objects

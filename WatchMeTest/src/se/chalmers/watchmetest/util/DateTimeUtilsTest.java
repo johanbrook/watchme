@@ -11,6 +11,7 @@ package se.chalmers.watchmetest.util;
 import java.util.Calendar;
 
 import android.test.suitebuilder.annotation.SmallTest;
+
 import se.chalmers.watchme.utils.DateTimeUtils;
 import se.chalmers.watchme.utils.MovieHelper;
 import junit.framework.TestCase;
