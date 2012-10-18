@@ -1,6 +1,7 @@
 package se.chalmers.watchme.activity;
 
 import se.chalmers.watchme.R;
+import se.chalmers.watchme.database.DatabaseAdapter;
 import android.app.ListActivity;
 import android.app.SearchManager;
 import android.content.Intent;
@@ -29,7 +30,8 @@ public class SearchableActivity extends ListActivity {
 	}
 
 	private void doMySearch(String query) {
-		// TODO Auto-generated method stub
+		DatabaseAdapter db = new DatabaseAdapter(getContentResolver());
 		
+		db.searchForMovies(query);
 	}
 }
