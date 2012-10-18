@@ -1,3 +1,11 @@
+/**
+*	MovieDetailsActivity.java
+*
+*	@author Robin Andersson
+*	@copyright (c) 2012 Robin Andersson
+*	@license MIT
+*/
+
 package se.chalmers.watchme.activity;
 
 import java.text.SimpleDateFormat;
@@ -181,8 +189,9 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
      */
     private void setNotification(Movie movie) {
     	this.notifications.setMovieNotification(movie);
+    	
     	Toast.makeText(this, 
-    			R.string.notification_prefix_text + 
+    			getString(R.string.notification_prefix_text) + 
     			DateTimeUtils.toSimpleDate(movie.getDate()), 
     			Toast.LENGTH_LONG)
     		.show();

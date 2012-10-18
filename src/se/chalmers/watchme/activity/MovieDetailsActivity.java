@@ -1,3 +1,11 @@
+/**
+*	MovieDetailsActivity.java
+*
+*	@author Robin Andersson
+*	@copyright (c) 2012 Robin Andersson
+*	@license MIT
+*/
+
 package se.chalmers.watchme.activity;
 
 import java.util.Calendar;
@@ -37,6 +45,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -87,6 +96,9 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
         myRatingBar.setEnabled(false);	// Unable to do this in XML (?)
         
         this.dialog = new ImageDialog(this);
+        
+        // Hide the progress spinner on init
+        findViewById(R.id.imdb_loading_spinner).setVisibility(View.INVISIBLE);
         
         /*
     	 * Create a new image download task for the poster image
@@ -288,21 +300,20 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
      */
     private class IMDBTask extends AsyncTask<Integer, Void, JSONObject> {
 
-    	private ProgressDialog dialog;
+    	private ProgressBar spinner;
     	
     	public IMDBTask() {
-    		this.dialog = new ProgressDialog(MovieDetailsActivity.this);
+    		this.spinner = (ProgressBar) findViewById(R.id.imdb_loading_spinner);
     	}
     	
     	@Override
     	protected void onPreExecute() {
-    		this.dialog.setMessage(getString(R.string.imdb_loading_text));
-    		this.dialog.show();
+    		this.spinner.setVisibility(View.VISIBLE);
     	}
     	
     	@Override
 		public void onCancelled() {
-    		this.dialog.dismiss();
+    		this.spinner.setVisibility(View.INVISIBLE);
     		Toast.makeText(getBaseContext(), 
 					getString(R.string.imdb_fetch_error_text), 
 					Toast.LENGTH_SHORT)
@@ -318,9 +329,7 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
     	
 		@Override
 		protected void onPostExecute(JSONObject res) {
-			if(this.dialog.isShowing()) {
-				this.dialog.dismiss();
-			}
+			this.spinner.setVisibility(View.INVISIBLE);
 			
 			// Update the UI with the JSON data
 			if(res != null) {
@@ -505,6 +514,11 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
 			 */
 			movie = db.getMovie(movie.getId()); 		
 			
+			// Show status toast when saved
+			Toast.makeText(MovieDetailsActivity.this, "\""+ movie.getTitle() +"\" "+ 
+						getString(R.string.movie_updated_toast_suffix), 
+						Toast.LENGTH_SHORT)
+				.show();
 		}
     }
     

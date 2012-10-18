@@ -179,34 +179,40 @@ public class WatchMeContentProvider extends ContentProvider {
 					TagsTable.COLUMN_NAME + " = \"" + 
 			tagName + "\"", null, null, null, null);
 			
-			long tagId;
 			if(tagCursor.moveToFirst()) {
 				// If the Tag already exist. Get the Id. 
-				tagId = Long.parseLong(tagCursor.getString(0));
+				id = Long.parseLong(tagCursor.getString(0));
+				
+				/*
+				 * Check if the tag is already attached to the movie.
+				 * Return 0 as id.
+				 */
+				Cursor cursor = sqlDB.query(HasTagTable.TABLE_HAS_TAG, null, 
+						HasTagTable.COLUMN_MOVIE_ID + " = " + 
+						values.getAsLong(MoviesTable.COLUMN_MOVIE_ID) + " AND " +
+						HasTagTable.COLUMN_TAG_ID + " = " + id , 
+						null, null, null, null);
+				if(cursor.moveToFirst()) {
+					id = 0;
+					break;
+				}
 			} else {
 				ContentValues tagValues = new ContentValues();
 				tagValues.put(TagsTable.COLUMN_NAME, tagName);
-		        tagId = sqlDB.insert(TagsTable.TABLE_TAGS, null, tagValues); 
+		        id = sqlDB.insert(TagsTable.TABLE_TAGS, null, tagValues); 
 		        // TODO insert(URI_TAGS, tagValues) instead?
 			}
 			
-			// TODO cursor.close()?
+			tagCursor.close();
 			
 			String sql = "INSERT INTO " + HasTagTable.TABLE_HAS_TAG + " VALUES(" + 
-			values.getAsLong(MoviesTable.COLUMN_MOVIE_ID) + ", " + tagId + ")";
+			values.getAsLong(MoviesTable.COLUMN_MOVIE_ID) + ", " + id + ")";
 			sqlDB.execSQL(sql);
-			
-			// TODO: FIX THIS SMELLY CODE
-			id = values.getAsLong(MoviesTable.COLUMN_MOVIE_ID) + tagId;
 			
 			break;
 		case TAGS:
-			/*
-			 *  TODO Unnecessary? A Tag will never be inserted by itself,
-			 *  instead whey will be inserted by the case: HAS_TAG
-			 */
-			id = sqlDB.insert(TagsTable.TABLE_TAGS, null, values);
-			break;
+			throw new UnsupportedOperationException("A tag can't exist " +
+					"without being attached to a movie");
 		default:
 			throw new IllegalArgumentException("Unknown URI" + uri);
 		}
@@ -262,7 +268,7 @@ public class WatchMeContentProvider extends ContentProvider {
 			queryBuilder.setTables(tables);		
 			break;
 	    default:
-	        throw new IllegalArgumentException("Unknown URI");
+	        throw new IllegalArgumentException("Unknown URI " + uri);
 	    }
 	    Cursor cursor = queryBuilder.query(sqlDB,
 	            projection, selection, selectionArgs, null, null, sortOrder);

@@ -67,6 +67,14 @@
 		        android:layout_marginTop="5dp"
 		        android:hint="@string/details_duration_label"
 		        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+		    <ProgressBar
+		        android:id="@+id/imdb_loading_spinner"
+		        style="@android:style/Widget.ProgressBar.Small.Inverse"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:layout_alignLeft="@+id/duration"
+		        android:layout_alignParentBottom="true" />
 		    
 		</RelativeLayout>
 	

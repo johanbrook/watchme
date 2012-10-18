@@ -39,16 +39,16 @@
 	<string name="notification_prefix_text">"Notification set for "</string>
 	<string name="email_subject">WatchMe Movie List</string>
 	<string name="choose_message_app">Send the movie list in:</string>
-	<string name="imdb_loading_text">Loading from IMDb …</string>
 	<string name="imdb_fetch_error_text">An error occurred while fetching from IMDb</string>
 	<string name="notification_title">Movie released</string>
 	<string name="notification_suffix">is released!</string>
-	<string name="poster_dialog_dismiss_text">Tap poster to dimiss</string>
+	<string name="poster_dialog_dismiss_text">Tap poster to dismiss</string>
 	<string name="order_dialog_title">Order by</string>
 	<string name="delete_button_positive">Yes</string>
 	<string name="delete_button_negative">Cancel</string>
 	<string name="delete_dialog_text">Are you sure you want to delete</string>
 	<string name="datetime_format">dd-MM-yyyy</string>
 	<string name="movie_detail_runtime">Runtime:</string>
+	<string name="movie_updated_toast_suffix">updated</string>
     
 </resources>
