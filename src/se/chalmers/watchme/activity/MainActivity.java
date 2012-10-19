@@ -8,12 +8,13 @@ import se.chalmers.watchme.database.DatabaseAdapter;
 import se.chalmers.watchme.model.Movie;
 import se.chalmers.watchme.notifications.NotificationClient;
 import se.chalmers.watchme.ui.MovieListFragment;
-import se.chalmers.watchme.ui.MyListFragment;
+import se.chalmers.watchme.ui.ContentListFragment;
 import se.chalmers.watchme.ui.TagListFragment;
 import se.chalmers.watchme.utils.DateTimeUtils;
 import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.ActionBar.Tab;
+import android.app.SearchManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -29,6 +30,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
+import android.widget.SearchView;
 import android.widget.Toast;
 
 
@@ -69,12 +71,18 @@ public class MainActivity extends FragmentActivity {
 		if (savedInstanceState != null) {
 			actionBar.setSelectedNavigationItem(savedInstanceState.getInt("tab", 0));
 		}	
-
     }
     
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.activity_main, menu);
+        
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        SearchView searchView = (SearchView) menu.findItem(R.id.menu_search_button).getActionView();
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        searchView.setIconifiedByDefault(false); // Do not iconify the widget; expand it by default
+        searchView.setSubmitButtonEnabled(true);
+
         return true;
     }
     
@@ -93,58 +101,15 @@ public class MainActivity extends FragmentActivity {
     	case R.id.menu_send_email_button:
     		sendEmail();
     		return true;
-
-    	case R.id.menu_search_button:
-    		search();
     		
+    	case R.id.menu_search_button:
+            onSearchRequested();
+            return true;
+            
     	default:
     		return super.onOptionsItemSelected(item);
     	}
     	
-    }
-    
-    @Override
-    public boolean onSearchRequested() {
-    	
-    	search();
-    	
-    	return false;
-    }
-    
-    private void search() {    	
-    	AlertDialog.Builder alertbox = new AlertDialog.Builder(this);
-    	alertbox.setTitle(getString(R.string.search));
-    	final EditText ed = new EditText(this);
-    	ed.addTextChangedListener(new TextWatcher() {
-
-			@Override
-			public void afterTextChanged(Editable e) {
-				MyListFragment f = (MyListFragment) getSupportFragmentManager().findFragmentById(R.id.vPager);
-				int i = viewPager.getCurrentItem();
-				System.out.println("FRAGMENT: " + f.getClass() + " " + i);
-				f.filter(e.toString());
-			}
-
-			@Override
-			public void beforeTextChanged(CharSequence arg0, int arg1,
-					int arg2, int arg3) {}
-
-			@Override
-			public void onTextChanged(CharSequence arg0, int arg1, int arg2,
-					int arg3) {}
-    		
-    	});
-
-    	alertbox.setView(ed);
-		alertbox.setPositiveButton("Search!",
-				new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						
-						dialog.dismiss();
-					}
-				});
-		alertbox.show();
     }
     
     private void sendEmail() {

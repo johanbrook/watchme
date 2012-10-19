@@ -70,7 +70,7 @@
             </intent-filter>
             <meta-data
                 android:name="android.app.searchable"
-                android:resource="@layout/searchable" />
+                android:resource="@xml/searchable" />
         </activity>
 
     </application>

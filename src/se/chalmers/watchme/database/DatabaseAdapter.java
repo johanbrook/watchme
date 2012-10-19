@@ -452,9 +452,7 @@ public class DatabaseAdapter {
 		String selection = HasTagTable.TABLE_HAS_TAG + "." + 
 				HasTagTable.COLUMN_TAG_ID + " = " + tagId;
 		
-		Cursor cursor = contentResolver.query(uri_has_tag, null, selection, null, null);
-		
-		return cursor;
+		return contentResolver.query(uri_has_tag, null, selection, null, null);
 	}
 	
 	/**

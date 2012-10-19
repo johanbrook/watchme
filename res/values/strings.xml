@@ -35,8 +35,11 @@
     <string name="share_movie_list">Share List</string>
     <string name="title_activity_tagmovielist">Tags</string>
 	<string name="sort">Sort</string>
+	
 	<string name="search">Search</string>
 	<string name="search_hint">Search WatchMe</string>
+	<string name="no_results">No results found for \"%s\"</string>
+	
 	<string name="notification_prefix_text">"Notification set for "</string>
 	<string name="email_subject">WatchMe Movie List</string>
 	<string name="choose_message_app">Send the movie list in:</string>
