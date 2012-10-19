@@ -53,8 +53,7 @@ public class MovieListFragmentTest extends
 	}
 
 	// TODO: Can you be sure that the application is in the state as when the
-	// last
-	// test was done? In that case, first rows can be removed.
+	// last test. In that case you can remove first lines.
 	public void testRemoveMovie() {
 		final int ADD_MOVIE_BUTTON = 1;
 
@@ -86,4 +85,16 @@ public class MovieListFragmentTest extends
 		assertEquals("TEST_MOVIE was found", expected, actual);
 	}
 
+	public void testClickOnMovie() {
+		solo.assertCurrentActivity("MainActivity expected", MainActivity.class);
+		solo.clickOnText("Movies");
+		solo.clickOnActionBarItem(R.id.menu_add_movie);
+		solo.enterText(0, "TEST_MOVIE_2");
+		solo.clickOnButton(1);
+		solo.assertCurrentActivity("MainActivity expected", MainActivity.class);
+		solo.clickOnText("TEST_MOVIE_2");
+		solo.assertCurrentActivity("MovieDetailsActivity expected",
+				MovieDetailsActivity.class);
+	}
+	
 }
