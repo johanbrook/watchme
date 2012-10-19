@@ -49,14 +49,16 @@ public class MainActivityTest extends
 
 		solo.assertCurrentActivity("Current activity is not MainActivity",
 				MainActivity.class);
-
-		assertTrue(solo.waitForFragmentByTag("android:switcher:" + viewPagerId
-				+ ":1"));
+		
+		boolean tagListFragmentViewed = solo.waitForFragmentByTag("android:switcher:" + viewPagerId
+				+ ":1");
 		solo.clickOnText("Tags");
+		assertTrue(tagListFragmentViewed);
 
-		assertTrue(solo.waitForFragmentByTag("android:switcher:" + viewPagerId
-				+ ":0"));
+		boolean movieListFragmentViewed = solo.waitForFragmentByTag("android:switcher:" + viewPagerId
+				+ ":0");
 		solo.clickOnText("Movies");
+		assertTrue(movieListFragmentViewed);
 	}
 
 }
