@@ -37,6 +37,8 @@ public class MovieListFragmentTest extends
 
 	// TODO: solo.sleep(n) ugly code? better with .waitFor___() method?
 	public void testAddMovie() {
+		final int ADD_MOVIE_BUTTON = 1;
+		
 		solo.assertCurrentActivity("MainActivity expected", MainActivity.class);
 		solo.clickOnText("Movies");
 		solo.clickOnActionBarItem(R.id.menu_add_movie);
@@ -49,7 +51,7 @@ public class MovieListFragmentTest extends
 		solo.clickOnText("Done");
 		solo.enterText(1, "Action");
 		solo.enterText(2, "Mum said I'd like this");
-		solo.clickOnButton(1);
+		solo.clickOnButton(ADD_MOVIE_BUTTON);
 		solo.assertCurrentActivity("MainActivity expected", MainActivity.class);
 		boolean movieFound = solo.searchText("Batman");
 		assertTrue(movieFound);
