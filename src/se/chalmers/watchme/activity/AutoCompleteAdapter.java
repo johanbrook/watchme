@@ -19,6 +19,7 @@ import org.json.JSONObject;
 import se.chalmers.watchme.R;
 import se.chalmers.watchme.model.Movie;
 import se.chalmers.watchme.net.MovieSource;
+import se.chalmers.watchme.utils.DateTimeUtils;
 import se.chalmers.watchme.utils.MovieHelper;
 
 import android.content.Context;
@@ -153,7 +154,7 @@ public class AutoCompleteAdapter extends ArrayAdapter<JSONObject> implements Fil
 		if(suggestion != null) {
 			String releaseDate = suggestion.optString("released");
 			releaseDate = (releaseDate.isEmpty()) ? null : releaseDate;
-			String year = MovieHelper.parseYearFromDate(releaseDate);
+			String year = DateTimeUtils.parseYearFromDate(releaseDate);
 			
 			holder.title.setText(suggestion.optString(Movie.JSON_KEY_NAME) + 
 					( (year != null) ? " ("+ year +")" : "" ) );

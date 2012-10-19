@@ -342,4 +342,8 @@ public class MovieListFragment extends ContentListFragment {
 			}
 		});		
 	}
+    
+    public long getTagId() {
+    	return tagId;
+    }
 }

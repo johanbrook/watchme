@@ -10,7 +10,10 @@ package se.chalmers.watchmetest.util;
 
 import java.util.Calendar;
 
+import android.test.suitebuilder.annotation.SmallTest;
+
 import se.chalmers.watchme.utils.DateTimeUtils;
+import se.chalmers.watchme.utils.MovieHelper;
 import junit.framework.TestCase;
 
 public class DateTimeUtilsTest extends TestCase {
@@ -42,5 +45,15 @@ public class DateTimeUtilsTest extends TestCase {
 		assertEquals("1:59", DateTimeUtils.minutesToHuman(minutes2));
 		assertEquals("2:00", DateTimeUtils.minutesToHuman(minutes3));
 		assertEquals("0:59", DateTimeUtils.minutesToHuman(minutes4));
+	}
+	
+	public void testParseYearFromDate() {
+		String correctDate = "2012-03-03";
+		assertEquals(DateTimeUtils.parseYearFromDate(correctDate), "2012");
+		
+		String incorrectDate = "2012/03/03";
+		assertEquals(DateTimeUtils.parseYearFromDate(incorrectDate), incorrectDate);
+		
+		assertNull(DateTimeUtils.parseYearFromDate(null), null);
 	}
 }
