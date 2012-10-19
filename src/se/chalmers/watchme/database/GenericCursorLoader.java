@@ -5,7 +5,6 @@ import android.database.ContentObserver;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.CancellationSignal;
-import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.CursorLoader;
 
 import java.io.FileDescriptor;
@@ -18,25 +17,50 @@ import java.io.PrintWriter;
  * implementation is still used; it does not try to switch to the framework's
  * implementation. See the framework SDK documentation for a class overview.
  * 
- * A CursorLoader that uses the {@link se.chalmers.watchme DatabaseAdapter}
- * to fetch data from the Database.
+ * A CursorLoader that has a ICursorHelper that calculates the cursor.
  * 
- * @lisastenberg
+ * @author lisastenberg
  */
 
-public class MyCursorLoader extends CursorLoader {
+public class GenericCursorLoader extends CursorLoader {
 
-	final ForceLoadContentObserver mObserver;
+	private final ForceLoadContentObserver mObserver;
 	private Uri mUri;
-	private DatabaseAdapter db;
 
 	// Set default to order by Date
 	private String mSortOrder;
-	private Long mTagId;
 	
 	private Cursor mCursor;
 	private CancellationSignal mCancellationSignal;
+	
+	private ICursorHelper mCursorHelper;
 
+	/**
+	 * Creates an empty unspecified CursorLoader. You must follow this with
+	 * calls to {@link #setUri(Uri)}, {@link #setSelection(String)}, etc to
+	 * specify the query to perform.
+	 */
+	public GenericCursorLoader(Context context) {
+		super(context);
+		mObserver = new ForceLoadContentObserver();
+	}
+	
+	/**
+	 * Creates a CursorLoader with a cursorHelper that is used to calculate
+	 * the Cursor in loadCursor()
+	 * 
+	 * @param context The context
+	 * @param cursorHelper The CursorHelper
+	 */
+	public GenericCursorLoader(Context context, ICursorHelper cursorHelper) {
+		super(context);
+		mObserver = new ForceLoadContentObserver();
+		mCursorHelper = cursorHelper;
+		
+		mUri = mCursorHelper.getUri();
+		mSortOrder = mCursorHelper.getSortOrder();
+	}
+	
 	/* Runs on a worker thread */
 	@Override
 	public Cursor loadInBackground() {
@@ -46,8 +70,7 @@ public class MyCursorLoader extends CursorLoader {
         }
         try {
         	
-        	db = new DatabaseAdapter(getContext().getContentResolver());
-            Cursor cursor = getCursor();
+            Cursor cursor = mCursorHelper.getCursor();
             if (cursor != null) {
             	
                 // Ensure the cursor window is filled
@@ -63,29 +86,6 @@ public class MyCursorLoader extends CursorLoader {
                 mCancellationSignal = null;
             }
         }
-	}
-	
-	public void changeCursor(String orderBy) {
-		mSortOrder = orderBy;
-		loadInBackground();
-	}
-	
-	/**
-	 * Asks the DatabaseAdapter for a Cursor depending on the Uri and the Id of 
-	 * the Tag.
-	 * 
-	 * @return a Cursor.
-	 */
-	private Cursor getCursor() {
-		if (mUri == WatchMeContentProvider.CONTENT_URI_MOVIES) {
-			if (mTagId == -1) {
-				return db.getAllMoviesCursor(mSortOrder);
-			}
-			return db.getAttachedMovies(mTagId);
-		} else if(mUri == WatchMeContentProvider.CONTENT_URI_TAGS) {
-			return db.getAllTagsCursor();
-		}
-		return null;
 	}
 
 	/**
@@ -114,31 +114,6 @@ public class MyCursorLoader extends CursorLoader {
 		if (oldCursor != null && oldCursor != cursor && !oldCursor.isClosed()) {
 			oldCursor.close();
 		}
-	}
-
-	/**
-	 * Creates an empty unspecified CursorLoader. You must follow this with
-	 * calls to {@link #setUri(Uri)}, {@link #setSelection(String)}, etc to
-	 * specify the query to perform.
-	 */
-	public MyCursorLoader(Context context) {
-		super(context);
-		mObserver = new ForceLoadContentObserver();
-	}
-
-	/**
-	 * Creates a fully-specified CursorLoader. See
-	 * {@link ContentResolver#query(Uri, String[], String, String[], String)
-	 * ContentResolver.query()} for documentation on the meaning of the
-	 * parameters. These will be passed as-is to that call.
-	 */
-	public MyCursorLoader(Context context, Uri uri, Long tagId, String sortOrder) {
-		super(context);
-		mObserver = new ForceLoadContentObserver();
-		mUri = uri;
-		mTagId = tagId;
-		
-		mSortOrder = sortOrder;
 	}
 
 	/**
