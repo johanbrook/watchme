@@ -1,72 +1,84 @@
 package se.chalmers.watchme.activity;
 
 import se.chalmers.watchme.R;
-import se.chalmers.watchme.database.DatabaseAdapter;
 import se.chalmers.watchme.ui.MovieListFragment;
 import se.chalmers.watchme.ui.ContentListFragment;
 import android.annotation.TargetApi;
 import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.NavUtils;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.SearchView;
 
 //TODO Important! API level required does not match with what is used
 @TargetApi(11)
 public class SearchableActivity extends FragmentActivity {
 
-	private DatabaseAdapter db;
-	
-	private AsyncTask<String, Void, Bitmap> imageTask;
-
+	private ContentListFragment fragment;
 	
 	/*
-	 * 1. Receiving the Query
-	 * 
-	 * (non-Javadoc)
-	 * @see android.app.Activity#onCreate(android.os.Bundle)
+	 * Receiving the query
 	 */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.movie_list_fragment_view);
-		// TODO Create R.layout.search?
-
-		// Get the intent, verify the action and get the query
-		Intent intent = getIntent();
-		if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
-			System.out.println("Intent.ACTION_SEARCH");
-			String query = intent.getStringExtra(SearchManager.QUERY);
-			doMySearch(query);
-		}
+		getActionBar().setDisplayHomeAsUpEnabled(true);
 		
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction ft = fragmentManager.beginTransaction();
         
-        ft.add(android.R.id.content, new MovieListFragment());
+        fragment = new MovieListFragment();
+        Bundle b = new Bundle();
+        
+		// Get the intent, verify the action and get the query
+		Intent intent = getIntent();
+		if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+			String query = intent.getStringExtra(SearchManager.QUERY);
+			b.putString(getString(R.string.search), query);
+		}
+        
+        fragment.setArguments(b);
+        
+        ft.add(android.R.id.content, fragment);
         ft.commit();
 	}
-
-	/*
-	 * 2. Searching the data
-	 */
-	private void doMySearch(String query) {
-		System.out.println("--- doMySearch ---");
-		db = new DatabaseAdapter(getContentResolver());
-		
-		showResults(db.searchForMovies(query));
-	}
 	
-	/*
-	 * 3. Presenting the results
-	 */
-	private void showResults(Cursor result) {
-		System.out.println("--- doMySearch ---");
-		ContentListFragment fragment = (ContentListFragment) getSupportFragmentManager().findFragmentById(R.id.vPager);
-		fragment.showResult(result);
-	}
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.activity_main, menu);
+        
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        SearchView searchView = (SearchView) menu.findItem(R.id.menu_search_button).getActionView();
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        searchView.setIconifiedByDefault(false); // Do not iconify the widget; expand it by default
+        
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        
+    	switch(item.getItemId()) {
+    	case android.R.id.home:
+            NavUtils.navigateUpFromSameTask(this);
+            return true;
+    	
+    	case R.id.menu_add_movie:
+    		Intent intent = new Intent(this, AddMovieActivity.class);
+            startActivity(intent);
+            return true;
+    		
+    	case R.id.menu_search_button:
+            onSearchRequested();
+            return true;
+            
+    	default:
+    		return super.onOptionsItemSelected(item);
+    	}
+    }
 }

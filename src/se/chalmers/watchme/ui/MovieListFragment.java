@@ -48,7 +48,6 @@ import android.widget.Toast;
 public class MovieListFragment extends ContentListFragment {
 	
 	private DatabaseAdapter db;
-	private GenericCursorLoader cursorLoader;
 	
 	private AsyncTask<String, Void, Bitmap> imageTask;
 	private Long tagId;
@@ -58,6 +57,7 @@ public class MovieListFragment extends ContentListFragment {
 	private static final String orderByRating = MoviesTable.COLUMN_RATING + " DESC";
 	
 	private int sortOrder = 0;
+	private String query;
 	
 	public MovieListFragment() {
 		super(WatchMeContentProvider.CONTENT_URI_MOVIES);
@@ -72,7 +72,7 @@ public class MovieListFragment extends ContentListFragment {
 	@Override
 	public void onActivityCreated(Bundle b) {
 		super.onActivityCreated(b);
-		
+				
 		// TODO: Has to be done in onCreate instead?
 		setHasOptionsMenu(true);
 		
@@ -80,6 +80,11 @@ public class MovieListFragment extends ContentListFragment {
 		ResponseCache.setDefault(new ImageCache(cacheDir));
 
 		setUpAdapter();
+		
+		Bundle arguments = getArguments();
+		if (arguments != null) {
+			query = arguments.getString(getString(R.string.search));
+		}
 	    
 		// Set up listeners to delete and view a movie
         this.getListView().setOnItemClickListener(new OnDetailsListener());
@@ -133,7 +138,10 @@ public class MovieListFragment extends ContentListFragment {
 			@Override
 			public Cursor getCursor() {
 				if (tagId == -1) {
-					return db.getAllMoviesCursor(getSortOrder());
+					if(query == null) {
+						return db.getAllMoviesCursor(getSortOrder());
+					}
+					return db.searchForMovies(query);
 				}
 				return db.getAttachedMovies(tagId);
 			}
@@ -153,6 +161,15 @@ public class MovieListFragment extends ContentListFragment {
     		break;
     	}
     	return super.onOptionsItemSelected(item);
+    }
+    
+    public void search(String query) {
+    	db = new DatabaseAdapter(getActivity().getContentResolver());
+    	Cursor c = db.searchForMovies(query);
+    	System.out.println("NUMBER OF MOVIES DETECTED: " + c.getCount());
+    	onLoadFinished(null, c);
+    	getAdapter().notifyDataSetChanged();
+    	//showResult(db.searchForMovies(query));
     }
     
     /**
@@ -185,7 +202,7 @@ public class MovieListFragment extends ContentListFragment {
     				sortOrder = item;
     				// Change the cursor
     				
-    				onLoadFinished(cursorLoader, cursor);
+    				onLoadFinished(null, cursor);
     				getAdapter().notifyDataSetChanged();
     				
     				dialog.dismiss();
@@ -265,6 +282,9 @@ public class MovieListFragment extends ContentListFragment {
 	}
 
 	private void setUpAdapter() {
+		System.out.println("--- setUpAdapter ---");
+
+		
 		String[] from = new String[] { 
 				MoviesTable.COLUMN_MOVIE_ID, 
 				MoviesTable.COLUMN_TITLE,  
