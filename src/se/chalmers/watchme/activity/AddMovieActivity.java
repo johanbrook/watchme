@@ -34,7 +34,6 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.support.v4.app.DialogFragment;
@@ -48,7 +47,6 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
 	private TextView tagField;
 	private TextView noteField;
 	private AutoCompleteTextView titleField;
-	private ProgressBar progressSpinner;
 	private Button addButton;
 	
 	// The handler to interface with the notification system and scheduler
@@ -87,10 +85,6 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
         this.titleField = (AutoCompleteTextView) findViewById(R.id.title_field);
         this.noteField = (TextView) findViewById(R.id.note_field_addmovie);
         this.tagField = (TextView) findViewById(R.id.tag_field_addmovie);
-        
-        // The progress bar when fetching IMDb movies
-        this.progressSpinner = (ProgressBar) findViewById(R.id.title_progress);
-        this.progressSpinner.setVisibility(View.INVISIBLE);
         
         // Add listeners to the title field
         this.titleField.addTextChangedListener(new AddButtonToggler());
