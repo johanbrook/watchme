@@ -169,8 +169,8 @@ public class AutoCompleteAdapter extends ArrayAdapter<JSONObject> implements Fil
 	 * @author Johan
 	 */
 	static class ViewHolder {
-		TextView title;
-		int position;
+		public TextView title;
+		public int position;
 	}
 
 }
