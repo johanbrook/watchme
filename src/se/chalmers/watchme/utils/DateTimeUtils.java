@@ -10,7 +10,6 @@ package se.chalmers.watchme.utils;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import se.chalmers.watchme.R;
 
 /**
  * A utility class for converting date's to common formats

@@ -20,10 +20,7 @@ import se.chalmers.watchme.R;
 import se.chalmers.watchme.model.Movie;
 import se.chalmers.watchme.net.MovieSource;
 import se.chalmers.watchme.utils.DateTimeUtils;
-import se.chalmers.watchme.utils.MovieHelper;
-
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;

@@ -1,10 +1,8 @@
 package se.chalmers.watchme.activity;
 
 import se.chalmers.watchme.R;
-import se.chalmers.watchme.database.DatabaseAdapter;
 import se.chalmers.watchme.ui.MovieListFragment;
 import android.content.Intent;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -19,7 +17,7 @@ public class TagMovieListActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         getActionBar().setDisplayHomeAsUpEnabled(true);
         
-        //Recieve tagId sent from TagListFragment
+        // Receive tagId sent from TagListFragment
         Intent intent = getIntent();
         Long tagId = intent.getLongExtra(MainActivity.TAG_ID, -1);
         

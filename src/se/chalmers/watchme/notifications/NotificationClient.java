@@ -10,7 +10,6 @@
 
 package se.chalmers.watchme.notifications;
 
-import se.chalmers.watchme.model.Movie;
 import android.app.NotificationManager;
 import android.content.ComponentName;
 import android.content.Context;

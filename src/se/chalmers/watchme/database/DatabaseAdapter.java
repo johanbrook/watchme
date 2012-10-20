@@ -9,11 +9,9 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
-import android.util.Log;
 
 import se.chalmers.watchme.model.Movie;
 import se.chalmers.watchme.model.Tag;
-import se.chalmers.watchme.utils.MovieHelper;
 
 /**
  * Adapter to the Content Provider.

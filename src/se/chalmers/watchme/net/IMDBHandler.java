@@ -15,9 +15,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import se.chalmers.watchme.utils.MovieHelper;
-
-
 public class IMDBHandler implements MovieSource {
 	
 	/** The TMDb API url */

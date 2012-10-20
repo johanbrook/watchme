@@ -12,11 +12,9 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.database.Cursor;
-import android.util.Log;
 import se.chalmers.watchme.model.Movie;
 import se.chalmers.watchme.model.Tag;
 

@@ -10,13 +10,9 @@ package se.chalmers.watchme.notifications;
 
 import java.io.Serializable;
 
-import javax.net.ssl.ManagerFactoryParameters;
-
-import se.chalmers.watchme.activity.MainActivity;
 import se.chalmers.watchme.activity.MovieDetailsActivity;
 import se.chalmers.watchme.model.Movie;
 import android.R;
-import android.annotation.TargetApi;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -33,9 +29,6 @@ public class NotifyService extends Service {
 			return NotifyService.this;
 		}
 	}
-	
-	// ID to identify the notification
-	private static final int NOTIFICATION = 666;
 	
 	/** Intent key extra */
 	public static final String INTENT_NOTIFY = "se.chalmers.watchme.notifications.INTENT_NOTIFY";

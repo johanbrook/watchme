@@ -8,40 +8,21 @@
 
 package se.chalmers.watchme.activity;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-
-import org.json.JSONArray;
 import org.json.JSONObject;
-
 import se.chalmers.watchme.database.DatabaseAdapter;
 import se.chalmers.watchme.model.Movie;
-import se.chalmers.watchme.model.Movie.PosterSize;
 import se.chalmers.watchme.R;
-import android.net.Uri;
-import se.chalmers.watchme.model.Tag;
 import se.chalmers.watchme.ui.DatePickerFragment;
 import se.chalmers.watchme.ui.DatePickerFragment.DatePickerListener;
 import se.chalmers.watchme.utils.DateTimeUtils;
 import se.chalmers.watchme.utils.MovieHelper;
 import se.chalmers.watchme.net.IMDBHandler;
 import se.chalmers.watchme.notifications.NotificationClient;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.ContentValues;
-import android.content.Context;
-import android.content.Intent;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -53,8 +34,6 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.DatePicker;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.TextView;

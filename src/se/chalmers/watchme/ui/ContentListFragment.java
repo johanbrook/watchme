@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
-import android.support.v4.widget.CursorAdapter;
 import android.support.v4.widget.SimpleCursorAdapter;
 
 public abstract class ContentListFragment extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor> {
