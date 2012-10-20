@@ -78,4 +78,9 @@ public class Tag implements Serializable {
 			return this.getSlug().equals(tmp.getSlug());
 		}
 	}
+	
+	@Override
+	public int hashCode() {
+		return this.slug.hashCode();
+	}
 }
