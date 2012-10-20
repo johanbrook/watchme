@@ -3,17 +3,13 @@ package se.chalmers.watchmetest.ui;
 import se.chalmers.watchme.R;
 import se.chalmers.watchme.activity.MainActivity;
 import se.chalmers.watchme.activity.TagMovieListActivity;
+import se.chalmers.watchmetest.Constants;
 import android.test.ActivityInstrumentationTestCase2;
 
 import com.jayway.android.robotium.solo.Solo;
 
 public class TagListFragmentTest extends
 		ActivityInstrumentationTestCase2<MainActivity> {
-	
-	// TODO: make public static?
-	final int ADD_MOVIE_BUTTON = 1;
-	final int TITLE_FIELD = 0;
-	final int TAG_FIELD = 1;
 
 	Solo solo;
 
@@ -36,9 +32,9 @@ public class TagListFragmentTest extends
 	public void testAddTag() {	
 		solo.clickOnText("Movies");
 		solo.clickOnActionBarItem(R.id.menu_add_movie);
-		solo.enterText(TITLE_FIELD, "Batman");
-		solo.enterText(TAG_FIELD, "Action");
-		solo.clickOnButton(ADD_MOVIE_BUTTON);
+		solo.enterText(Constants.TITLE_FIELD, "Batman");
+		solo.enterText(Constants.TAG_FIELD, "Action");
+		solo.clickOnButton(Constants.ADD_MOVIE_BUTTON);
 		solo.clickOnText("Tags");
 		boolean wasTagFound = solo.searchText("action");
 		assertTrue(wasTagFound);
@@ -47,15 +43,15 @@ public class TagListFragmentTest extends
 	public void testClickTag() {
 		solo.clickOnText("Movies");
 		solo.clickOnActionBarItem(R.id.menu_add_movie);
-		solo.enterText(TITLE_FIELD, "Batman");
-		solo.enterText(TAG_FIELD, "Action");
-		solo.clickOnButton(ADD_MOVIE_BUTTON);
+		solo.enterText(Constants.TITLE_FIELD, "Batman");
+		solo.enterText(Constants.TAG_FIELD, "Action");
+		solo.clickOnButton(Constants.ADD_MOVIE_BUTTON);
 		
 		solo.clickOnText("Movies");
 		solo.clickOnActionBarItem(R.id.menu_add_movie);
-		solo.enterText(TITLE_FIELD, "Dead poet society");
-		solo.enterText(TAG_FIELD, "Drama");
-		solo.clickOnButton(ADD_MOVIE_BUTTON);
+		solo.enterText(Constants.TITLE_FIELD, "Dead poet society");
+		solo.enterText(Constants.TAG_FIELD, "Drama");
+		solo.clickOnButton(Constants.ADD_MOVIE_BUTTON);
 		
 		solo.clickOnText("Tags");
 		solo.clickOnText("drama");
@@ -70,9 +66,9 @@ public class TagListFragmentTest extends
 	public void testDeleteTag() {
 		solo.clickOnText("Movies");
 		solo.clickOnActionBarItem(R.id.menu_add_movie);
-		solo.enterText(TITLE_FIELD, "Batman");
-		solo.enterText(TAG_FIELD, "Action");
-		solo.clickOnButton(ADD_MOVIE_BUTTON);
+		solo.enterText(Constants.TITLE_FIELD, "Batman");
+		solo.enterText(Constants.TAG_FIELD, "Action");
+		solo.clickOnButton(Constants.ADD_MOVIE_BUTTON);
 		
 		solo.clickOnText("Tags");
 		solo.clickLongOnText("action");
