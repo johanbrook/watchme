@@ -18,27 +18,30 @@ import se.chalmers.watchme.model.Tag;
 public class MovieTest extends TestCase {
 	
 	private Movie batman;
+
+	private final String DEFAULT_MOVIE_NAME = "batman";
+	private final String DEFAULT_TAG_NAME = "action";
 	
 	public void setUp() throws Exception {
 		super.setUp();
-		this.batman = new Movie("batman");
+		this.batman = new Movie(DEFAULT_MOVIE_NAME);
 	}
 	
 	public void testAddTag() {
-		Tag action = new Tag("action");
+		Tag action = new Tag(DEFAULT_TAG_NAME);
 		batman.addTag(action);
 		assertTrue(batman.getTags().contains(action));
 	}
 	
 	public void testRemoveTag() {
-		Tag action = new Tag("action");
+		Tag action = new Tag(DEFAULT_TAG_NAME);
 		batman.addTag(action);
 		batman.removeTag(action);
 		assertFalse(batman.getTags().contains(action));
 	}
 	
 	public void testGetTags() {
-		Tag action = new Tag("action");
+		Tag action = new Tag(DEFAULT_TAG_NAME);
 		batman.addTag(action);
 		assertTrue(batman.getTags().size() == 1);
 	}
@@ -49,7 +52,7 @@ public class MovieTest extends TestCase {
 	}
 	
 	public void testGetTitle() {
-		assertTrue(batman.getTitle().equals("batman"));
+		assertTrue(batman.getTitle().equals(DEFAULT_MOVIE_NAME));
 	}
 	
 	public void testGetNote() {
@@ -110,18 +113,18 @@ public class MovieTest extends TestCase {
 		Movie compareObject = null; 
 		assertFalse(batman.equals(compareObject));
 		
-		compareObject = new ActionMovie("batman");
+		compareObject = new ActionMovie(DEFAULT_MOVIE_NAME);
 		assertFalse(batman.equals(compareObject));
 		
 		compareObject = new Movie("spiderman");
 		assertFalse(batman.equals(compareObject));
 
-		compareObject = new Movie("batman");
+		compareObject = new Movie(DEFAULT_MOVIE_NAME);
 		assertTrue(batman.equals(compareObject));
 	}
 	
 	public void testHashCode() {
-		Movie otherMovie = new Movie("batman");
+		Movie otherMovie = new Movie(DEFAULT_MOVIE_NAME);
 		Movie notSameMovie = new Movie("spiderman");
 		
 		assertTrue(batman.equals(otherMovie));
