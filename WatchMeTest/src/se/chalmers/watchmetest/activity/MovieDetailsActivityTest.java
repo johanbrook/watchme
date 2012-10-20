@@ -3,6 +3,7 @@ package se.chalmers.watchmetest.activity;
 import se.chalmers.watchme.R;
 import se.chalmers.watchme.activity.MainActivity;
 import se.chalmers.watchme.activity.MovieDetailsActivity;
+import se.chalmers.watchme.database.DatabaseHelper;
 import se.chalmers.watchmetest.Constants;
 import android.test.ActivityInstrumentationTestCase2;
 import android.view.View;
@@ -16,6 +17,7 @@ public class MovieDetailsActivityTest extends
 		ActivityInstrumentationTestCase2<MainActivity> {
 
 	Solo solo;
+	DatabaseHelper dbh;
 
 	public MovieDetailsActivityTest() {
 		super(MainActivity.class);
@@ -25,18 +27,23 @@ public class MovieDetailsActivityTest extends
 	protected void setUp() throws Exception {
 		super.setUp();
 		solo = new Solo(getInstrumentation(), getActivity());
+		dbh = new DatabaseHelper(getActivity());
 	}
 
 	@Override
 	public void tearDown() throws Exception {
 		// finish all activities that have been opened during test execution.
 		solo.finishOpenedActivities();
+		dbh.onUpgrade(dbh.getWritableDatabase(), 1, 1);
 	}
 	
 	public void testViewDetails() {
+		// Clear list of movies stored in database
+		dbh.onUpgrade(dbh.getWritableDatabase(), 1, 1);
+		
 		solo.clickOnText("Movies");
 		solo.clickOnActionBarItem(R.id.menu_add_movie);
-		solo.enterText(Constants.TITLE_FIELD, "3_TEST_MOVIE");
+		solo.enterText(Constants.TITLE_FIELD, "TEST_MOVIE");
 		solo.setProgressBar(Constants.RATING_BAR, 1);
 		solo.clickOnText("Pick");
 		solo.setDatePicker(Constants.DATE_PICKER, 2014 - 1, 12, 24);
@@ -44,10 +51,10 @@ public class MovieDetailsActivityTest extends
 		solo.enterText(Constants.TAG_FIELD, "Action");
 		solo.enterText(Constants.NOTE_FIELD, "Mum said I'd like this");
 		solo.clickOnButton(Constants.ADD_MOVIE_BUTTON);
-		solo.clickOnText("3_TEST_MOVIE");
+		solo.clickOnText("TEST_MOVIE");
 		solo.assertCurrentActivity("MovieDetailsActivty expected", MovieDetailsActivity.class);
 		
-		boolean isTitleFound = solo.searchText("3_TEST_MOVIE");
+		boolean isTitleFound = solo.searchText("TEST_MOVIE");
 		assertTrue(isTitleFound);
 		
 		RatingBar ratingBar = (RatingBar) solo.getView(R.id.my_rating_bar);
@@ -63,13 +70,16 @@ public class MovieDetailsActivityTest extends
 		assertTrue(tagField.getText().toString().equals("action"));
 	}
 	
-	// TODO: add new movie every test or use last movie?
 	public void testEditDetails() {
+		// Clear list of movies stored in database
+		dbh.onUpgrade(dbh.getWritableDatabase(), 1, 1);
+		
 		solo.clickOnText("Movies");
 		solo.clickOnActionBarItem(R.id.menu_add_movie);
-		solo.enterText(Constants.TITLE_FIELD, "4_TEST_MOVIE");
+		solo.enterText(Constants.TITLE_FIELD, "TEST_MOVIE");
 		solo.clickOnButton(Constants.ADD_MOVIE_BUTTON);
-		solo.clickOnText("4_TEST_MOVIE");
+		solo.sleep(2000);
+		solo.clickOnText("TEST_MOVIE");
 		
 		RatingBar ratingBar = (RatingBar) solo.getView(R.id.my_rating_bar);
 		TextView releaseDateLabel = (TextView) solo.getView(R.id.releaseDate);
@@ -92,7 +102,7 @@ public class MovieDetailsActivityTest extends
 		solo.clickOnText("Save");
 		solo.clickOnActionBarHomeButton();
 		solo.sleep(2000);
-		solo.clickOnText("4_TEST_MOVIE");
+		solo.clickOnText("TEST_MOVIE");
 		
 		assertTrue(ratingBar.getRating() == 1);
 		assertTrue(releaseDateLabel.getText().equals("24 Jan, 2014"));

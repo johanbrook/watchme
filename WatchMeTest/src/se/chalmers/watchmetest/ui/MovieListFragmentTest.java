@@ -6,6 +6,7 @@ import se.chalmers.watchme.R;
 import se.chalmers.watchme.activity.AddMovieActivity;
 import se.chalmers.watchme.activity.MainActivity;
 import se.chalmers.watchme.activity.MovieDetailsActivity;
+import se.chalmers.watchme.database.DatabaseHelper;
 import se.chalmers.watchmetest.Constants;
 import android.test.ActivityInstrumentationTestCase2;
 import android.view.View;
@@ -19,6 +20,7 @@ public class MovieListFragmentTest extends
 		ActivityInstrumentationTestCase2<MainActivity> {
 	
 	Solo solo;
+	DatabaseHelper dbh;
 
 	public MovieListFragmentTest() {
 		super(MainActivity.class);
@@ -28,16 +30,20 @@ public class MovieListFragmentTest extends
 	protected void setUp() throws Exception {
 		super.setUp();
 		solo = new Solo(getInstrumentation(), getActivity());
+		dbh = new DatabaseHelper(getActivity());
 	}
 
 	@Override
 	public void tearDown() throws Exception {
 		// finish all activities that have been opened during test execution.
 		solo.finishOpenedActivities();
+		dbh.onUpgrade(dbh.getWritableDatabase(), 1, 1);
 	}
 
 	// TODO: solo.sleep(n) ugly code? better with .waitFor___() method?
 	public void testAddMovie() {
+		// Clear list of movies stored in database
+		dbh.onUpgrade(dbh.getWritableDatabase(), 1, 1);
 		
 		solo.assertCurrentActivity("MainActivity expected", MainActivity.class);
 		solo.clickOnText("Movies");
@@ -60,51 +66,56 @@ public class MovieListFragmentTest extends
 	// TODO: Can you be sure that the application is in the state as when the
 	// last test was done? In that case, first rows can be removed.
 	public void testRemoveMovie() {
-		final int ADD_MOVIE_BUTTON = 1;
+		// Clear list of movies stored in database
+		dbh.onUpgrade(dbh.getWritableDatabase(), 1, 1);
 
 		solo.assertCurrentActivity("MainActivity expected", MainActivity.class);
 		solo.clickOnText("Movies");
 		solo.clickOnActionBarItem(R.id.menu_add_movie);
-		solo.enterText(Constants.TITLE_FIELD, "1_TEST_MOVIE");
-		solo.clickOnButton(ADD_MOVIE_BUTTON);
+		solo.enterText(Constants.TITLE_FIELD, "TEST_MOVIE");
+		solo.clickOnButton(Constants.ADD_MOVIE_BUTTON);
 		solo.assertCurrentActivity("MainActivity expected", MainActivity.class);
-		solo.clickLongOnText("1_TEST_MOVIE");
+		solo.clickLongOnText("TEST_MOVIE");
 
 		boolean dialogAppeared = solo
-				.searchText("Are you sure you want to delete \"1_TEST_MOVIE\"?");
+				.searchText("Are you sure you want to delete \"TEST_MOVIE\"?");
 		assertTrue(dialogAppeared);
 
 		solo.clickOnText("Cancel");
 		boolean expected = true;
-		boolean actual = solo.searchText("1_TEST_MOVIE");
-		assertEquals("1_TEST_MOVIE was not found", expected, actual);
+		boolean actual = solo.searchText("TEST_MOVIE");
+		assertEquals("TEST_MOVIE was not found", expected, actual);
 
-		solo.clickLongOnText("1_TEST_MOVIE");
+		solo.clickLongOnText("TEST_MOVIE");
 		solo.clickOnText("Yes");
 
-		// Delay. Gives 1_TEST_MOVIE time to disappear 
+		// Delay. Gives TEST_MOVIE time to disappear 
 		solo.sleep(5000);
 
 		expected = false;
-		actual = solo.searchText("1_TEST_MOVIE");
-		assertEquals("1_TEST_MOVIE was found", expected, actual);
+		actual = solo.searchText("TEST_MOVIE");
+		assertEquals("TEST_MOVIE was found", expected, actual);
 	}
 
 	public void testClickOnMovie() {
+		// Clear list of movies stored in database
+		dbh.onUpgrade(dbh.getWritableDatabase(), 1, 1);
+		
 		solo.assertCurrentActivity("MainActivity expected", MainActivity.class);
 		solo.clickOnText("Movies");
 		solo.clickOnActionBarItem(R.id.menu_add_movie);
-		solo.enterText(Constants.TITLE_FIELD, "2_TEST_MOVIE");
+		solo.enterText(Constants.TITLE_FIELD, "TEST_MOVIE");
 		solo.clickOnButton(Constants.ADD_MOVIE_BUTTON);
 		solo.assertCurrentActivity("MainActivity expected", MainActivity.class);
-		solo.clickOnText("2_TEST_MOVIE");
+		solo.clickOnText("TEST_MOVIE");
 		solo.assertCurrentActivity("MovieDetailsActivity expected",
 				MovieDetailsActivity.class);
 	}
 
 	// TODO: add date sorting. hard to compare dates..
 	public void testSort() {
-		final int ADD_MOVIE_BUTTON = 1;
+		// Clear list of movies stored in database
+		dbh.onUpgrade(dbh.getWritableDatabase(), 1, 1);
 
 		solo.assertCurrentActivity("MainActivity expected", MainActivity.class);
 		solo.clickOnText("Movies");
@@ -120,7 +131,7 @@ public class MovieListFragmentTest extends
 			solo.clickOnText("Pick");
 			solo.setDatePicker(Constants.DATE_PICKER, year, 12, 24);
 			solo.clickOnText("Done");
-			solo.clickOnButton(ADD_MOVIE_BUTTON);
+			solo.clickOnButton(Constants.ADD_MOVIE_BUTTON);
 			solo.sleep(2000);
 
 			movieFirstCharacter++;
@@ -154,6 +165,7 @@ public class MovieListFragmentTest extends
 			String lastTitle = movieTitleList.get(i - 1);
 			if (thisTitle.compareTo(lastTitle) < 0) {
 				areMoviesInCorrectOrder = false;
+				break;
 			}
 		}
 
@@ -180,6 +192,7 @@ public class MovieListFragmentTest extends
 			float lastRating = movieRatingList.get(i - 1);
 			if (thisRating > lastRating) {
 				areMoviesInCorrectOrder = false;
+				break;
 			}
 		}
 
