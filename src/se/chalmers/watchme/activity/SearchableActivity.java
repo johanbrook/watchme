@@ -32,6 +32,7 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v4.widget.SimpleCursorAdapter.ViewBinder;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageView;
@@ -46,6 +47,7 @@ import android.widget.AdapterView.OnItemLongClickListener;
 public class SearchableActivity extends FragmentActivity {
 
 	private DatabaseAdapter db;
+	private ContentListFragment fragment;
 	
 	private AsyncTask<String, Void, Bitmap> imageTask;
 
@@ -59,29 +61,47 @@ public class SearchableActivity extends FragmentActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.movie_list_fragment_view);
-		// TODO Create R.layout.search?
-
-		// Get the intent, verify the action and get the query
-		Intent intent = getIntent();
-		if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
-			System.out.println("Intent.ACTION_SEARCH");
-			String query = intent.getStringExtra(SearchManager.QUERY);
-			doMySearch(query);
-		}
+		getActionBar().setDisplayHomeAsUpEnabled(true);
 		
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction ft = fragmentManager.beginTransaction();
         
-        ft.add(android.R.id.content, new MovieListFragment());
+        fragment = new MovieListFragment();
+        
+        ft.add(android.R.id.content, fragment);
         ft.commit();
+        
+		// Get the intent, verify the action and get the query
+		Intent intent = getIntent();
+		if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+			String query = intent.getStringExtra(SearchManager.QUERY);
+			doMySearch(query);
+		}
 	}
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        
+    	switch(item.getItemId()) {
+    	case R.id.menu_add_movie:
+    		Intent intent = new Intent(this, AddMovieActivity.class);
+            startActivity(intent);
+            return true;
+    		
+    	case R.id.menu_search_button:
+            onSearchRequested();
+            return true;
+            
+    	default:
+    		return super.onOptionsItemSelected(item);
+    	}
+    }
+	
 	/*
 	 * 2. Searching the data
 	 */
 	private void doMySearch(String query) {
-		System.out.println("--- doMySearch ---");
+		System.out.println("--- doMySearch --- " + query);
 		db = new DatabaseAdapter(getContentResolver());
 		
 		showResults(db.searchForMovies(query));
@@ -91,8 +111,9 @@ public class SearchableActivity extends FragmentActivity {
 	 * 3. Presenting the results
 	 */
 	private void showResults(Cursor result) {
-		System.out.println("--- doMySearch ---");
-		ContentListFragment fragment = (ContentListFragment) getSupportFragmentManager().findFragmentById(R.id.vPager);
+		System.out.println("--- showResults ---");
+		//ContentListFragment f = (ContentListFragment) getSupportFragmentManager().findFragmentByTag(fragment);
+		System.out.println("FRAGMENT: " + fragment);
 		fragment.showResult(result);
 	}
 }

@@ -48,7 +48,6 @@ import android.widget.Toast;
 public class MovieListFragment extends ContentListFragment {
 	
 	private DatabaseAdapter db;
-	private GenericCursorLoader cursorLoader;
 	
 	private AsyncTask<String, Void, Bitmap> imageTask;
 	private Long tagId;
@@ -185,7 +184,7 @@ public class MovieListFragment extends ContentListFragment {
     				sortOrder = item;
     				// Change the cursor
     				
-    				onLoadFinished(cursorLoader, cursor);
+    				onLoadFinished(null, cursor);
     				getAdapter().notifyDataSetChanged();
     				
     				dialog.dismiss();

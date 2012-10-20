@@ -114,7 +114,7 @@ public class TagListFragment extends ContentListFragment {
                 	db = new DatabaseAdapter(getActivity().getContentResolver());
                 	db.removeTag(tag);
                 	
-                    Toast.makeText(getActivity().getApplicationContext(), "\"" + tag.getName() + "\" was deleted" , Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity().getApplicationContext(), "\"" + tag.getName() + "\" ws deleted" , Toast.LENGTH_SHORT).show();
                 }
             });
             alertbox.setNeutralButton(getString(R.string.delete_button_negative), new DialogInterface.OnClickListener() {
