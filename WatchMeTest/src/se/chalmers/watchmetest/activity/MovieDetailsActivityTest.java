@@ -62,4 +62,41 @@ public class MovieDetailsActivityTest extends
 		EditText tagField = (EditText) solo.getView(R.id.tag_field_details);
 		assertTrue(tagField.getText().toString().equals("action"));
 	}
+	
+	// TODO: add new movie every test or use last movie?
+	public void testEditDetails() {
+		solo.clickOnText("Movies");
+		solo.clickOnActionBarItem(R.id.menu_add_movie);
+		solo.enterText(Constants.TITLE_FIELD, "4_TEST_MOVIE");
+		solo.clickOnButton(Constants.ADD_MOVIE_BUTTON);
+		solo.clickOnText("4_TEST_MOVIE");
+		
+		RatingBar ratingBar = (RatingBar) solo.getView(R.id.my_rating_bar);
+		TextView releaseDateLabel = (TextView) solo.getView(R.id.releaseDate);
+		EditText noteField = (EditText) solo.getView(R.id.note_field_details);
+		EditText tagField = (EditText) solo.getView(R.id.tag_field_details);
+		
+		assertTrue(ratingBar.getRating() == 0);
+		assertFalse(releaseDateLabel.getText().equals("24 Jan, 2014"));
+		assertTrue(noteField.getText().toString().equals(""));
+		assertTrue(tagField.getText().toString().equals(""));
+		
+		solo.clickOnText("Edit");
+		solo.setProgressBar(Constants.RATING_BAR, 1);
+		solo.clickOnText("Pick");
+		solo.setDatePicker(Constants.DATE_PICKER, 2014 - 1, 12, 24);
+		solo.clickOnText("Done");
+		solo.enterText(0, "Action");
+		solo.enterText(1, "Mum said I'd like this");
+		
+		solo.clickOnText("Save");
+		solo.clickOnActionBarHomeButton();
+		solo.sleep(2000);
+		solo.clickOnText("4_TEST_MOVIE");
+		
+		assertTrue(ratingBar.getRating() == 1);
+		assertTrue(releaseDateLabel.getText().equals("24 Jan, 2014"));
+		assertTrue(noteField.getText().toString().equals("Mum said I'd like this"));
+		assertTrue(tagField.getText().toString().equals("action"));
+	}
 }
