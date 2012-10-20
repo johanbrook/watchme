@@ -19,6 +19,7 @@ import se.chalmers.watchme.utils.ImageCache;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.SearchManager;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -29,14 +30,17 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.LoaderManager;
+import android.support.v4.app.NavUtils;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v4.widget.SimpleCursorAdapter.ViewBinder;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.RatingBar;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
@@ -46,17 +50,10 @@ import android.widget.AdapterView.OnItemLongClickListener;
 @TargetApi(11)
 public class SearchableActivity extends FragmentActivity {
 
-	private DatabaseAdapter db;
 	private ContentListFragment fragment;
 	
-	private AsyncTask<String, Void, Bitmap> imageTask;
-
-	
 	/*
-	 * 1. Receiving the Query
-	 * 
-	 * (non-Javadoc)
-	 * @see android.app.Activity#onCreate(android.os.Bundle)
+	 * Receiving the query
 	 */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -67,22 +64,40 @@ public class SearchableActivity extends FragmentActivity {
         FragmentTransaction ft = fragmentManager.beginTransaction();
         
         fragment = new MovieListFragment();
-        
-        ft.add(android.R.id.content, fragment);
-        ft.commit();
+        Bundle b = new Bundle();
         
 		// Get the intent, verify the action and get the query
 		Intent intent = getIntent();
 		if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
 			String query = intent.getStringExtra(SearchManager.QUERY);
-			doMySearch(query);
+			b.putString(getString(R.string.search), query);
 		}
+        
+        fragment.setArguments(b);
+        
+        ft.add(android.R.id.content, fragment);
+        ft.commit();
 	}
+	
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.activity_main, menu);
+        
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        SearchView searchView = (SearchView) menu.findItem(R.id.menu_search_button).getActionView();
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        searchView.setIconifiedByDefault(false); // Do not iconify the widget; expand it by default
+        
+        return true;
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         
     	switch(item.getItemId()) {
+    	case android.R.id.home:
+            NavUtils.navigateUpFromSameTask(this);
+            return true;
+    	
     	case R.id.menu_add_movie:
     		Intent intent = new Intent(this, AddMovieActivity.class);
             startActivity(intent);
@@ -96,24 +111,4 @@ public class SearchableActivity extends FragmentActivity {
     		return super.onOptionsItemSelected(item);
     	}
     }
-	
-	/*
-	 * 2. Searching the data
-	 */
-	private void doMySearch(String query) {
-		System.out.println("--- doMySearch --- " + query);
-		db = new DatabaseAdapter(getContentResolver());
-		
-		showResults(db.searchForMovies(query));
-	}
-	
-	/*
-	 * 3. Presenting the results
-	 */
-	private void showResults(Cursor result) {
-		System.out.println("--- showResults ---");
-		//ContentListFragment f = (ContentListFragment) getSupportFragmentManager().findFragmentByTag(fragment);
-		System.out.println("FRAGMENT: " + fragment);
-		fragment.showResult(result);
-	}
 }

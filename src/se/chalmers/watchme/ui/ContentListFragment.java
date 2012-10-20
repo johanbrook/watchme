@@ -24,6 +24,7 @@ public abstract class ContentListFragment extends ListFragment implements Loader
 		super.onActivityCreated(b);
 		Thread.currentThread().setContextClassLoader(getActivity().getClassLoader());
 		
+		System.out.println("ContentListFragment: onActivityCreated");
 		//setRetainInstance(true); 
 	}
 	
@@ -60,6 +61,7 @@ public abstract class ContentListFragment extends ListFragment implements Loader
 	 * Set the adapter of the fragment.
 	 */
 	protected void setAdapter(SimpleCursorAdapter adapter) {
+		System.out.println("-- setAdapter -- " + adapter);
 		this.adapter = adapter;
 		setListAdapter(this.adapter);
 	}
