@@ -5,7 +5,6 @@ import java.net.ResponseCache;
 import java.util.Calendar;
 
 import se.chalmers.watchme.R;
-import se.chalmers.watchme.activity.MainActivity;
 import se.chalmers.watchme.activity.MovieDetailsActivity;
 import se.chalmers.watchme.database.DatabaseAdapter;
 import se.chalmers.watchme.database.GenericCursorLoader;
@@ -43,7 +42,11 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
+/**
+ * A fragment that present data about Movies.
+ * 
+ * @author lisastenberg
+ */
 // TODO Important! API level required does not match with what is used
 @TargetApi(11)
 public class MovieListFragment extends ContentListFragment {
@@ -78,9 +81,11 @@ public class MovieListFragment extends ContentListFragment {
 		}
 	}
 		
+	private static final int LOADER_ID = 0;
+	
 	private AsyncTask<String, Void, Bitmap> imageTask;
 	
-	private static final long DEFAULT_TAGID = -1;
+	private static final long MISSING_TAGID = -1;
 	private Long tagId;
 	
 	/**
@@ -89,6 +94,10 @@ public class MovieListFragment extends ContentListFragment {
 	private static int sortOrder;
 	private String query;
 	
+	/**
+	 * Creates a new MovieListFragment with the Uri
+	 * WatchMeContentProvider.CONTENT_URI_MOVIES
+	 */
 	public MovieListFragment() {
 		super(WatchMeContentProvider.CONTENT_URI_MOVIES);
 	}
@@ -111,9 +120,9 @@ public class MovieListFragment extends ContentListFragment {
 		Bundle arguments = getArguments();
 		if (arguments != null) {
 			query = arguments.getString(getString(R.string.search), null);
-			tagId = arguments.getLong(TagListFragment.TAG_ID, DEFAULT_TAGID);
+			tagId = arguments.getLong(TagListFragment.TAG_ID, MISSING_TAGID);
 		} else if(tagId == null) {
-			tagId = DEFAULT_TAGID;
+			tagId = MISSING_TAGID;
 		}
 
 		setUpAdapter();
@@ -169,10 +178,11 @@ public class MovieListFragment extends ContentListFragment {
 
 			@Override
 			public Cursor getCursor() {
-				if (tagId == -1) {
+				if (tagId == MISSING_TAGID) {
 					if(query == null || query.equals("")) {
 						return db.getAllMoviesCursor(getSortOrder());
 					}
+					// If this is presenting a search.
 					return db.searchForMovies(query);
 				}
 				return db.getAttachedMovies(tagId);
@@ -200,7 +210,6 @@ public class MovieListFragment extends ContentListFragment {
      */
     private void sortList() {
     	final String[] alternatives = { "Date" , "Rating", "Title" };
-    	//db = new DatabaseAdapter(getActivity().getContentResolver());
     	
     	AlertDialog.Builder alertbox = new AlertDialog.Builder(getActivity());
     	alertbox.setTitle(getString(R.string.order_dialog_title));
@@ -235,9 +244,7 @@ public class MovieListFragment extends ContentListFragment {
 
 		public void onItemClick(AdapterView<?> parent, View view, int position,
 				long id) {
-			
-		//	db = new DatabaseAdapter(getActivity().getContentResolver());
-			
+						
 			if(imageTask != null && imageTask.getStatus() == AsyncTask.Status.RUNNING) {
 				imageTask.cancel(true);
 			}
@@ -265,7 +272,6 @@ public class MovieListFragment extends ContentListFragment {
      */
     private class OnDeleteListener implements OnItemLongClickListener {
     	public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-			//db = new DatabaseAdapter(getActivity().getContentResolver());
 			
 			Cursor selectedMovie = (Cursor) getListView().getItemAtPosition(position);
     		final Movie movie = db.getMovie(Long.parseLong(selectedMovie.getString(0)));
@@ -275,7 +281,6 @@ public class MovieListFragment extends ContentListFragment {
             alertbox.setPositiveButton(getString(R.string.delete_button_positive), new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface arg0, int arg1) {
                 	
-                	db = new DatabaseAdapter(getActivity().getContentResolver());
                 	db.removeMovie(movie);
                 	
                 	NotificationClient.cancelNotification(getActivity(), movie);
@@ -292,10 +297,13 @@ public class MovieListFragment extends ContentListFragment {
 			return true;
 		}    	
 	}
-
+    
+    /**
+     * Set up adapter and set adapter.
+     */
 	private void setUpAdapter() {
 
-		// Bind from
+		// Bind columns from the table Movies to items in the rows.
 		String[] from = new String[] { 
 				MoviesTable.COLUMN_TITLE,  
 				MoviesTable.COLUMN_RATING ,
@@ -303,14 +311,13 @@ public class MovieListFragment extends ContentListFragment {
 				MoviesTable.COLUMN_POSTER_SMALL
 				};
 		
-		// Bind to
 		int[] to = new int[] { 
 				R.id.title, 
 				R.id.raiting, 
 				R.id.date,
 				R.id.poster};
 		
-		getActivity().getSupportLoaderManager().initLoader(2, null, this);
+		getActivity().getSupportLoaderManager().initLoader(LOADER_ID, null, this);
 		setAdapter(new SimpleCursorAdapter(getActivity(), R.layout.list_item_movie , null, from, to, 0));
 		
 		/**
