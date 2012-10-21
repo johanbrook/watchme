@@ -153,7 +153,6 @@ public class MovieListFragment extends ContentListFragment {
 	
 	@Override
 	public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
-		//db = new DatabaseAdapter(getActivity().getContentResolver());
 		
 		return new GenericCursorLoader(getActivity(), new ICursorHelper() {
 
@@ -200,7 +199,6 @@ public class MovieListFragment extends ContentListFragment {
      */
     private void sortList() {
     	final String[] alternatives = { "Date" , "Rating", "Title" };
-    	//db = new DatabaseAdapter(getActivity().getContentResolver());
     	
     	AlertDialog.Builder alertbox = new AlertDialog.Builder(getActivity());
     	alertbox.setTitle(getString(R.string.order_dialog_title));
@@ -236,7 +234,6 @@ public class MovieListFragment extends ContentListFragment {
 		public void onItemClick(AdapterView<?> parent, View view, int position,
 				long id) {
 			
-		//	db = new DatabaseAdapter(getActivity().getContentResolver());
 			
 			/*
 			 * Cancel any tasks that fetches poster images if a movie is selected
@@ -268,7 +265,6 @@ public class MovieListFragment extends ContentListFragment {
      */
     private class OnDeleteListener implements OnItemLongClickListener {
     	public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-			//db = new DatabaseAdapter(getActivity().getContentResolver());
 			
 			Cursor selectedMovie = (Cursor) getListView().getItemAtPosition(position);
     		final Movie movie = db.getMovie(Long.parseLong(selectedMovie.getString(0)));
@@ -317,9 +313,8 @@ public class MovieListFragment extends ContentListFragment {
 		setAdapter(new SimpleCursorAdapter(getActivity(), R.layout.list_item_movie , null, from, to, 0));
 		
 		/**
-		 * Convert date text from millis to dd-mm-yyyy format
+		 * Manipulate the shown date in list
 		 */
-		//TODO: Refactor?
 		getAdapter().setViewBinder(new ViewBinder() {
 			
 			public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
@@ -333,6 +328,7 @@ public class MovieListFragment extends ContentListFragment {
 					String formattedDate = DateTimeUtils.toHumanDate(cal);
 					
 					textView.setText(formattedDate);
+					
 					return true;
 				}
 				
