@@ -18,7 +18,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.SearchView;
 
-
+/**
+ * The Main Activity for the WatchMe application. Contains to tabs: one
+ * presenting all movies and one presenting all tags.
+ * 
+ * @author lisastenberg
+ */
 public class MainActivity extends FragmentActivity {
 	
 	public static final String MOVIE_DETAILS_ID = "se.chalmers.watchme.DETAILS_ID";
@@ -57,10 +62,16 @@ public class MainActivity extends FragmentActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.activity_main, menu);
         
-        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        SearchView searchView = (SearchView) menu.findItem(R.id.menu_search_button).getActionView();
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-        searchView.setIconifiedByDefault(false); // Do not iconify the widget; expand it by default
+		/*
+		 * Add necessary functionality for the search widget
+		 */
+		SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+		SearchView searchView = (SearchView) menu.findItem(
+				R.id.menu_search_button).getActionView();
+		searchView.setSearchableInfo(searchManager
+				.getSearchableInfo(getComponentName()));
+		searchView.setIconifiedByDefault(false); // Do not iconify the widget;
+													// expand it by default
 
         return true;
     }
