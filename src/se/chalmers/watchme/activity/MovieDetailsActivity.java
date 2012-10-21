@@ -81,6 +81,8 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
         setContentView(R.layout.activity_movie_details);
         getActionBar().setDisplayHomeAsUpEnabled(true);
         
+        db = new DatabaseAdapter(getContentResolver());
+        
         this.movie = (Movie) getIntent().getSerializableExtra(MOVIE_EXTRA);
         this.imdb = new IMDBHandler();
         
@@ -169,7 +171,6 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
         ratingBar.setRating(m.getRating());
         releaseDateLabel.setText(DateTimeUtils.toSimpleDate(m.getDate()));
         
-        db = new DatabaseAdapter(this.getContentResolver());
         String tags = MovieHelper.getCursorString(db.getAttachedTags(m));
         
         if(tags != null && !tags.isEmpty()) {
@@ -448,9 +449,7 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
     private class OnSaveClickListener implements OnClickListener {
 
 		public void onClick(View v) {
-			
-			db = new DatabaseAdapter(getContentResolver());
-			
+						
 			movie.setDate(tempReleaseDate);
 			movie.setNote(noteField.getText().toString());
 			movie.setRating((int) myRatingBar.getRating());

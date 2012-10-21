@@ -77,9 +77,7 @@ public class MovieListFragment extends ContentListFragment {
 			return orderBy;
 		}
 	}
-	
-	private DatabaseAdapter db;
-	
+		
 	private AsyncTask<String, Void, Bitmap> imageTask;
 	
 	private static final long DEFAULT_TAGID = -1;
@@ -99,7 +97,7 @@ public class MovieListFragment extends ContentListFragment {
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 						
-		System.out.println("--- onActivityCreated ---");
+		db = new DatabaseAdapter(getActivity().getContentResolver());
 		
 		setHasOptionsMenu(true);
 		setRetainInstance(true);
@@ -113,7 +111,7 @@ public class MovieListFragment extends ContentListFragment {
 		Bundle arguments = getArguments();
 		if (arguments != null) {
 			query = arguments.getString(getString(R.string.search), null);
-			tagId = arguments.getLong(MainActivity.TAG_ID, DEFAULT_TAGID);
+			tagId = arguments.getLong(TagListFragment.TAG_ID, DEFAULT_TAGID);
 		} else if(tagId == null) {
 			tagId = DEFAULT_TAGID;
 		}
@@ -155,7 +153,7 @@ public class MovieListFragment extends ContentListFragment {
 	
 	@Override
 	public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
-		db = new DatabaseAdapter(getActivity().getContentResolver());
+		//db = new DatabaseAdapter(getActivity().getContentResolver());
 		
 			return new GenericCursorLoader(getActivity(), new ICursorHelper() {
 
@@ -202,7 +200,7 @@ public class MovieListFragment extends ContentListFragment {
      */
     private void sortList() {
     	final String[] alternatives = { "Date" , "Rating", "Title" };
-    	db = new DatabaseAdapter(getActivity().getContentResolver());
+    	//db = new DatabaseAdapter(getActivity().getContentResolver());
     	
     	AlertDialog.Builder alertbox = new AlertDialog.Builder(getActivity());
     	alertbox.setTitle(getString(R.string.order_dialog_title));
@@ -238,7 +236,7 @@ public class MovieListFragment extends ContentListFragment {
 		public void onItemClick(AdapterView<?> parent, View view, int position,
 				long id) {
 			
-			db = new DatabaseAdapter(getActivity().getContentResolver());
+		//	db = new DatabaseAdapter(getActivity().getContentResolver());
 			
 			if(imageTask != null && imageTask.getStatus() == AsyncTask.Status.RUNNING) {
 				imageTask.cancel(true);
@@ -267,7 +265,7 @@ public class MovieListFragment extends ContentListFragment {
      */
     private class OnDeleteListener implements OnItemLongClickListener {
     	public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-			db = new DatabaseAdapter(getActivity().getContentResolver());
+			//db = new DatabaseAdapter(getActivity().getContentResolver());
 			
 			Cursor selectedMovie = (Cursor) getListView().getItemAtPosition(position);
     		final Movie movie = db.getMovie(Long.parseLong(selectedMovie.getString(0)));
