@@ -9,7 +9,6 @@
 package se.chalmers.watchme.ui;
 
 import java.util.Calendar;
-
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -57,8 +56,12 @@ public class DatePickerFragment extends DialogFragment
         int month = pickedDate.get(Calendar.MONTH);
         int day = pickedDate.get(Calendar.DAY_OF_MONTH);
 
+        DatePickerDialog datePickerDialog = new DatePickerDialog(getActivity(), this, year, month, day);
+        // Disallow any earlier dates than today's date
+        datePickerDialog.getDatePicker().setMinDate(pickedDate.getTimeInMillis());
+        
         // Create a new instance of DatePickerDialog and return it
-        return new DatePickerDialog(getActivity(), this, year, month, day);
+        return datePickerDialog;
     }
 	
 
