@@ -1,5 +1,6 @@
 package se.chalmers.watchme.ui;
 
+import se.chalmers.watchme.database.DatabaseAdapter;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -13,15 +14,18 @@ public abstract class ContentListFragment extends ListFragment implements Loader
 	private Uri uri;
 	private SimpleCursorAdapter adapter;
 	
+	protected DatabaseAdapter db;
+	
 	public ContentListFragment(Uri uri) {
 		this.uri = uri;
-		
 	}
 	
 	@Override
 	public void onActivityCreated(Bundle b) {
 		super.onActivityCreated(b);
 		Thread.currentThread().setContextClassLoader(getActivity().getClassLoader());
+		
+		db = new DatabaseAdapter(getActivity().getContentResolver());
 	}
 	
 	/**
