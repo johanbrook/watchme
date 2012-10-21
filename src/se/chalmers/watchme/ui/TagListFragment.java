@@ -27,7 +27,7 @@ import android.widget.AdapterView.OnItemLongClickListener;
 
 public class TagListFragment extends ContentListFragment {
 	
-	private DatabaseAdapter db;
+	public static final String TAG_ID = "se.chalmers.watchme.TAG_ID";
 	
 	public TagListFragment() {
 		super(WatchMeContentProvider.CONTENT_URI_TAGS);
@@ -36,6 +36,8 @@ public class TagListFragment extends ContentListFragment {
 	@Override
 	public void onActivityCreated(Bundle b) {
 		super.onActivityCreated(b);
+		
+		db = new DatabaseAdapter(getActivity().getContentResolver());
 		
 		setUpAdapter();
 		
@@ -52,7 +54,7 @@ public class TagListFragment extends ContentListFragment {
 	
 	@Override
 	public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
-		db = new DatabaseAdapter(getActivity().getContentResolver());
+		//db = new DatabaseAdapter(getActivity().getContentResolver());
 		
 		return new GenericCursorLoader(getActivity(), new ICursorHelper() {
 			
@@ -81,7 +83,7 @@ public class TagListFragment extends ContentListFragment {
 		 */
 		
 		Intent intent = new Intent(getActivity(), TagMovieListActivity.class);
-		intent.putExtra(MainActivity.TAG_ID, id);
+		intent.putExtra(TAG_ID, id);
 		startActivity(intent);
 		getActivity().overridePendingTransition(R.anim.right_slide_in, R.anim.right_slide_out);
 			
@@ -97,7 +99,7 @@ public class TagListFragment extends ContentListFragment {
      */
     private class OnDeleteListener implements OnItemLongClickListener {
     	public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-			db = new DatabaseAdapter(getActivity().getContentResolver());
+			//db = new DatabaseAdapter(getActivity().getContentResolver());
 			
 			Cursor selectedTag = (Cursor) getListView().getItemAtPosition(position);
     		final Tag tag = db.getTag(Long.parseLong(selectedTag.getString(0)));
