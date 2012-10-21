@@ -3,8 +3,8 @@
  *
  *  A utility class for converting date's to common formats
  *
- *	@author Robin Andersson
- *	@copyright (c) 2012 Robin Andersson
+ *	@author Robin Andersson, Johan Brook
+ *	@copyright (c) 2012 Robin Andersson, Johan Brook, Mattias Henriksson, Lisa Stenberg
  *	@license MIT
  */
 
@@ -13,6 +13,7 @@ package se.chalmers.watchme.utils;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.concurrent.TimeUnit;
 
 public class DateTimeUtils {
 
@@ -118,5 +119,26 @@ public class DateTimeUtils {
 
 		return "today";
 	}
-
+	
+	/**
+	 * Check if a given date lies in a given interval from today's date.
+	 * 
+	 * <p>Ex. Check if a date is 5 days from now:</p>
+	 * 
+	 * <pre>DateTimeUtils.isDateInInterval(aDate, 5, TimeUnit.DAYS)
+	 * </pre>
+	 * 
+	 * @param date The input date
+	 * @param interval The interval
+	 * @param type The type (ex. TimeUnit.DAYS, TimeUnit.MONTHS
+	 * @return True if date lies within the interval, otherwise false
+	 */
+	public static boolean isDateInInterval(Calendar date, int interval, TimeUnit type) {
+		Calendar diff = Calendar.getInstance();
+    	long today = Calendar.getInstance().getTimeInMillis();
+    	
+    	diff.setTimeInMillis(TimeUnit.MILLISECONDS.convert(interval, type));
+    	
+    	return (date.getTimeInMillis() - today < diff.getTimeInMillis());
+	}
 }
