@@ -32,6 +32,25 @@ public class MovieHelperTest extends TestCase {
 		
 	}
 	
+	public void testJsonArrayToList() {
+		String json = "[\"james\", \"bond\"]";
+		
+		try {
+			JSONArray array = new JSONArray(json);
+			assertNotNull(array);
+			
+			List<String> list = MovieHelper.jsonArrayToList(array);
+			
+			assertEquals(array.length(), list.size());
+			assertEquals("james", list.get(0));
+			assertEquals("bond", list.get(1));
+			
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
 	public void testJsonArrayToMovieList() {
 		String json = "[{\""+ Movie.JSON_KEY_NAME +"\": \"James Bond\", "+ 
 						"\""+ Movie.JSON_KEY_ID + "\": 202929}]";
