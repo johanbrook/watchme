@@ -22,9 +22,6 @@ public abstract class ContentListFragment extends ListFragment implements Loader
 	public void onActivityCreated(Bundle b) {
 		super.onActivityCreated(b);
 		Thread.currentThread().setContextClassLoader(getActivity().getClassLoader());
-		
-		System.out.println("ContentListFragment: onActivityCreated");
-		//setRetainInstance(true); 
 	}
 	
 	/**
@@ -60,18 +57,7 @@ public abstract class ContentListFragment extends ListFragment implements Loader
 	 * Set the adapter of the fragment.
 	 */
 	protected void setAdapter(SimpleCursorAdapter adapter) {
-		System.out.println("-- setAdapter -- " + adapter);
 		this.adapter = adapter;
 		setListAdapter(this.adapter);
-	}
-		
-	/**
-	 * Filter the list from the given string.
-	 * 
-	 * @param search The string to be filtered on.
-	 */
-	public void showResult(Cursor result) {
-		onLoadFinished(null, result);
-		//adapter.notifyDataSetChanged();
 	}
 }

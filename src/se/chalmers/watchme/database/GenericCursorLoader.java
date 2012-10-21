@@ -75,8 +75,7 @@ public class GenericCursorLoader extends CursorLoader {
             	
                 // Ensure the cursor window is filled
             	
-            	int c = cursor.getCount();
-            	System.out.println("CL " + mUri.getLastPathSegment() + ": loadInBackground: count: " + c);
+            	cursor.getCount();
                 registerContentObserver(cursor, mObserver);
             }
             return cursor;

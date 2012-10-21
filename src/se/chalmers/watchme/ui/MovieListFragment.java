@@ -48,18 +48,47 @@ import android.widget.Toast;
 @TargetApi(11)
 public class MovieListFragment extends ContentListFragment {
 	
+	/**
+	 * Enum that represents a sort order for Movies
+	 * 
+	 * @author lisastenberg
+	 */
+	public enum SortOrder {
+		
+		ORDER_BY_DATE (MoviesTable.COLUMN_DATE), 
+		ORDER_BY_TITLE (MoviesTable.COLUMN_TITLE), 
+		ORDER_BY_RATING (MoviesTable.COLUMN_RATING + " DESC");
+		
+		private String orderBy;
+		
+		/**
+		 * Creates a new enum that has a string to order by
+		 * @param orderBy
+		 */
+		SortOrder(String orderBy) {
+			this.orderBy = orderBy;
+		}
+		
+		/**
+		 * Return the string to order by
+		 * @return the string to order by
+		 */
+		public String getOrderBy() {
+			return orderBy;
+		}
+	}
+	
 	private DatabaseAdapter db;
 	
 	private AsyncTask<String, Void, Bitmap> imageTask;
 	
-	private static final String ORDER_BY_DATE = MoviesTable.COLUMN_DATE;
-	private static final String ORDER_BY_TITLE = MoviesTable.COLUMN_TITLE;
-	private static final String ORDER_BY_RATING = MoviesTable.COLUMN_RATING + " DESC";
-	
 	private static final long DEFAULT_TAGID = -1;
 	private Long tagId;
 	
-	private int sortOrder = 0;
+	/**
+	 * Has the current sort order
+	 */
+	private static int sortOrder;
 	private String query;
 	
 	public MovieListFragment() {
@@ -67,15 +96,20 @@ public class MovieListFragment extends ContentListFragment {
 	}
 	
 	@Override
-	public void onActivityCreated(Bundle b) {
-		super.onActivityCreated(b);
+	public void onActivityCreated(Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
 						
-		// TODO: Has to be done in onCreate instead?
+		System.out.println("--- onActivityCreated ---");
+		
 		setHasOptionsMenu(true);
+		setRetainInstance(true);
 		
 		final File cacheDir = getActivity().getBaseContext().getCacheDir();
 		ResponseCache.setDefault(new ImageCache(cacheDir));
 
+		/*
+		 * If any arguments where set
+		 */
 		Bundle arguments = getArguments();
 		if (arguments != null) {
 			query = arguments.getString(getString(R.string.search), null);
@@ -83,7 +117,7 @@ public class MovieListFragment extends ContentListFragment {
 		} else if(tagId == null) {
 			tagId = DEFAULT_TAGID;
 		}
-		
+
 		setUpAdapter();
 	    
 		// Set up listeners to delete and view a movie
@@ -132,7 +166,7 @@ public class MovieListFragment extends ContentListFragment {
 
 			@Override
 			public String getSortOrder() {
-				return ORDER_BY_DATE;
+				return SortOrder.values()[sortOrder].getOrderBy();
 			}
 
 			@Override
@@ -163,15 +197,6 @@ public class MovieListFragment extends ContentListFragment {
     	return super.onOptionsItemSelected(item);
     }
     
-    public void search(String query) {
-    	db = new DatabaseAdapter(getActivity().getContentResolver());
-    	Cursor c = db.searchForMovies(query);
-    	System.out.println("NUMBER OF MOVIES DETECTED: " + c.getCount());
-    	onLoadFinished(null, c);
-    	getAdapter().notifyDataSetChanged();
-    	//showResult(db.searchForMovies(query));
-    }
-    
     /**
      * Show a Dialog Box with choices of attributes to order the Movies by.
      */
@@ -185,25 +210,14 @@ public class MovieListFragment extends ContentListFragment {
     			new DialogInterface.OnClickListener() {
     			public void onClick(DialogInterface dialog, int item) {
 
-    				Cursor cursor = null;
-    				switch(item) {
-    				case 0:
-    					cursor = db.getAllMoviesCursor(ORDER_BY_DATE);
-    					break;
-    				case 1:
-    					cursor = db.getAllMoviesCursor(ORDER_BY_RATING);
-    					break;
-    				case 2:
-    					cursor = db.getAllMoviesCursor(ORDER_BY_TITLE);
-    					break;
-    				default:
-    					break;
-    				}
     				sortOrder = item;
-    				// Change the cursor
+    				// Fetch the order by-string from SortOrder
+    				String orderBy = SortOrder.values()[sortOrder].getOrderBy();
     				
+    				Cursor cursor = db.getAllMoviesCursor(orderBy);
+    				
+    				// Change the cursor
     				onLoadFinished(null, cursor);
-    				getAdapter().notifyDataSetChanged();
     				
     				dialog.dismiss();
     			}
@@ -282,18 +296,17 @@ public class MovieListFragment extends ContentListFragment {
 	}
 
 	private void setUpAdapter() {
-		System.out.println("--- setUpAdapter ---");
 
-		
+		// Bind from
 		String[] from = new String[] { 
-				MoviesTable.COLUMN_MOVIE_ID, 
 				MoviesTable.COLUMN_TITLE,  
 				MoviesTable.COLUMN_RATING ,
 				MoviesTable.COLUMN_DATE,
 				MoviesTable.COLUMN_POSTER_SMALL
 				};
 		
-		int[] to = new int[] { 0 , 
+		// Bind to
+		int[] to = new int[] { 
 				R.id.title, 
 				R.id.raiting, 
 				R.id.date,

@@ -78,7 +78,6 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        System.out.println("starta");
         setContentView(R.layout.activity_movie_details);
         getActionBar().setDisplayHomeAsUpEnabled(true);
         
