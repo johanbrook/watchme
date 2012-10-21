@@ -37,10 +37,6 @@ public class TagListFragment extends ContentListFragment {
 	public void onActivityCreated(Bundle b) {
 		super.onActivityCreated(b);
 		
-		// We want to participate in manipulating the Action bar options menu
-		// TODO But we don't do it?
-		this.setHasOptionsMenu(true);
-		
 		setUpAdapter();
 		
 		// Set up listener to delete a Tag.
@@ -129,8 +125,8 @@ public class TagListFragment extends ContentListFragment {
 	}
 
 	private void setUpAdapter() {
-		String[] from = new String[] { TagsTable.COLUMN_TAG_ID, TagsTable.COLUMN_NAME };
-		int[] to = new int[] { android.R.id.text1 , android.R.id.text1 };
+		String[] from = new String[] { TagsTable.COLUMN_NAME };
+		int[] to = new int[] { android.R.id.text1 };
 		
 		getActivity().getSupportLoaderManager().initLoader(1, null, this);
 		super.setAdapter(new SimpleCursorAdapter(getActivity(), android.R.layout.simple_list_item_1 , null, from, to, 0));
