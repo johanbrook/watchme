@@ -26,6 +26,8 @@ public class MainActivity extends FragmentActivity {
 	public static final String MOVIE_DETAILS_RATING = "se.chalmers.watchme.DETAILS_RATING";
 	public static final String MOVIE_DETAILS_NOTE = "se.chalmers.watchme.DETAILS_NOTE";
 	
+	public static final String TAG_ID = "se.chalmers.watchme.TAG_ID";
+	
 	private ViewPager viewPager;
 	private TabsAdapter tabsAdapter;
 	private ActionBar actionBar;
