@@ -84,6 +84,9 @@ public class DatabaseAdapter {
 
 			Movie movie = new Movie(title, calendar, rating, note);
 			movie.setId(id);
+			movie.setPosterURL(cursor.getString(6), Movie.PosterSize.MID);
+			movie.setPosterURL(cursor.getString(7), Movie.PosterSize.THUMB);
+			
 			movie.setApiID(Integer.parseInt(cursor.getString(5)));
 
 			/*
