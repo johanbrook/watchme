@@ -10,6 +10,7 @@ package se.chalmers.watchme.utils;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 /**
  * A utility class for converting date's to common formats
@@ -73,6 +74,24 @@ public class DateTimeUtils {
 		
 		int index = longDate.indexOf("-");
 		return (index != -1) ? longDate.substring(0, index) : longDate; 
+	}
+
+	
+	public static String toHumanDate(Calendar cal) {
+		Calendar now = GregorianCalendar.getInstance();
+		
+		int years = cal.get(Calendar.YEAR) - now.get(Calendar.YEAR);
+		int months = cal.get(Calendar.MONTH) - now.get(Calendar.MONTH);
+		int days = cal.get(Calendar.DAY_OF_MONTH) - now.get(Calendar.DAY_OF_MONTH);
+		
+		if(years == 1) 			return "next year";
+		else if(years > 1) 		return years + " years";
+		else if(months == 1) 	return "next month";
+		else if(months > 1) 	return months + " months";
+		else if(days == 1) 		return "tomorrow";
+		else if(days > 1)		return days + " days";
+		
+		return "today";
 	}
 	
 }

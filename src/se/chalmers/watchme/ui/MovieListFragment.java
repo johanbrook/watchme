@@ -332,7 +332,6 @@ public class MovieListFragment extends ContentListFragment {
 					Calendar cal = Calendar.getInstance();
 					cal.setTimeInMillis(Long.parseLong(date));
 					
-//					String formattedDate = DateTimeUtils.toSimpleDate(cal);
 					String formattedDate = DateTimeUtils.toHumanDate(cal);
 					
 					textView.setText(formattedDate);
