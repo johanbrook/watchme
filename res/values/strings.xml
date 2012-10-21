@@ -56,5 +56,7 @@
 	<string name="movie_updated_toast_suffix">updated</string>
 	<string name="imdb_site_button">View on IMDb</string>
 	<string name="movie_url_error">Cannot show site for this movie</string>
-    
+	<string name="days_threshold">7</string>
+	<string name="color_threshold">#A30000</string>
+    <string name="list_date_color">#0088CC</string>
 </resources>
