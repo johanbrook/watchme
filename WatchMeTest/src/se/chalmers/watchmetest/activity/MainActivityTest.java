@@ -2,6 +2,7 @@ package se.chalmers.watchmetest.activity;
 
 import se.chalmers.watchme.R;
 import se.chalmers.watchme.activity.MainActivity;
+import se.chalmers.watchmetest.Constants;
 import android.annotation.TargetApi;
 import android.app.ActionBar;
 import android.support.v4.view.ViewPager;
@@ -23,10 +24,10 @@ public class MainActivityTest extends
 		super.setUp();
 		solo = new Solo(getInstrumentation(), getActivity());
 	}
-	
+
 	@Override
 	public void tearDown() throws Exception {
-		//finish all activities that have been opened during test execution.
+		// finish all activities that have been opened during test execution.
 		solo.finishOpenedActivities();
 	}
 
@@ -49,14 +50,16 @@ public class MainActivityTest extends
 
 		solo.assertCurrentActivity("Current activity is not MainActivity",
 				MainActivity.class);
-		
-		boolean tagListFragmentViewed = solo.waitForFragmentByTag("android:switcher:" + viewPagerId
-				+ ":1");
+
+		boolean tagListFragmentViewed = solo
+				.waitForFragmentByTag("android:switcher:" + viewPagerId + ":"
+						+ Constants.TAG_LIST_FRAGMENT_VIEW_PAGER_ID);
 		solo.clickOnText("Tags");
 		assertTrue(tagListFragmentViewed);
 
-		boolean movieListFragmentViewed = solo.waitForFragmentByTag("android:switcher:" + viewPagerId
-				+ ":0");
+		boolean movieListFragmentViewed = solo
+				.waitForFragmentByTag("android:switcher:" + viewPagerId + ":"
+						+ Constants.MOVIE_LIST_FRAGMENT_VIEW_PAGER_ID);
 		solo.clickOnText("Movies");
 		assertTrue(movieListFragmentViewed);
 	}

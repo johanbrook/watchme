@@ -8,5 +8,7 @@ public class Constants {
 	public static final int NOTE_FIELD = 2;
 	public static final int DATE_PICKER = 0;
 	public static final int RATING_BAR = 0;
-
+	
+	public static final int TAG_LIST_FRAGMENT_VIEW_PAGER_ID = 1;
+	public static final int MOVIE_LIST_FRAGMENT_VIEW_PAGER_ID = 0;
 }
