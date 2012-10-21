@@ -3,11 +3,11 @@
         android:title="@string/menu_settings"
         android:orderInCategory="100"
         android:showAsAction="never" />
-    <item android:id="@+id/save_button_edit_menu"
+    <item android:id="@+id/menu_save_changes"
         android:showAsAction="always"
-        android:actionLayout="@layout/savebutton_edit"
-        android:visible="false"/>
-    <item android:id="@+id/toggle_edit_menu"
+        android:visible="false"
+        android:icon="@drawable/apply"/>
+    <item android:id="@+id/menu_toggle_edit"
         android:showAsAction="always"
         android:actionLayout="@layout/togglebutton_edit"/>
 </menu>

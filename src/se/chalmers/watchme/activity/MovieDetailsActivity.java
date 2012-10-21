@@ -143,8 +143,6 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
         // Populate various view fields from the Movie object
         populateFieldsFromMovie(this.movie);
         
-        tempReleaseDate = this.movie.getDate();
-        
     }
     
     @Override
@@ -247,11 +245,8 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.activity_movie_details, menu);
         
-        View toggleView = menu.findItem(R.id.toggle_edit_menu).getActionView();
+        View toggleView = menu.findItem(R.id.menu_toggle_edit).getActionView();
         toggleView.setOnClickListener(new OnEditClickListener());
-        
-        View saveView = menu.findItem(R.id.save_button_edit_menu).getActionView();
-        saveView.setOnClickListener(new OnSaveClickListener());
         
         this.menu = menu;	// Can't get reference outside of this method,
         					// reference needs to be stored here
@@ -268,8 +263,13 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
                 NavUtils.navigateUpFromSameTask(this);
                 return true;
                 
+        	case R.id.menu_save_changes:
+        		this.saveUserChanges();
+        		return true;
+                
         }
         return super.onOptionsItemSelected(item);
+        
     }
     
     /**
@@ -286,6 +286,85 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
 		
 		TextView releaseDateLabel = (TextView) findViewById(R.id.releaseDate);
 		releaseDateLabel.setText(DateTimeUtils.toSimpleDate(tempReleaseDate));
+	}
+	
+	/**
+     * Saves the user editable fields
+     */
+	private void saveUserChanges() {
+		
+		db = new DatabaseAdapter(getContentResolver());
+		
+		if(tempReleaseDate != null){
+			movie.setDate(tempReleaseDate);
+		}
+		
+		movie.setNote(noteField.getText().toString());
+		movie.setRating((int) myRatingBar.getRating());
+		
+		/* 
+		 * Split the text input into separate strings input at
+		 * commas (",") from tag-field
+		 */
+		String [] tagStrings = tagField.getText().toString().split(",");
+		List<Tag> tempTags = MovieHelper.stringArrayToTagList(tagStrings);
+		
+		List<Tag> newTags = new LinkedList<Tag>(tempTags);
+		
+		/*
+		 * If there are some Tags in the new list that doesn't exist in the
+		 * old list, then those tags are new
+		 */
+		newTags.removeAll(movie.getTags());
+		
+		if(!newTags.isEmpty()) {
+			
+			/*
+			 * TODO How to avoid doing the same thing in two different places?
+			 * (update database and the movie model) Skip Movie model altogether
+			 * or make Movie model communicate with database instead of doing
+			 * these calls all over the place! Same problem in next conditional
+			 * statement.
+			 */
+			db.attachTags(movie, newTags);
+			Log.i("Custom", movie.getTitle() + " - attached Tags: " +
+					newTags.toString());
+		}
+		
+		List<Tag> removedTags = new LinkedList<Tag>(movie.getTags());
+	
+		/*
+		 * If there are some Tags in the old list that doesn't exist in the
+		 * new list, then those tags have been removed
+		 */
+		removedTags.removeAll(tempTags);
+		
+		if(!removedTags.isEmpty()) {
+			db.detachTags(movie, removedTags);
+			Log.i("Custom", movie.getTitle() + " - detached Tags: " +
+					removedTags.toString());
+		}
+		
+		/*
+		 * Call the togglebuttons onClickListener to toggle it's state and
+		 * perform necessary actions
+		 */
+		((ToggleButton) findViewById(R.id.toggle_edit)).performClick();
+		
+		db.updateMovie(movie);	// Updates release date, rating and note
+		
+		/*
+		 * Fetches a new instance of the movie straight from the database to
+		 * avoid having two different versions. Also vital because new Tags
+		 * id's are not set before this update.
+		 */
+		movie = db.getMovie(movie.getId()); 		
+		
+		// Show status toast when saved
+		Toast.makeText(MovieDetailsActivity.this, "\""+ movie.getTitle() +"\" "+ 
+					getString(R.string.movie_updated_toast_suffix), 
+					Toast.LENGTH_SHORT)
+			.show();
 	}
 
 
@@ -364,13 +443,14 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
     }
     
     /**
-     * Listener class for when user clicks the edit toggle button
+     * <p>Listener class for when user clicks the edit toggle button.</p>
      * 
-     * <p>If the toggle button is checked only the data that are be editable is
-     * shown. The remaining data is hidden.</p>
+     * <p>If the toggle button is checked the data that the user can change
+     * becomes editable.</p>
      * 
-     * <p>If the toggle button is unchecked everything is shown and the editable
-     * data is made uneditable. </p>
+     * <p>If the toggle button is unchecked no element is editable. Also, the
+     * data shown is the last saved state. 
+     * </p>
      * 
      * @author Robin
      *
@@ -379,9 +459,11 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
 
 		public void onClick(View v) {
 			
-			MenuItem saveMenuButton = menu.findItem(R.id.save_button_edit_menu);
+			MenuItem saveMenuButton = menu.findItem(R.id.menu_save_changes);
 			Button releaseDateButton = (Button) findViewById(R.id.release_date_button);
 			
+
+			// Enter edit state, make elements editable
 			if(((ToggleButton) v).isChecked()) {
 				
 				saveMenuButton.setVisible(true);
@@ -391,9 +473,9 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
 				
 				/*
 				 * setFocusable(true) does not work on EditText if it were
-				 * previously set to 'false'. This is a reported bug and at the
-				 * time of writing there is no fix. setFocusableInTouchMode(true)
-				 * gets the job done for now.
+				 * previously set to 'false'. This is a reported android bug and
+				 * at the time of writing there is no fix.
+				 * setFocusableInTouchMode(true) gets the job done for now.
 				 */
 				tagField.setFocusableInTouchMode(true);
 				tagField.setFocusable(true);
@@ -403,7 +485,8 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
 				noteField.setEnabled(true);
     			
     		}
-    		
+			
+			// Exit edit state, cancel changes and make elements uneditable
     		else {
     			
     			/*
@@ -424,8 +507,8 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
 				myRatingBar.setEnabled(false);
 				
 				/*
-				 * Both disallows the user from interacting with the text field
-				 * and removes the focus from it (if focus is 'set')  
+				 * Both disallow the user from interacting with the text field
+				 * and remove the focus from it (if focus is at this element)  
 				 */
 				tagField.setFocusableInTouchMode(false);
 				tagField.setFocusable(false);
@@ -437,88 +520,4 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
     		}
 		}
     }
-    
-    /**
-     * Listener class for when user clicks the save button
-     * 
-     * Saves/Removes the tags that the user has added/removed 
-     * 
-     * @author Robin
-     *
-     */
-    private class OnSaveClickListener implements OnClickListener {
-
-		public void onClick(View v) {
-			
-			db = new DatabaseAdapter(getContentResolver());
-			
-			movie.setDate(tempReleaseDate);
-			movie.setNote(noteField.getText().toString());
-			movie.setRating((int) myRatingBar.getRating());
-			
-			/* 
-			 * Split the text input into separate strings input at
-			 * commas (",") from tag-field
-			 */
-			String [] tagStrings = tagField.getText().toString().split(",");
-			List<Tag> tempTags = MovieHelper.stringArrayToTagList(tagStrings);
-			
-			List<Tag> newTags = new LinkedList<Tag>(tempTags);
-			
-			/*
-			 * If there are some Tags in the new list that doesn't exist in the
-			 * old list, then those tags are new
-			 */
-			newTags.removeAll(movie.getTags());
-			
-			if(!newTags.isEmpty()) {
-				
-				/*
-				 * TODO How to avoid doing the same thing in two different places?
-				 * Skip Movie model altogether or make Movie model communicate
-				 * with database instead of doing these calls all over the place!
-				 * Same problem in next conditional statement.
-				 */
-				db.attachTags(movie, newTags);
-				Log.i("Custom", movie.getTitle() + " - attached Tags: " +
-						newTags.toString());
-			}
-			
-			List<Tag> removedTags = new LinkedList<Tag>(movie.getTags());
-
-			/*
-			 * If there are some Tags in the old list that doesn't exist in the
-			 * new list, then those tags have been removed
-			 */
-			removedTags.removeAll(tempTags);
-			
-			if(!removedTags.isEmpty()) {
-				db.detachTags(movie, removedTags);
-				Log.i("Custom", movie.getTitle() + " - detached Tags: " +
-						removedTags.toString());
-			}
-			
-			/*
-			 * Call the togglebuttons onClickListener to toggle it's state and
-			 * perform necessary actions
-			 */
-			((ToggleButton) findViewById(R.id.toggle_edit)).performClick();
-			
-			db.updateMovie(movie);	// Updates release date, rating and note
-			
-			/*
-			 * Fetches a new instance of the movie straight from the database to
-			 * avoid having two different versions. Also vital because new Tags
-			 * id's are not set before this update.
-			 */
-			movie = db.getMovie(movie.getId()); 		
-			
-			// Show status toast when saved
-			Toast.makeText(MovieDetailsActivity.this, "\""+ movie.getTitle() +"\" "+ 
-						getString(R.string.movie_updated_toast_suffix), 
-						Toast.LENGTH_SHORT)
-				.show();
-		}
-    }
-    
 }
