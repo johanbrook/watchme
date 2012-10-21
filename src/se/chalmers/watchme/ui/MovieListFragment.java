@@ -3,7 +3,7 @@
  *
  *  A fragment that present data about Movies.
  *
- *	@author lisastenberg
+ *	@author lisastenberg, Johan Brook
  *	@copyright (c) 2012 Robin Andersson, Johan Brook, Mattias Henriksson, Lisa Stenberg
  *	@license MIT
  */
@@ -13,6 +13,8 @@ package se.chalmers.watchme.ui;
 import java.io.File;
 import java.net.ResponseCache;
 import java.util.Calendar;
+import java.util.concurrent.TimeUnit;
+
 import se.chalmers.watchme.R;
 import se.chalmers.watchme.activity.MovieDetailsActivity;
 import se.chalmers.watchme.database.DatabaseAdapter;
@@ -31,6 +33,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -38,6 +41,7 @@ import android.support.v4.app.NavUtils;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v4.widget.SimpleCursorAdapter.ViewBinder;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -368,13 +372,32 @@ public class MovieListFragment extends ContentListFragment {
 
 				if (columnIndex == cursor
 						.getColumnIndexOrThrow(MoviesTable.COLUMN_DATE)) {
-					String date = cursor.getString(columnIndex);
+					
+					String dateString = cursor.getString(columnIndex);
 					TextView textView = (TextView) view;
-					Calendar cal = Calendar.getInstance();
-					cal.setTimeInMillis(Long.parseLong(date));
-
-					String formattedDate = DateTimeUtils.toHumanDate(cal);
-
+					Calendar date = Calendar.getInstance();
+					date.setTimeInMillis(Long.parseLong(dateString));
+					
+					/*
+					 * If the movie's release date is within a given threshold (fetched 
+					 * from resource file), change the text color of the field. 
+					 */
+					int threshold = Integer.parseInt(getString(R.string.days_threshold));
+					
+					if(DateTimeUtils.isDateInInterval(date, threshold, TimeUnit.DAYS)) {
+						String color = getString(R.string.color_threshold);
+						textView.setTextColor(Color.parseColor(color));
+					}
+					/*
+					 * Set to original color if not in threshold
+					 */
+					else {
+						textView.setTextColor(R.string.list_date_color);
+					}
+					
+					
+					// Format the date to relative form ("two days left")
+					String formattedDate = DateTimeUtils.toHumanDate(date);
 					textView.setText(formattedDate);
 
 					return true;

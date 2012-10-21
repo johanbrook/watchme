@@ -8,24 +8,17 @@
 
 package se.chalmers.watchmetest.util;
 
-import java.util.LinkedList;
 import java.util.List;
+import org.json.JSONArray;
+import org.json.JSONException;
 
 import junit.framework.TestCase;
+import se.chalmers.watchme.model.Movie;
 import se.chalmers.watchme.model.Tag;
 import se.chalmers.watchme.utils.MovieHelper;
-import android.test.suitebuilder.annotation.SmallTest;
 
 
 public class MovieHelperTest extends TestCase {
-	
-	public MovieHelperTest() {
-		super();
-	}
-	
-	public void setUp() throws Exception {
-		super.setUp();
-	}
 	
 	public void testStringArrayToTagList() {
 		
@@ -36,6 +29,51 @@ public class MovieHelperTest extends TestCase {
 		for(String tagString : tagStrings) {
 			assertTrue(tags.contains(new Tag(tagString)));
 		}
+		
+	}
+	
+	public void testJsonArrayToList() {
+		String json = "[\"james\", \"bond\"]";
+		
+		try {
+			JSONArray array = new JSONArray(json);
+			assertNotNull(array);
+			
+			List<String> list = MovieHelper.jsonArrayToList(array);
+			
+			assertEquals(array.length(), list.size());
+			assertEquals("james", list.get(0));
+			assertEquals("bond", list.get(1));
+			
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
+	public void testJsonArrayToMovieList() {
+		String json = "[{\""+ Movie.JSON_KEY_NAME +"\": \"James Bond\", "+ 
+						"\""+ Movie.JSON_KEY_ID + "\": 202929}]";
+		
+		try {
+			JSONArray array = new JSONArray(json);
+			
+			assertNotNull(array);
+			assertTrue(array.length() == 1);
+			
+			List<Movie> movies = MovieHelper.jsonArrayToMovieList(array);
+			
+			assertEquals(array.length(), movies.size());
+			
+			Movie movie = movies.get(0);
+			
+			assertEquals("James Bond", movie.getTitle());
+			assertEquals(202929, movie.getApiID());
+			
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		
 		
 	}
 	
