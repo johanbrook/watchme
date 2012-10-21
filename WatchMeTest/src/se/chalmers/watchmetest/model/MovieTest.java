@@ -157,7 +157,7 @@ public class MovieTest extends TestCase {
 		Movie compareObject = null;
 		assertFalse(batman.equals(compareObject));
 
-		// An Movie should not be equal to it's subclasses
+		// A Movie should not be equal to it's subclasses
 		compareObject = new ActionMovie(DEFAULT_MOVIE_NAME);
 		assertFalse(batman.equals(compareObject));
 
