@@ -164,7 +164,7 @@ public class MovieListFragment extends ContentListFragment {
 	public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
 		//db = new DatabaseAdapter(getActivity().getContentResolver());
 		
-			return new GenericCursorLoader(getActivity(), new ICursorHelper() {
+		return new GenericCursorLoader(getActivity(), new ICursorHelper() {
 
 			@Override
 			public Uri getUri() {
@@ -244,19 +244,22 @@ public class MovieListFragment extends ContentListFragment {
 
 		public void onItemClick(AdapterView<?> parent, View view, int position,
 				long id) {
-						
+			
+			/*
+			 * Cancel any tasks that fetches poster images if a movie is selected
+			 */
 			if(imageTask != null && imageTask.getStatus() == AsyncTask.Status.RUNNING) {
 				imageTask.cancel(true);
 			}
 			
+			// Fetch selected movie from database
 			Cursor selectedMovie = (Cursor) getListView().getItemAtPosition(position);
 			Movie movie = db.getMovie(Long.parseLong(selectedMovie.getString(0)));
 			
 			Intent intent = new Intent(getActivity(), MovieDetailsActivity.class);
-			
-			// TODO Fetch all data from database in DetailsActivity instead?
 			intent.putExtra(MovieDetailsActivity.MOVIE_EXTRA, movie);
 			
+			// .. and jump to the details view
 			startActivity(intent);
 			
 		}
@@ -333,7 +336,8 @@ public class MovieListFragment extends ContentListFragment {
 					TextView textView = (TextView) view;
 					Calendar cal = Calendar.getInstance();
 					cal.setTimeInMillis(Long.parseLong(date));
-					String formattedDate = DateTimeUtils.toSimpleDate(cal);
+					
+					String formattedDate = DateTimeUtils.toHumanDate(cal);
 					
 					textView.setText(formattedDate);
 					return true;
@@ -363,6 +367,7 @@ public class MovieListFragment extends ContentListFragment {
 						// Fetch the image in an async task
 						imageTask = new ImageDownloadTask(new ImageDownloadTask.TaskActions() {
 							
+							// When task is finished, set the resulting image on the poster view
 							public void onFinished(Bitmap image) {
 								if(image != null) {
 									((ImageView) imageView).setImageBitmap(image);
