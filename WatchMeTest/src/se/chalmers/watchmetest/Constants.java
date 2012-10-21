@@ -11,4 +11,6 @@ public class Constants {
 	
 	public static final int TAG_LIST_FRAGMENT_VIEW_PAGER_ID = 1;
 	public static final int MOVIE_LIST_FRAGMENT_VIEW_PAGER_ID = 0;
+	
+	public static final int WAIT_FOR_DIALOG_TO_CLOSE_TIME = 1000;
 }
