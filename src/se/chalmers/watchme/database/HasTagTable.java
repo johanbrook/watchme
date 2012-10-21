@@ -1,16 +1,21 @@
+/**
+ *	HasTagsTable.java
+ *
+ *  The table that holds data for Movies and Tags.
+ * 
+ *  COLUMN_MOVIE_ID is a foreign key to COLUMN_MOVIE_ID in MoviesTable
+ *  COLUMN_TAG_ID is a foreign key to COLUMN_TAG_ID in TagsTable
+ *
+ *	@author lisastenberg
+ *	@copyright (c) 2012 Johan Brook, Robin Andersson, Lisa Stenberg, Mattias Henriksson
+ *	@license MIT
+ */
+
 package se.chalmers.watchme.database;
 
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
-/**
- * The table that holds data for Movies and Tags.
- * 
- * COLUMN_MOVIE_ID is a foreign key to COLUMN_MOVIE_ID in MoviesTable
- * COLUMN_TAG_ID is a foreign key to COLUMN_TAG_ID in TagsTable
- * 
- * @author lisastenberg
- */
 public class HasTagTable {
 	public static final String TABLE_HAS_TAG = "hastag";
 
