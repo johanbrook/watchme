@@ -3,6 +3,7 @@ package se.chalmers.watchme.ui;
 import java.io.File;
 import java.net.ResponseCache;
 import java.util.Calendar;
+import java.util.concurrent.TimeUnit;
 
 import se.chalmers.watchme.R;
 import se.chalmers.watchme.activity.MainActivity;
@@ -23,22 +24,26 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v4.widget.SimpleCursorAdapter.ViewBinder;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -194,6 +199,8 @@ public class MovieListFragment extends ContentListFragment {
     	return super.onOptionsItemSelected(item);
     }
     
+    
+    
     /**
      * Show a Dialog Box with choices of attributes to order the Movies by.
      */
@@ -300,14 +307,15 @@ public class MovieListFragment extends ContentListFragment {
 				MoviesTable.COLUMN_RATING ,
 				MoviesTable.COLUMN_DATE,
 				MoviesTable.COLUMN_POSTER_SMALL
-				};
+		};
 		
 		// Bind to
 		int[] to = new int[] { 
 				R.id.title, 
 				R.id.raiting, 
 				R.id.date,
-				R.id.poster};
+				R.id.poster
+		};
 		
 		getActivity().getSupportLoaderManager().initLoader(2, null, this);
 		setAdapter(new SimpleCursorAdapter(getActivity(), R.layout.list_item_movie , null, from, to, 0));
@@ -320,17 +328,28 @@ public class MovieListFragment extends ContentListFragment {
 			public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
 				
 				if (columnIndex == cursor.getColumnIndexOrThrow(MoviesTable.COLUMN_DATE)) {
-					String date = cursor.getString(columnIndex);
+					String dateString = cursor.getString(columnIndex);
 					TextView textView = (TextView) view;
-					Calendar cal = Calendar.getInstance();
-					cal.setTimeInMillis(Long.parseLong(date));
+					Calendar date = Calendar.getInstance();
+					date.setTimeInMillis(Long.parseLong(dateString));
 					
-					String formattedDate = DateTimeUtils.toHumanDate(cal);
+					// If the movie's release date is within a given threshold,
+					// change the cell's background color
+					int threshold = Integer.parseInt(getString(R.string.days_threshold));
 					
+					if(DateTimeUtils.isDateInInterval(date, threshold, TimeUnit.DAYS)) {
+						String color = getString(R.string.color_threshold);
+						
+						view.getRootView().setBackgroundColor(Color.parseColor(color));
+					}
+					
+					// Format the date to relative form ("two days left")
+					String formattedDate = DateTimeUtils.toHumanDate(date);
 					textView.setText(formattedDate);
 					
 					return true;
 				}
+				
 				
 				/*
 				 * Handle rating bar conversion

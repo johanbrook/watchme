@@ -10,6 +10,7 @@ package se.chalmers.watchmetest.util;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.concurrent.TimeUnit;
 
 import android.test.suitebuilder.annotation.SmallTest;
 
@@ -103,5 +104,19 @@ public class DateTimeUtilsTest extends TestCase {
 		
 		date.add(Calendar.MONTH, 6);
 		assertEquals("next year", DateTimeUtils.toHumanDate(date));
+	}
+	
+	
+	public void testIsDateInInterval() {
+		Calendar dateWithin = GregorianCalendar.getInstance();
+		Calendar dateOutside = GregorianCalendar.getInstance();
+		
+		dateWithin.add(Calendar.DAY_OF_MONTH, 3);
+		dateOutside.add(Calendar.DAY_OF_MONTH, 10);
+		
+		assertTrue(DateTimeUtils.isDateInInterval(dateWithin, 5, TimeUnit.DAYS));
+		assertTrue(DateTimeUtils.isDateInInterval(GregorianCalendar.getInstance(), 5, TimeUnit.DAYS));
+		
+		assertFalse(DateTimeUtils.isDateInInterval(dateOutside, 5, TimeUnit.DAYS));
 	}
 }
