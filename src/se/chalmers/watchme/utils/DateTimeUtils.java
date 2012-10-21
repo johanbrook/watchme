@@ -18,6 +18,8 @@ public class DateTimeUtils {
 	
 	private final static int HOUR = 60;
 	
+	private DateTimeUtils() {}
+	
 	/**
 	 * Recieves a calendar instance and returns a String with simple
 	 * date format ("d MMM, yyyy" = "14 Oct, 2012")
