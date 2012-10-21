@@ -76,7 +76,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		HasTagTable.onCreate(db);
 
 		db.execSQL(CREATE_TRIGGER_DETACH);
-		// db.execSQL(CREATE_TRIGGER_DETACH2);
+		db.execSQL(CREATE_TRIGGER_DETACH2);
 	}
 
 	@Override
@@ -86,8 +86,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		HasTagTable.onUpgrade(db, oldVersion, newVersion);
 
 		db.execSQL("DROP TRIGGER IF EXISTS " + TRIGGER_DETACH);
-		// db.execSQL("DROP TRIGGER IF EXISTS " + TRIGGER_DETACH2);
+		db.execSQL("DROP TRIGGER IF EXISTS " + TRIGGER_DETACH2);
 		db.execSQL(CREATE_TRIGGER_DETACH);
-		// db.execSQL(CREATE_TRIGGER_DETACH2);
+		db.execSQL(CREATE_TRIGGER_DETACH2);
 	}
 }
