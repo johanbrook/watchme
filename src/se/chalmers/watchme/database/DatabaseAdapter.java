@@ -20,9 +20,9 @@ import se.chalmers.watchme.model.Tag;
  */
 public class DatabaseAdapter {
 	
-	private Uri uri_movies = WatchMeContentProvider.CONTENT_URI_MOVIES;
-	private Uri uri_tags = WatchMeContentProvider.CONTENT_URI_TAGS;
-	private Uri uri_has_tag = WatchMeContentProvider.CONTENT_URI_HAS_TAG;
+	protected Uri uri_movies = WatchMeContentProvider.CONTENT_URI_MOVIES;
+	protected Uri uri_tags = WatchMeContentProvider.CONTENT_URI_TAGS;
+	protected Uri uri_has_tag = WatchMeContentProvider.CONTENT_URI_HAS_TAG;
 	
 	private ContentResolver contentResolver;
 	

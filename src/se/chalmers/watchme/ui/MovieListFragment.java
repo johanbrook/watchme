@@ -116,7 +116,7 @@ public class MovieListFragment extends ContentListFragment {
 		ResponseCache.setDefault(new ImageCache(cacheDir));
 
 		/*
-		 * If any arguments where set
+		 * If any arguments where set fetch the values
 		 */
 		Bundle arguments = getArguments();
 		if (arguments != null) {
@@ -290,6 +290,11 @@ public class MovieListFragment extends ContentListFragment {
                 	NotificationClient.cancelNotification(getActivity(), movie);
                     Toast.makeText(getActivity().getApplicationContext(), "\"" + movie.getTitle() + "\" was deleted" , Toast.LENGTH_SHORT).show();
                     
+                    /*
+                     * If this MovieListFragment contains all Movies for a
+                     * specified tag and the tag has no other attached movies,
+                     * the user is brought back to the main activity.
+                     */
                     if(tagId != MISSING_TAGID && db.getAttachedMovies(tagId).getCount() == 0) {
                     	NavUtils.navigateUpFromSameTask(getActivity());
                     }
@@ -297,7 +302,7 @@ public class MovieListFragment extends ContentListFragment {
             });
             alertbox.setNeutralButton(getString(R.string.delete_button_negative), new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface arg0, int arg1) {
-                    
+                    // Nothing should happen if the user press cancel.
                 }
             });
             

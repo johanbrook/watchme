@@ -124,7 +124,7 @@ public class TagListFragment extends ContentListFragment {
             });
             alertbox.setNeutralButton(getString(R.string.delete_button_negative), new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface arg0, int arg1) {
-                    
+                	// Nothing should happen if the user press cancel.
                 }
             });
             
