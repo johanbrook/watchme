@@ -25,6 +25,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.NavUtils;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v4.widget.SimpleCursorAdapter.ViewBinder;
@@ -288,6 +289,10 @@ public class MovieListFragment extends ContentListFragment {
                 	
                 	NotificationClient.cancelNotification(getActivity(), movie);
                     Toast.makeText(getActivity().getApplicationContext(), "\"" + movie.getTitle() + "\" was deleted" , Toast.LENGTH_SHORT).show();
+                    
+                    if(tagId != MISSING_TAGID && db.getAttachedMovies(tagId).getCount() == 0) {
+                    	NavUtils.navigateUpFromSameTask(getActivity());
+                    }
                 }
             });
             alertbox.setNeutralButton(getString(R.string.delete_button_negative), new DialogInterface.OnClickListener() {
