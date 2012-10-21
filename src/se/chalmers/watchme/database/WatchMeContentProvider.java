@@ -100,7 +100,6 @@ public class WatchMeContentProvider extends ContentProvider {
 			
 			break;
 		case MOVIES_ID:
-			//TODO: Need to check if selection is null?
 			selection = selection + MoviesTable.COLUMN_MOVIE_ID + " = " 
 			+ uri.getLastPathSegment();
 			deletedRows = sqlDB.delete(MoviesTable.TABLE_MOVIES, selection, 
@@ -111,7 +110,6 @@ public class WatchMeContentProvider extends ContentProvider {
 					selectionArgs);
 			break;
 		case TAGS_ID:
-			//TODO: Need to check if selection is null?
 			selection = selection + TagsTable.COLUMN_TAG_ID + " = " + 
 			uri.getLastPathSegment();
 			deletedRows = sqlDB.delete(TagsTable.TABLE_TAGS, selection, 
@@ -204,7 +202,6 @@ public class WatchMeContentProvider extends ContentProvider {
 				ContentValues tagValues = new ContentValues();
 				tagValues.put(TagsTable.COLUMN_NAME, tagName);
 		        id = sqlDB.insert(TagsTable.TABLE_TAGS, null, tagValues); 
-		        // TODO insert(URI_TAGS, tagValues) instead?
 			}
 			
 			tagCursor.close();
