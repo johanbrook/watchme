@@ -67,9 +67,9 @@ public class MovieListFragment extends ContentListFragment {
 	 */
 	public enum SortOrder {
 
-		ORDER_BY_DATE(MoviesTable.COLUMN_DATE), ORDER_BY_TITLE(
-				MoviesTable.COLUMN_TITLE), ORDER_BY_RATING(
-				MoviesTable.COLUMN_RATING + " DESC");
+		ORDER_BY_DATE(MoviesTable.COLUMN_DATE), 
+		ORDER_BY_RATING(MoviesTable.COLUMN_RATING + " DESC"),
+		ORDER_BY_TITLE(MoviesTable.COLUMN_TITLE);
 
 		private String orderBy;
 
