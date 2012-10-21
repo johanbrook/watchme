@@ -1,39 +1,29 @@
+/**
+*	AddMovieActivity.java
+*
+*	@author Robin Andersson
+*	@copyright (c) 2012 Robin Andersson
+*	@license MIT
+*/
+
 package se.chalmers.watchme.activity;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-
-import org.json.JSONArray;
 import org.json.JSONObject;
-
 import se.chalmers.watchme.database.DatabaseAdapter;
+import se.chalmers.watchme.database.MovieAlreadyExistsException;
 import se.chalmers.watchme.model.Movie;
-import se.chalmers.watchme.model.Movie.PosterSize;
 import se.chalmers.watchme.R;
-import android.net.Uri;
-import se.chalmers.watchme.model.Tag;
 import se.chalmers.watchme.ui.DatePickerFragment;
 import se.chalmers.watchme.ui.DatePickerFragment.DatePickerListener;
 import se.chalmers.watchme.utils.DateTimeUtils;
 import se.chalmers.watchme.utils.MovieHelper;
 import se.chalmers.watchme.net.IMDBHandler;
 import se.chalmers.watchme.notifications.NotificationClient;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.ContentValues;
-import android.content.Context;
-import android.content.Intent;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -45,9 +35,6 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.DatePicker;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.support.v4.app.DialogFragment;
@@ -61,7 +48,6 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
 	private TextView tagField;
 	private TextView noteField;
 	private AutoCompleteTextView titleField;
-	private ProgressBar progressSpinner;
 	private Button addButton;
 	
 	// The handler to interface with the notification system and scheduler
@@ -80,6 +66,8 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_movie);
         getActionBar().setDisplayHomeAsUpEnabled(true);
+        
+        db = new DatabaseAdapter(getContentResolver());
         
         this.releaseDate = Calendar.getInstance();
         this.autoCompleteAdapter = new AutoCompleteAdapter(this, R.layout.auto_complete_item, new IMDBHandler());
@@ -101,10 +89,6 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
         this.noteField = (TextView) findViewById(R.id.note_field_addmovie);
         this.tagField = (TextView) findViewById(R.id.tag_field_addmovie);
         
-        // The progress bar when fetching IMDb movies
-        this.progressSpinner = (ProgressBar) findViewById(R.id.title_progress);
-        this.progressSpinner.setVisibility(View.INVISIBLE);
-        
         // Add listeners to the title field
         this.titleField.addTextChangedListener(new AddButtonToggler());
         this.titleField.setOnItemClickListener(new AutoCompleteClickListener());
@@ -125,11 +109,9 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
     public void onAddButtonClick(View view) {
     	
     	addMovie();
-		finish();
     }
     
     private void addMovie() {
-    	db = new DatabaseAdapter(this.getContentResolver());
     	
     	// Get the movie from the auto-complete field 
     	Movie movie = (Movie) this.titleField.getTag();
@@ -156,22 +138,28 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
 		int rating = (int) ratingBar.getRating();
 		movie.setRating(rating);
 		
-		Log.i("Custom", movie.getPosterURLs().toString());
-		
 		// Insert into database
-		db.addMovie(movie);
-		
-		/* 
-		 * Split the text input into separate strings input at
-		 * commas (",") from tag-field
-		 */
-		String [] tagStrings = tagField.getText().toString().split(",");
-		
-		// TODO Shouldn't the tags be added to database in the addMovie-method?
-		db.attachTags(movie, MovieHelper.stringArrayToTagList(tagStrings));
-		
-		// Set a notification for the date picked
-    	this.setNotification(movie);
+		try {
+			db.addMovie(movie);
+			// Set a notification for the date picked
+	    	this.setNotification(movie);
+	    	
+	    	/* 
+			 * Split the text input into separate strings input at
+			 * commas (",") from tag-field
+			 */
+			String [] tagStrings = tagField.getText().toString().split(",");
+			
+			// TODO Shouldn't the tags be added to database in the addMovie-method?
+			db.attachTags(movie, MovieHelper.stringArrayToTagList(tagStrings));
+	    	
+			// If everything went alright, return to the movie list view
+	    	finish();
+	    	
+		} catch (MovieAlreadyExistsException e) {
+			// If the movie already exists, show a message
+			Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+		}
     }
     
     /**
@@ -181,8 +169,9 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
      */
     private void setNotification(Movie movie) {
     	this.notifications.setMovieNotification(movie);
+    	
     	Toast.makeText(this, 
-    			R.string.notification_prefix_text + 
+    			getString(R.string.notification_prefix_text) + 
     			DateTimeUtils.toSimpleDate(movie.getDate()), 
     			Toast.LENGTH_LONG)
     		.show();

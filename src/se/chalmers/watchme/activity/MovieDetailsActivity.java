@@ -1,3 +1,11 @@
+/**
+*	MovieDetailsActivity.java
+*
+*	@author Robin Andersson
+*	@copyright (c) 2012 Robin Andersson
+*	@license MIT
+*/
+
 package se.chalmers.watchme.activity;
 
 import java.util.Calendar;
@@ -19,10 +27,10 @@ import se.chalmers.watchme.ui.DatePickerFragment.DatePickerListener;
 import se.chalmers.watchme.ui.ImageDialog;
 import se.chalmers.watchme.utils.DateTimeUtils;
 import se.chalmers.watchme.utils.MovieHelper;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -37,6 +45,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -56,8 +65,10 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
 	
 	private ImageView poster;
 	private ImageDialog dialog;
+	
 	private EditText tagField;
 	private EditText noteField;
+	private Button imdbButton;
 	
 	private RatingBar myRatingBar;
 	
@@ -67,12 +78,14 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
 	
 	private Menu menu;
 
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        System.out.println("starta");
         setContentView(R.layout.activity_movie_details);
         getActionBar().setDisplayHomeAsUpEnabled(true);
+        
+        db = new DatabaseAdapter(getContentResolver());
         
         this.movie = (Movie) getIntent().getSerializableExtra(MOVIE_EXTRA);
         this.imdb = new IMDBHandler();
@@ -80,13 +93,19 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
         this.poster = (ImageView) findViewById(R.id.poster);
         this.poster.setOnClickListener(new OnPosterClickListener());
         
+        this.imdbButton = (Button) findViewById(R.id.browser_button);
+        this.imdbButton.setEnabled(false);
+        
         this.tagField = (EditText) findViewById(R.id.tag_field_details);
         this.noteField = (EditText) findViewById(R.id.note_field_details);
         
-        myRatingBar = (RatingBar) findViewById(R.id.my_rating_bar);
-        myRatingBar.setEnabled(false);	// Unable to do this in XML (?)
+        this.myRatingBar = (RatingBar) findViewById(R.id.my_rating_bar);
+        this.myRatingBar.setEnabled(false);	// Unable to do this in XML (?)
         
         this.dialog = new ImageDialog(this);
+        
+        // Hide the progress spinner on init
+        findViewById(R.id.imdb_loading_spinner).setVisibility(View.INVISIBLE);
         
         /*
     	 * Create a new image download task for the poster image
@@ -132,15 +151,35 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
         // Populate various view fields from the Movie object
         populateFieldsFromMovie(this.movie);
         
-        tempReleaseDate = this.movie.getDate();
-        
+    }
+    
+    /**
+     * Click callback when clicking on "View on IMDb" button.
+     * Opens the current movie in the Android browser.
+     * 
+     * Shows an error toast if it wasn't possible to go to
+     * the website, perhaps due to missing IMDb id.
+     * 
+     * @param view The view that triggered the event
+     */
+    public void goToIMDb(View view) {
+    	final String BASE_URL = "http://m.imdb.com/title/";
+    	final String imdbID = (String) view.getTag();
+    	
+    	if(imdbID != null) {
+    		String url = BASE_URL + imdbID;
+    		startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+    	}
+    	else {
+    		Toast.makeText(this, R.string.movie_url_error, Toast.LENGTH_LONG).show();
+    	}
     }
     
     @Override
     protected void onNewIntent(Intent intent) {
     	super.onNewIntent(intent);
     	System.out.println("new");
-    	}
+    }
     
 	/**
 	 * Populate various view fields with data from a Movie.
@@ -159,7 +198,6 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
         ratingBar.setRating(m.getRating());
         releaseDateLabel.setText(DateTimeUtils.toSimpleDate(m.getDate()));
         
-        db = new DatabaseAdapter(this.getContentResolver());
         String tags = MovieHelper.getCursorString(db.getAttachedTags(m));
         
         if(tags != null && !tags.isEmpty()) {
@@ -175,6 +213,15 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
      */
     
     public void populateFieldsFromJSON(JSONObject json) {
+    	
+    	/*
+    	 * Enable the browser button and tag it with the IMDB id
+    	 * from the JSON response. Used to build an URL to the
+    	 * movie on IMDB.com 
+    	 */
+    	this.imdbButton.setEnabled(true);
+    	this.imdbButton.setTag(json.optString("imdb_id"));
+    	
     	TextView rating = (TextView) findViewById(R.id.imdb_rating_number_label);
     	TextView plot = (TextView) findViewById(R.id.plot_content);
     	TextView cast = (TextView) findViewById(R.id.cast_list);
@@ -236,12 +283,6 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.activity_movie_details, menu);
         
-        View toggleView = menu.findItem(R.id.toggle_edit_menu).getActionView();
-        toggleView.setOnClickListener(new OnEditClickListener());
-        
-        View saveView = menu.findItem(R.id.save_button_edit_menu).getActionView();
-        saveView.setOnClickListener(new OnSaveClickListener());
-        
         this.menu = menu;	// Can't get reference outside of this method,
         					// reference needs to be stored here
         
@@ -257,8 +298,24 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
                 NavUtils.navigateUpFromSameTask(this);
                 return true;
                 
+        	case R.id.menu_save:
+        		this.saveUserChanges();
+        		return true;
+        		
+        	case R.id.menu_cancel:
+        		this.setEditable(false);
+        		
+        		// Restore changes to visual elements
+        		populateFieldsFromMovie(this.movie); 
+        		return true;
+        		
+        	case R.id.menu_edit:
+        		this.setEditable(true);
+        		return true;
+        		
         }
         return super.onOptionsItemSelected(item);
+        
     }
     
     /**
@@ -276,7 +333,122 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
 		TextView releaseDateLabel = (TextView) findViewById(R.id.releaseDate);
 		releaseDateLabel.setText(DateTimeUtils.toSimpleDate(tempReleaseDate));
 	}
-
+	
+	/**
+     * Saves the user editable fields
+     */
+	private void saveUserChanges() {
+		
+		db = new DatabaseAdapter(getContentResolver());
+		
+		if(tempReleaseDate != null){
+			movie.setDate(tempReleaseDate);
+		}
+		
+		movie.setNote(noteField.getText().toString());
+		movie.setRating((int) myRatingBar.getRating());
+		
+		/* 
+		 * Split the text input into separate strings input at
+		 * commas (",") from tag-field
+		 */
+		String [] tagStrings = tagField.getText().toString().split(",");
+		List<Tag> tempTags = MovieHelper.stringArrayToTagList(tagStrings);
+		
+		List<Tag> newTags = new LinkedList<Tag>(tempTags);
+		
+		/*
+		 * If there are some Tags in the new list that doesn't exist in the
+		 * old list, then those tags are new
+		 */
+		newTags.removeAll(movie.getTags());
+		
+		if(!newTags.isEmpty()) {
+			
+			/*
+			 * TODO How to avoid doing the same thing in two different places?
+			 * (update database and the movie model) Skip Movie model altogether
+			 * or make Movie model communicate with database instead of doing
+			 * these calls all over the place! Same problem in next conditional
+			 * statement.
+			 */
+			db.attachTags(movie, newTags);
+			Log.i("Custom", movie.getTitle() + " - attached Tags: " +
+					newTags.toString());
+		}
+		
+		List<Tag> removedTags = new LinkedList<Tag>(movie.getTags());
+	
+		/*
+		 * If there are some Tags in the old list that doesn't exist in the
+		 * new list, then those tags have been removed
+		 */
+		removedTags.removeAll(tempTags);
+		
+		if(!removedTags.isEmpty()) {
+			db.detachTags(movie, removedTags);
+			Log.i("Custom", movie.getTitle() + " - detached Tags: " +
+					removedTags.toString());
+		}
+		
+		this.setEditable(false);
+		
+		db.updateMovie(movie);	// Updates release date, rating and note
+		
+		/*
+		 * Fetches a new instance of the movie straight from the database to
+		 * avoid having two different versions. Also vital because new Tags
+		 * id's are not set before this update.
+		 */
+		movie = db.getMovie(movie.getId()); 		
+		
+		// Show status toast when saved
+		Toast.makeText(MovieDetailsActivity.this, "\""+ movie.getTitle() +"\" "+ 
+					getString(R.string.movie_updated_toast_suffix), 
+					Toast.LENGTH_SHORT)
+			.show();
+	}
+	
+    /**
+     * Set whether user is able to edit movie data
+     * 
+     * @param isEditable True if user is able to edit
+     */
+    private void setEditable(boolean isEditable) {
+    	
+    	MenuItem editMenuButton = menu.findItem(R.id.menu_edit);
+    	MenuItem saveMenuButton = menu.findItem(R.id.menu_save);
+    	MenuItem cancelMenuButton = menu.findItem(R.id.menu_cancel);
+    	Button releaseDateButton = (Button) findViewById(R.id.release_date_button);
+		
+		editMenuButton.setVisible(!isEditable);
+		saveMenuButton.setVisible(isEditable);
+		cancelMenuButton.setVisible(isEditable);
+		
+		if(isEditable) {
+			releaseDateButton.setVisibility(Button.VISIBLE);
+		}
+		
+		else {
+			releaseDateButton.setVisibility(Button.GONE);
+		}
+		
+		myRatingBar.setIsIndicator(!isEditable);
+		myRatingBar.setEnabled(isEditable);
+		
+		/*
+		 * setFocusable(true) does not work on EditText if it were
+		 * previously set to 'false'. This is a reported android bug and
+		 * at the time of writing there is no fix.
+		 * setFocusableInTouchMode(true) gets the job done for now.
+		 */
+		tagField.setFocusableInTouchMode(isEditable);
+		tagField.setFocusable(isEditable);
+		tagField.setEnabled(isEditable);
+		noteField.setFocusableInTouchMode(isEditable);
+		noteField.setFocusable(isEditable);
+		noteField.setEnabled(isEditable);
+    }
 
     /**
      * The IMDb info fetch task.
@@ -288,25 +460,26 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
      */
     private class IMDBTask extends AsyncTask<Integer, Void, JSONObject> {
 
-    	private ProgressDialog dialog;
+    	private ProgressBar spinner;
     	
     	public IMDBTask() {
-    		this.dialog = new ProgressDialog(MovieDetailsActivity.this);
+    		this.spinner = (ProgressBar) findViewById(R.id.imdb_loading_spinner);
     	}
     	
     	@Override
     	protected void onPreExecute() {
-    		this.dialog.setMessage(getString(R.string.imdb_loading_text));
-    		this.dialog.show();
+    		this.spinner.setVisibility(View.VISIBLE);
     	}
     	
     	@Override
 		public void onCancelled() {
-    		this.dialog.dismiss();
+    		this.spinner.setVisibility(View.INVISIBLE);
+    		
     		Toast.makeText(getBaseContext(), 
 					getString(R.string.imdb_fetch_error_text), 
 					Toast.LENGTH_SHORT)
 			.show();
+    		
 		}
     	
 		@Override
@@ -318,9 +491,7 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
     	
 		@Override
 		protected void onPostExecute(JSONObject res) {
-			if(this.dialog.isShowing()) {
-				this.dialog.dismiss();
-			}
+			this.spinner.setVisibility(View.INVISIBLE);
 			
 			// Update the UI with the JSON data
 			if(res != null) {
@@ -354,158 +525,4 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
 		}
     	
     }
-    
-    /**
-     * Listener class for when user clicks the edit toggle button
-     * 
-     * <p>If the toggle button is checked only the data that are be editable is
-     * shown. The remaining data is hidden.</p>
-     * 
-     * <p>If the toggle button is unchecked everything is shown and the editable
-     * data is made uneditable. </p>
-     * 
-     * @author Robin
-     *
-     */
-    private class OnEditClickListener implements OnClickListener {
-
-		public void onClick(View v) {
-			
-			MenuItem saveMenuButton = menu.findItem(R.id.save_button_edit_menu);
-			Button releaseDateButton = (Button) findViewById(R.id.release_date_button);
-			
-			if(((ToggleButton) v).isChecked()) {
-				
-				saveMenuButton.setVisible(true);
-				releaseDateButton.setVisibility(Button.VISIBLE);
-				myRatingBar.setIsIndicator(false);
-				myRatingBar.setEnabled(true);
-				
-				/*
-				 * setFocusable(true) does not work on EditText if it were
-				 * previously set to 'false'. This is a reported bug and at the
-				 * time of writing there is no fix. setFocusableInTouchMode(true)
-				 * gets the job done for now.
-				 */
-				tagField.setFocusableInTouchMode(true);
-				tagField.setFocusable(true);
-				tagField.setEnabled(true);
-				noteField.setFocusableInTouchMode(true);
-				noteField.setFocusable(true);
-				noteField.setEnabled(true);
-    			
-    		}
-    		
-    		else {
-    			
-    			/*
-    			 *  TODO Set flags to allow conditional statement so that
-    			 * populateFieldsFromMovie doesn't has to be executed if nothing
-    			 * has changed
-    			 */
-    			
-    			/*
-    			 * Restore visual elements to reflect a saved state
-    			 */
-    			populateFieldsFromMovie(movie);
-				
-    			saveMenuButton.setVisible(false);
-    			
-    			releaseDateButton.setVisibility(Button.GONE);
-				myRatingBar.setIsIndicator(true);
-				myRatingBar.setEnabled(false);
-				
-				/*
-				 * Both disallows the user from interacting with the text field
-				 * and removes the focus from it (if focus is 'set')  
-				 */
-				tagField.setFocusableInTouchMode(false);
-				tagField.setFocusable(false);
-				tagField.setEnabled(false);
-				noteField.setFocusableInTouchMode(false);
-				noteField.setFocusable(false);
-				noteField.setEnabled(false);
-				
-    		}
-		}
-    }
-    
-    /**
-     * Listener class for when user clicks the save button
-     * 
-     * Saves/Removes the tags that the user has added/removed 
-     * 
-     * @author Robin
-     *
-     */
-    private class OnSaveClickListener implements OnClickListener {
-
-		public void onClick(View v) {
-			
-			db = new DatabaseAdapter(getContentResolver());
-			
-			movie.setDate(tempReleaseDate);
-			movie.setNote(noteField.getText().toString());
-			movie.setRating((int) myRatingBar.getRating());
-			
-			/* 
-			 * Split the text input into separate strings input at
-			 * commas (",") from tag-field
-			 */
-			String [] tagStrings = tagField.getText().toString().split(",");
-			List<Tag> tempTags = MovieHelper.stringArrayToTagList(tagStrings);
-			
-			List<Tag> newTags = new LinkedList<Tag>(tempTags);
-			
-			/*
-			 * If there are some Tags in the new list that doesn't exist in the
-			 * old list, then those tags are new
-			 */
-			newTags.removeAll(movie.getTags());
-			
-			if(!newTags.isEmpty()) {
-				
-				/*
-				 * TODO How to avoid doing the same thing in two different places?
-				 * Skip Movie model altogether or make Movie model communicate
-				 * with database instead of doing these calls all over the place!
-				 * Same problem in next conditional statement.
-				 */
-				db.attachTags(movie, newTags);
-				Log.i("Custom", movie.getTitle() + " - attached Tags: " +
-						newTags.toString());
-			}
-			
-			List<Tag> removedTags = new LinkedList<Tag>(movie.getTags());
-
-			/*
-			 * If there are some Tags in the old list that doesn't exist in the
-			 * new list, then those tags have been removed
-			 */
-			removedTags.removeAll(tempTags);
-			
-			if(!removedTags.isEmpty()) {
-				db.detachTags(movie, removedTags);
-				Log.i("Custom", movie.getTitle() + " - detached Tags: " +
-						removedTags.toString());
-			}
-			
-			/*
-			 * Call the togglebuttons onClickListener to toggle it's state and
-			 * perform necessary actions
-			 */
-			((ToggleButton) findViewById(R.id.toggle_edit)).performClick();
-			
-			db.updateMovie(movie);	// Updates release date, rating and note
-			
-			/*
-			 * Fetches a new instance of the movie straight from the database to
-			 * avoid having two different versions. Also vital because new Tags
-			 * id's are not set before this update.
-			 */
-			movie = db.getMovie(movie.getId()); 		
-			
-		}
-    }
-    
 }

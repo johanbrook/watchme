@@ -67,6 +67,14 @@
 		        android:layout_marginTop="5dp"
 		        android:hint="@string/details_duration_label"
 		        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+		    <ProgressBar
+		        android:id="@+id/imdb_loading_spinner"
+		        style="@android:style/Widget.ProgressBar.Small.Inverse"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:layout_alignLeft="@+id/duration"
+		        android:layout_alignParentBottom="true" />
 		    
 		</RelativeLayout>
 	
@@ -79,12 +87,11 @@
 	        android:baselineAligned="false" >
 		    
 	        <LinearLayout
-		        android:layout_width="wrap_content"
-		        android:layout_height="wrap_content"
-		        android:layout_marginRight="10dp"
-		        android:layout_marginLeft="10dp"
-		        android:orientation="vertical"
-		        android:layout_weight="1" >
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_marginLeft="10dp"
+	            android:layout_marginRight="10dp"
+	            android:orientation="vertical" >
 		
 		        <TextView
 		            android:id="@+id/my_rating_label"
@@ -93,7 +100,7 @@
 			        android:layout_marginTop="5dp"
 			        android:hint="@string/details_my_rating_label"
 			        android:textAppearance="?android:attr/textAppearanceSmall" />
-		
+
 		        <RatingBar
 		            android:id="@+id/my_rating_bar"
 		            style="?android:attr/ratingBarStyleSmall"
@@ -104,32 +111,46 @@
 		            android:stepSize="1.0" />
 		        
 		    </LinearLayout>
-		    
+
 	        <LinearLayout
-		        android:layout_width="wrap_content"
-		        android:layout_height="wrap_content"
-		        android:layout_marginRight="10dp"
-		        android:layout_marginLeft="10dp"
-		        android:orientation="vertical"
-		        android:layout_weight="1" >
-		        
+	            android:layout_width="wrap_content"
+	            android:layout_height="match_parent"
+	            android:layout_marginLeft="10dp"
+	            android:layout_marginRight="10dp"
+	            android:orientation="vertical" >
+
 	            <TextView
-		            android:id="@+id/imdb_rating_label"
-			        android:layout_width="wrap_content"
-			        android:layout_height="wrap_content"
-			        android:layout_marginTop="5dp"
-			        android:hint="@string/details_imdb_rating_label"
-			        android:textAppearance="?android:attr/textAppearanceSmall" />
-	    
-		        <TextView
-		            android:id="@+id/imdb_rating_number_label"
-			        android:layout_width="wrap_content"
-			        android:layout_height="wrap_content"
-			        android:layout_marginTop="5dp"
-			        android:hint="@string/details_imdb_rating_value"
-			        android:textAppearance="?android:attr/textAppearanceSmall" />
-		        
-		    </LinearLayout>
+	                android:id="@+id/imdb_rating_label"
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:layout_marginTop="5dp"
+	                android:hint="@string/details_imdb_rating_label"
+	                android:textAppearance="?android:attr/textAppearanceSmall" />
+
+	            <TextView
+	                android:id="@+id/imdb_rating_number_label"
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:layout_marginTop="5dp"
+	                android:hint="@string/details_imdb_rating_value"
+	                android:textAppearance="?android:attr/textAppearanceSmall" />
+	        </LinearLayout>
+
+	        <LinearLayout
+	            android:layout_width="wrap_content"
+	            android:layout_height="match_parent"
+	            android:orientation="vertical" >
+
+	            <Button
+	                android:id="@+id/browser_button"
+	                style="?android:attr/buttonStyleSmall"
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:text="@string/imdb_site_button"
+	                android:onClick="goToIMDb"
+	                android:textSize="11sp" />
+
+	        </LinearLayout>
 		    
 	    </LinearLayout>
 	

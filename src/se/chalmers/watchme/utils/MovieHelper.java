@@ -12,33 +12,15 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.database.Cursor;
-import android.util.Log;
 import se.chalmers.watchme.model.Movie;
 import se.chalmers.watchme.model.Tag;
 
 public class MovieHelper {
 	
 	private MovieHelper() {}
-	
-	/**
-	 * Return the release year from a date on the format
-	 * "YYYY-MM-DD".
-	 * 
-	 * @param longDate The formatted long date
-	 * @return The year as a string on the format "YYYY". If the parameter is
-	 * not well formated ("YYYY-MM-DD") the parameter is returned untouched.
-	 */
-	public static String parseYearFromDate(String longDate) {
-		if(longDate == null)
-			return null;
-		
-		int index = longDate.indexOf("-");
-		return (index != -1) ? longDate.substring(0, index) : longDate; 
-	}
 	
 	/**
 	 * Convert a JSONArray to a List
@@ -143,7 +125,6 @@ public class MovieHelper {
 		return s;
 	}
 	
-	// TODO Shorter name for method?
 	/**
 	 * Helper method for converting a stringArray with tag names to a list with
 	 * Tag objects

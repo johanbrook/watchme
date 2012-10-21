@@ -1,14 +1,3 @@
-package se.chalmers.watchme.net;
-
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
-
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
-
 /**
 *	ImageDownloadTask.java
 *
@@ -21,6 +10,18 @@ import android.os.AsyncTask;
 *	@copyright (c) 2012 Johan Brook
 *	@license MIT
 */
+
+package se.chalmers.watchme.net;
+
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
+
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
+
 public class ImageDownloadTask extends AsyncTask<String, Void, Bitmap> {
 
 	private TaskActions task;

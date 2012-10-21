@@ -3,7 +3,7 @@
     <string name="app_name">WatchMe</string>
     <string name="hello_world">WatchMe app!</string>
     <string name="menu_settings">Settings</string>
-    <string name="title_activity_main">Movies</string>
+    <string name="title_activity_main">WatchMe</string>
     <string name="no_movies_found">No movies found</string>
     <string name="no_tags_found">No tags found</string>
     <string name="add_movie_button">Add Movie</string>
@@ -14,6 +14,7 @@
     <string name="release_date_hint">Release date</string>
     <string name="rating_hint">How badly do you want to see this movie?</string>
     <string name="input_tag_hint">Add tags</string>
+    
     <string name="details_genres_label">Genres not found</string>
     <string name="details_duration_label">Duration not found</string>
     <string name="details_imdb_button">IMdb</string>
@@ -28,26 +29,35 @@
     <string name="details_cast_title_hint">Cast</string>
     <string name="details_cast_list">No cast found</string>
     <string name="details_activity_title">Movie Details</string>
-    <string name="details_menu_toggle">Edit</string>
     <string name="details_menu_save">Save</string>
+    
     <string name="tab_movies">Movies</string>
     <string name="tab_tags">Tags</string>
     <string name="share_movie_list">Share List</string>
     <string name="title_activity_tagmovielist">Tags</string>
 	<string name="sort">Sort</string>
+	
+	<string name="search">Search</string>
+	<string name="search_hint">Search WatchMe</string>
+	<string name="no_results">No results found for \"%s\"</string>
+	
 	<string name="notification_prefix_text">"Notification set for "</string>
 	<string name="email_subject">WatchMe Movie List</string>
 	<string name="choose_message_app">Send the movie list in:</string>
-	<string name="imdb_loading_text">Loading from IMDb …</string>
 	<string name="imdb_fetch_error_text">An error occurred while fetching from IMDb</string>
 	<string name="notification_title">Movie released</string>
 	<string name="notification_suffix">is released!</string>
-	<string name="poster_dialog_dismiss_text">Tap poster to dimiss</string>
+	<string name="poster_dialog_dismiss_text">Tap poster to dismiss</string>
 	<string name="order_dialog_title">Order by</string>
 	<string name="delete_button_positive">Yes</string>
 	<string name="delete_button_negative">Cancel</string>
 	<string name="delete_dialog_text">Are you sure you want to delete</string>
 	<string name="datetime_format">dd-MM-yyyy</string>
 	<string name="movie_detail_runtime">Runtime:</string>
-    
+	<string name="movie_updated_toast_suffix">updated</string>
+	<string name="imdb_site_button">View on IMDb</string>
+	<string name="movie_url_error">Cannot show site for this movie</string>
+	<string name="days_threshold">7</string>
+	<string name="color_threshold">#A30000</string>
+    <string name="list_date_color">#0088CC</string>
 </resources>

@@ -6,11 +6,12 @@
 *	and disconnectFromService().
 *
 *	@author Johan
+*	@copyright (c) 2012 Johan Brook
+*	@license MIT
 */
 
 package se.chalmers.watchme.notifications;
 
-import se.chalmers.watchme.model.Movie;
 import android.app.NotificationManager;
 import android.content.ComponentName;
 import android.content.Context;
