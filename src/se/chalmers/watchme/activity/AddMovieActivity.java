@@ -1,5 +1,5 @@
 /**
-*	MovieDetailsActivity.java
+*	AddMovieActivity.java
 *
 *	@author Robin Andersson
 *	@copyright (c) 2012 Robin Andersson

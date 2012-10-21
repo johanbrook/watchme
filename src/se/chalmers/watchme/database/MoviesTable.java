@@ -1,12 +1,18 @@
+/**
+ *	MovieTable.java
+ *
+ *  The table in the database that holds data for Movies.
+ *
+ *  @author lisastenberg
+ *	@copyright (c) 2012 Johan Brook, Robin Andersson, Lisa Stenberg, Mattias Henriksson
+ *	@license MIT
+ */
+
 package se.chalmers.watchme.database;
 
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
-/**
- * The table in the database that holds data for Movies.
- * 
- * @author lisastenberg
- */
+
 public class MoviesTable {
 
 	public static final String TABLE_MOVIES = "movies";
@@ -22,9 +28,10 @@ public class MoviesTable {
 
 	private static final String CREATE_MOVIES_TABLE = "CREATE TABLE "
 			+ TABLE_MOVIES + "(" + COLUMN_MOVIE_ID + " INTEGER PRIMARY KEY,"
-			+ COLUMN_TITLE + " TEXT," + COLUMN_RATING + " INTEGER," + COLUMN_NOTE
-			+ " TEXT," + COLUMN_DATE + " INTEGER," + COLUMN_IMDB_ID +" TEXT," 
-			+ COLUMN_POSTER_LARGE + " TEXT," + COLUMN_POSTER_SMALL+ " TEXT)";
+			+ COLUMN_TITLE + " TEXT," + COLUMN_RATING + " INTEGER,"
+			+ COLUMN_NOTE + " TEXT," + COLUMN_DATE + " INTEGER,"
+			+ COLUMN_IMDB_ID + " TEXT," + COLUMN_POSTER_LARGE + " TEXT,"
+			+ COLUMN_POSTER_SMALL + " TEXT)";
 
 	public static void onCreate(SQLiteDatabase db) {
 		db.execSQL(CREATE_MOVIES_TABLE);

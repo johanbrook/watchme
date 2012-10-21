@@ -1,3 +1,13 @@
+/**
+ *	TagListFragment.java
+ *
+ *  A fragment that present data about Tags.
+ *
+ *	@author lisastenberg
+ *	@copyright (c) 2012 Robin Andersson, Johan Brook, Mattias Henriksson, Lisa Stenberg
+ *	@license MIT
+ */
+
 package se.chalmers.watchme.ui;
 
 import se.chalmers.watchme.R;
@@ -24,11 +34,6 @@ import android.widget.ListView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemLongClickListener;
 
-/**
- * A fragment that present data about Tags.
- * 
- * @author lisastenberg
- */
 public class TagListFragment extends ContentListFragment {
 	
 	public static final String TAG_ID = "se.chalmers.watchme.TAG_ID";

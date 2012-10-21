@@ -1,7 +1,3 @@
-package se.chalmers.watchme.database;
-
-import se.chalmers.watchme.model.Movie;
-
 /**
 *	MovieAlreadyExistsException.java
 *
@@ -12,6 +8,10 @@ import se.chalmers.watchme.model.Movie;
 *	@copyright (c) 2012 Johan Brook
 *	@license MIT
 */
+
+package se.chalmers.watchme.database;
+
+import se.chalmers.watchme.model.Movie;
 
 public class MovieAlreadyExistsException extends Exception {
 	
