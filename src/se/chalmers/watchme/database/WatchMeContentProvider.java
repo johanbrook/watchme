@@ -78,17 +78,24 @@ public class WatchMeContentProvider extends ContentProvider {
 		switch (sUriMatcher.match(uri)) {
 		case MOVIES:
 			/*
+			 * selection is supposed to contain "_id = <movieId>" therefore
 			 * movieSel is supposed to contain: " = <movieId>"
 			 */
 			String movieSel = selection.split(MoviesTable.COLUMN_MOVIE_ID)[1];
+			
+			// Query for all tags that is attached to the movie.
 			Cursor movieCursor = sqlDB.query(HasTagTable.TABLE_HAS_TAG, null,
 					HasTagTable.COLUMN_MOVIE_ID + movieSel, null, null, null,
 					null);
 			movieCursor.getCount();
 
+			// Delete the movie
 			deletedRows = sqlDB.delete(MoviesTable.TABLE_MOVIES, selection,
 					selectionArgs);
 
+			/*
+			 * If the movie had any attached tag: detach them
+			 */
 			while (movieCursor.moveToNext()) {
 				String tagSel = " = " + movieCursor.getString(1);
 
@@ -123,21 +130,28 @@ public class WatchMeContentProvider extends ContentProvider {
 					selectionArgs);
 			break;
 		case HAS_TAG:
+			// In practice this is the same as detaching a tag from a movie.
 			deletedRows = sqlDB.delete(HasTagTable.TABLE_HAS_TAG, selection,
 					selectionArgs);
 			/*
+			 * selection is supposed to contain 
+			 * "movieid = <movieid> AND tagid = <tagid>" therefore
+			 * 
 			 * tagSelection[0] is supposed to contain "movieid = <movieid> AND"
 			 * 
 			 * tagSelection[1] is supposed to contain: " = <tagId>"
 			 */
 			String tagSelection = selection.split(HasTagTable.COLUMN_TAG_ID)[1];
 
+			/*
+			 * Query for all movies attached to the tag.
+			 */
 			Cursor tagCursor = sqlDB.query(HasTagTable.TABLE_HAS_TAG, null,
 					HasTagTable.COLUMN_TAG_ID + tagSelection, null, null, null,
 					null);
 
+			// If the tag isn't connected to any Movie, delete it.
 			if (!tagCursor.moveToFirst()) {
-				// If the tag isn't connected to any Movie, delete it.
 				sqlDB.delete(TagsTable.TABLE_TAGS, TagsTable.COLUMN_TAG_ID
 						+ tagSelection, null);
 			}
@@ -174,17 +188,16 @@ public class WatchMeContentProvider extends ContentProvider {
 					MoviesTable.COLUMN_TITLE + " = \"" + movieTitle + "\"",
 					null, null, null, null);
 
-			movieCursor.getCount();
-
 			// If the Movie doesn't exist, create it.
-			if (!movieCursor.moveToFirst()) {
+			if (movieCursor.getCount() == 0) {
 				id = sqlDB.insert(MoviesTable.TABLE_MOVIES, null, values);
 			}
 
 			break;
 		case HAS_TAG:
-			// Check if the Tag exists. If it doesn't exist. insert into
-			// database
+			/* Check if the Tag exists. If it doesn't exist 
+			 * insert into database
+			 */
 			String tagName = values.getAsString(TagsTable.COLUMN_NAME);
 			Cursor tagCursor = sqlDB.query(TagsTable.TABLE_TAGS, null,
 					TagsTable.COLUMN_NAME + " = \"" + tagName + "\"", null,
@@ -199,8 +212,7 @@ public class WatchMeContentProvider extends ContentProvider {
 				 * as id.
 				 */
 				Cursor cursor = sqlDB.query(
-						HasTagTable.TABLE_HAS_TAG,
-						null,
+						HasTagTable.TABLE_HAS_TAG, null,
 						HasTagTable.COLUMN_MOVIE_ID + " = "
 								+ values.getAsLong(MoviesTable.COLUMN_MOVIE_ID)
 								+ " AND " + HasTagTable.COLUMN_TAG_ID + " = "
@@ -271,6 +283,10 @@ public class WatchMeContentProvider extends ContentProvider {
 			queryBuilder.setTables(TagsTable.TABLE_TAGS);
 			break;
 		case HAS_TAG:
+			/*
+			 * Join the tables Movies, HasTag and Tags to be able to query
+			 * for any attribute in any table.
+			 */
 			String tables = MoviesTable.TABLE_MOVIES + " LEFT OUTER JOIN "
 					+ HasTagTable.TABLE_HAS_TAG + " ON "
 					+ MoviesTable.TABLE_MOVIES + "."
