@@ -10,6 +10,12 @@ import android.test.ActivityInstrumentationTestCase2;
 
 import com.jayway.android.robotium.solo.Solo;
 
+/**
+ * Class that tests functionality implemented in MainActivity class.
+ * 
+ * @author mattiashenriksson
+ * 
+ */
 public class MainActivityTest extends
 		ActivityInstrumentationTestCase2<MainActivity> {
 
@@ -34,29 +40,40 @@ public class MainActivityTest extends
 	// TODO: Name? testOnCreate()?
 	// Testing to basic stuff?
 	// API fix
+	/**
+	 * Test if main activity is in correct state.
+	 */
 	@TargetApi(11)
 	public void testState() {
 		MainActivity mainActivity = this.getActivity();
 		ActionBar actionBar = mainActivity.getActionBar();
 
+		// Check if the correct navigation mode is set
 		assertTrue(actionBar.getNavigationMode() == ActionBar.NAVIGATION_MODE_TABS);
 	}
 
+	/**
+	 * Test if the tab switching functionality is functioning properly.
+	 */
 	public void testSwitchTabs() {
 		MainActivity mainActivity = this.getActivity();
+
+		// Get the id of the view pager handling the tabs
 		ViewPager viewPager = (ViewPager) mainActivity
 				.findViewById(R.id.vPager);
 		int viewPagerId = viewPager.getId();
 
 		solo.assertCurrentActivity("Current activity is not MainActivity",
 				MainActivity.class);
-
+		
+		// Click Tags-tab and check if it's viewed
 		boolean tagListFragmentViewed = solo
 				.waitForFragmentByTag("android:switcher:" + viewPagerId + ":"
 						+ Constants.TAG_LIST_FRAGMENT_VIEW_PAGER_ID);
 		solo.clickOnText("Tags");
 		assertTrue(tagListFragmentViewed);
 
+		// Click Movies-tab and check if it's viewed
 		boolean movieListFragmentViewed = solo
 				.waitForFragmentByTag("android:switcher:" + viewPagerId + ":"
 						+ Constants.MOVIE_LIST_FRAGMENT_VIEW_PAGER_ID);

@@ -9,18 +9,18 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 
-
-
 /**
  * The Content Provider for the WatchMe application.
  * 
  * @author lisastenberg
- *
  */
 public class WatchMeContentProvider extends ContentProvider {
 	
 	private DatabaseHelper db;
 	
+	/**
+	 * The authority of the Content Provider
+	 */
 	public static final String AUTHORITY = "se.chalmers.watchme.database." +
 			"providers.WatchMeContentProvider";
 	
@@ -34,10 +34,19 @@ public class WatchMeContentProvider extends ContentProvider {
 	private static final int TAGS_ID = 40;
 	private static final int HAS_TAG = 50;
 	
+	/**
+	 * The Uri that affects the Movie table.
+	 */
 	public static final Uri CONTENT_URI_MOVIES = Uri.parse("content://" 
 			+ AUTHORITY + "/" + BASE_PATH_MOVIES);
+	/**
+	 * The Uri that affects the Tags table.
+	 */
 	public static final Uri CONTENT_URI_TAGS = Uri.parse("content://" 
 			+ AUTHORITY + "/" + BASE_PATH_TAGS);
+	/**
+	 * The Uri that affects the HasTag table.
+	 */
 	public static final Uri CONTENT_URI_HAS_TAG = Uri.parse("content://" 
 			+ AUTHORITY + "/" + BASE_PATH_HAS_TAG);
 	
@@ -47,13 +56,13 @@ public class WatchMeContentProvider extends ContentProvider {
 			ContentResolver.CURSOR_DIR_BASE_TYPE + "/watchme";
 	
 	private static final UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-	  static {
-		    sUriMatcher.addURI(AUTHORITY, BASE_PATH_MOVIES, MOVIES);
-		    sUriMatcher.addURI(AUTHORITY, BASE_PATH_MOVIES + "/#", MOVIES_ID);
-		    sUriMatcher.addURI(AUTHORITY, BASE_PATH_TAGS, TAGS);
-		    sUriMatcher.addURI(AUTHORITY, BASE_PATH_TAGS + "/#", TAGS_ID);
-		    sUriMatcher.addURI(AUTHORITY, BASE_PATH_HAS_TAG, HAS_TAG);
-		  };
+	static {
+		sUriMatcher.addURI(AUTHORITY, BASE_PATH_MOVIES, MOVIES);
+		sUriMatcher.addURI(AUTHORITY, BASE_PATH_MOVIES + "/#", MOVIES_ID);
+		sUriMatcher.addURI(AUTHORITY, BASE_PATH_TAGS, TAGS);
+		sUriMatcher.addURI(AUTHORITY, BASE_PATH_TAGS + "/#", TAGS_ID);
+		sUriMatcher.addURI(AUTHORITY, BASE_PATH_HAS_TAG, HAS_TAG);
+	};
 	
 	@Override
 	public int delete(Uri uri, String selection, String[] selectionArgs) {
