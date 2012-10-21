@@ -71,14 +71,15 @@ public class MainActivity extends FragmentActivity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.activity_main, menu);
 		
-		
-		
 		int nbrOfMovies = new DatabaseAdapter(getContentResolver()).getMovieCount();
 
+		// If there are no movies make the mail button and sort button disabled
 		if (nbrOfMovies == 0) {
-			System.out.println("nbrofmovies 0");
 			MenuItem mailItem = menu.findItem(R.id.menu_send_email_button);
+			MenuItem sortItem = menu.findItem(R.id.menu_sort_button);
+			
 			mailItem.setEnabled(false);
+			sortItem.setEnabled(false);
 		}
 		
 		
