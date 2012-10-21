@@ -14,6 +14,7 @@
     <string name="release_date_hint">Release date</string>
     <string name="rating_hint">How badly do you want to see this movie?</string>
     <string name="input_tag_hint">Add tags</string>
+    
     <string name="details_genres_label">Genres not found</string>
     <string name="details_duration_label">Duration not found</string>
     <string name="details_imdb_button">IMdb</string>
@@ -30,6 +31,7 @@
     <string name="details_activity_title">Movie Details</string>
     <string name="details_menu_toggle">Edit</string>
     <string name="details_menu_save">Save</string>
+    
     <string name="tab_movies">Movies</string>
     <string name="tab_tags">Tags</string>
     <string name="share_movie_list">Share List</string>
