@@ -30,6 +30,7 @@ import se.chalmers.watchme.utils.MovieHelper;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -66,6 +67,7 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
 	private ImageDialog dialog;
 	private EditText tagField;
 	private EditText noteField;
+	private Button imdbButton;
 	
 	private RatingBar myRatingBar;
 	
@@ -74,6 +76,7 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
 	private Calendar tempReleaseDate;
 	
 	private Menu menu;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -88,11 +91,14 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
         this.poster = (ImageView) findViewById(R.id.poster);
         this.poster.setOnClickListener(new OnPosterClickListener());
         
+        this.imdbButton = (Button) findViewById(R.id.browser_button);
+        this.imdbButton.setEnabled(false);
+        
         this.tagField = (EditText) findViewById(R.id.tag_field_details);
         this.noteField = (EditText) findViewById(R.id.note_field_details);
         
-        myRatingBar = (RatingBar) findViewById(R.id.my_rating_bar);
-        myRatingBar.setEnabled(false);	// Unable to do this in XML (?)
+        this.myRatingBar = (RatingBar) findViewById(R.id.my_rating_bar);
+        this.myRatingBar.setEnabled(false);	// Unable to do this in XML (?)
         
         this.dialog = new ImageDialog(this);
         
@@ -147,11 +153,33 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
         
     }
     
+    /**
+     * Click callback when clicking on "View on IMDb" button.
+     * Opens the current movie in the Android browser.
+     * 
+     * Shows an error toast if it wasn't possible to go to
+     * the website, perhaps due to missing IMDb id.
+     * 
+     * @param view The view that triggered the event
+     */
+    public void goToIMDb(View view) {
+    	final String BASE_URL = "http://m.imdb.com/title/";
+    	final String imdbID = (String) view.getTag();
+    	
+    	if(imdbID != null) {
+    		String url = BASE_URL + imdbID;
+    		startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+    	}
+    	else {
+    		Toast.makeText(this, R.string.movie_url_error, Toast.LENGTH_LONG).show();
+    	}
+    }
+    
     @Override
     protected void onNewIntent(Intent intent) {
     	super.onNewIntent(intent);
     	System.out.println("new");
-    	}
+    }
     
 	/**
 	 * Populate various view fields with data from a Movie.
@@ -186,6 +214,15 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
      */
     
     public void populateFieldsFromJSON(JSONObject json) {
+    	
+    	/*
+    	 * Enable the browser button and tag it with the IMDB id
+    	 * from the JSON response. Used to build an URL to the
+    	 * movie on IMDB.com 
+    	 */
+    	this.imdbButton.setEnabled(true);
+    	this.imdbButton.setTag(json.optString("imdb_id"));
+    	
     	TextView rating = (TextView) findViewById(R.id.imdb_rating_number_label);
     	TextView plot = (TextView) findViewById(R.id.plot_content);
     	TextView cast = (TextView) findViewById(R.id.cast_list);
@@ -287,7 +324,7 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
 		TextView releaseDateLabel = (TextView) findViewById(R.id.releaseDate);
 		releaseDateLabel.setText(DateTimeUtils.toSimpleDate(tempReleaseDate));
 	}
-
+	
 
     /**
      * The IMDb info fetch task.
@@ -313,10 +350,12 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
     	@Override
 		public void onCancelled() {
     		this.spinner.setVisibility(View.INVISIBLE);
+    		
     		Toast.makeText(getBaseContext(), 
 					getString(R.string.imdb_fetch_error_text), 
 					Toast.LENGTH_SHORT)
 			.show();
+    		
 		}
     	
 		@Override
