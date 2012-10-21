@@ -76,7 +76,14 @@ public class DateTimeUtils {
 		return (index != -1) ? longDate.substring(0, index) : longDate; 
 	}
 
-	
+	/**
+	 * Formats a calendar instance to relative timestamp.
+	 * 
+	 * <p>Such as "next year", "3 days", etc. Only works for future dates.</p>
+	 * 
+	 * @param cal The input date
+	 * @return A formatted duration string
+	 */
 	public static String toHumanDate(Calendar cal) {
 		Calendar now = GregorianCalendar.getInstance();
 		

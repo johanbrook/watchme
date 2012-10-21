@@ -1,3 +1,19 @@
+/**
+ *	GenericCursorLoader.java
+ *
+ *  Static library support version of the framework's
+ *  {@link android.content.CursorLoader}. Used to write apps that run on
+ *  platforms prior to Android 3.0. When running on Android 3.0 or above, this
+ *  implementation is still used; it does not try to switch to the framework's
+ *  implementation. See the framework SDK documentation for a class overview.
+ * 
+ *  A CursorLoader that has a ICursorHelper that calculates the cursor.
+ *
+ *	@author lisastenberg
+ *	@copyright (c) 2012 Johan Brook, Robin Andersson, Lisa Stenberg, Mattias Henriksson
+ *	@license MIT
+ */
+
 package se.chalmers.watchme.database;
 
 import android.content.Context;
@@ -10,28 +26,16 @@ import android.support.v4.content.CursorLoader;
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
 
-/**
- * Static library support version of the framework's
- * {@link android.content.CursorLoader}. Used to write apps that run on
- * platforms prior to Android 3.0. When running on Android 3.0 or above, this
- * implementation is still used; it does not try to switch to the framework's
- * implementation. See the framework SDK documentation for a class overview.
- * 
- * A CursorLoader that has a ICursorHelper that calculates the cursor.
- * 
- * @author lisastenberg
- */
-
 public class GenericCursorLoader extends CursorLoader {
 
 	private final ForceLoadContentObserver mObserver;
 	private Uri mUri;
 
 	private String mSortOrder;
-	
+
 	private Cursor mCursor;
 	private CancellationSignal mCancellationSignal;
-	
+
 	private ICursorHelper mCursorHelper;
 
 	/**
@@ -43,46 +47,48 @@ public class GenericCursorLoader extends CursorLoader {
 		super(context);
 		mObserver = new ForceLoadContentObserver();
 	}
-	
+
 	/**
-	 * Creates a CursorLoader with a cursorHelper that is used to calculate
-	 * the Cursor in loadCursor()
+	 * Creates a CursorLoader with a cursorHelper that is used to calculate the
+	 * Cursor in loadCursor()
 	 * 
-	 * @param context The context
-	 * @param cursorHelper The CursorHelper
+	 * @param context
+	 *            The context
+	 * @param cursorHelper
+	 *            The CursorHelper
 	 */
 	public GenericCursorLoader(Context context, ICursorHelper cursorHelper) {
 		super(context);
 		mObserver = new ForceLoadContentObserver();
 		mCursorHelper = cursorHelper;
-		
+
 		mUri = mCursorHelper.getUri();
 		mSortOrder = mCursorHelper.getSortOrder();
 	}
-	
+
 	/* Runs on a worker thread */
 	@Override
 	public Cursor loadInBackground() {
-        synchronized (this) {
-        	//TODO: Unnecessary?
-            mCancellationSignal = new CancellationSignal();
-        }
-        try {
-        	
-            Cursor cursor = mCursorHelper.getCursor();
-            if (cursor != null) {
-            	
-                // Ensure the cursor window is filled
-            	cursor.getCount();
-                registerContentObserver(cursor, mObserver);
-            }
-            return cursor;
-        } finally {
-            synchronized (this) {
-            	//TODO: Unnecessary?
-                mCancellationSignal = null;
-            }
-        }
+		synchronized (this) {
+			// TODO: Unnecessary?
+			mCancellationSignal = new CancellationSignal();
+		}
+		try {
+
+			Cursor cursor = mCursorHelper.getCursor();
+			if (cursor != null) {
+
+				// Ensure the cursor window is filled
+				cursor.getCount();
+				registerContentObserver(cursor, mObserver);
+			}
+			return cursor;
+		} finally {
+			synchronized (this) {
+				// TODO: Unnecessary?
+				mCancellationSignal = null;
+			}
+		}
 	}
 
 	/**
@@ -103,10 +109,10 @@ public class GenericCursorLoader extends CursorLoader {
 			}
 			return;
 		}
-		
+
 		Cursor oldCursor = mCursor;
 		mCursor = cursor;
-		
+
 		if (isStarted()) {
 			super.deliverResult(cursor);
 		}
@@ -164,13 +170,13 @@ public class GenericCursorLoader extends CursorLoader {
 
 	@Override
 	public Uri getUri() {
-        return mUri;
-    }
+		return mUri;
+	}
 
 	@Override
-    public void setUri(Uri uri) {
-        this.mUri = uri;
-    }
+	public void setUri(Uri uri) {
+		this.mUri = uri;
+	}
 
 	@Override
 	public String getSortOrder() {
@@ -186,10 +192,14 @@ public class GenericCursorLoader extends CursorLoader {
 	public void dump(String prefix, FileDescriptor fd, PrintWriter writer,
 			String[] args) {
 		super.dump(prefix, fd, writer, args);
-		writer.print(prefix); writer.print("mUri="); writer.println(mUri);
-		writer.print(prefix); writer.print("mSortOrder=");
+		writer.print(prefix);
+		writer.print("mUri=");
+		writer.println(mUri);
+		writer.print(prefix);
+		writer.print("mSortOrder=");
 		writer.println(mSortOrder);
-		writer.print(prefix); writer.print("mCursor=");
+		writer.print(prefix);
+		writer.print("mCursor=");
 		writer.println(mCursor);
 		writer.print(prefix);
 	}

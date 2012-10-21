@@ -163,7 +163,6 @@ public class MovieListFragment extends ContentListFragment {
 	
 	@Override
 	public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
-		//db = new DatabaseAdapter(getActivity().getContentResolver());
 		
 		return new GenericCursorLoader(getActivity(), new ICursorHelper() {
 
@@ -334,9 +333,8 @@ public class MovieListFragment extends ContentListFragment {
 		setAdapter(new SimpleCursorAdapter(getActivity(), R.layout.list_item_movie , null, from, to, 0));
 		
 		/**
-		 * Convert date text from millis to dd-mm-yyyy format
+		 * Manipulate the shown date in list
 		 */
-		//TODO: Refactor?
 		getAdapter().setViewBinder(new ViewBinder() {
 			
 			public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
@@ -350,6 +348,7 @@ public class MovieListFragment extends ContentListFragment {
 					String formattedDate = DateTimeUtils.toHumanDate(cal);
 					
 					textView.setText(formattedDate);
+					
 					return true;
 				}
 				
