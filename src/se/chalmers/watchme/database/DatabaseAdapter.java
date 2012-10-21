@@ -16,12 +16,7 @@ import se.chalmers.watchme.model.Tag;
 /**
  * Adapter to the Content Provider.
  * 
- * To get a correct update in the database it seems like you need to create
- * a new DatabaseAdapter before every new method-call to this class.
- * Probably because it needs a fresh ContentResolver.
- * 
  * @author lisastenberg
- *
  */
 public class DatabaseAdapter {
 	

@@ -1,7 +1,6 @@
 package se.chalmers.watchme.ui;
 
 import se.chalmers.watchme.R;
-import se.chalmers.watchme.activity.MainActivity;
 import se.chalmers.watchme.activity.TagMovieListActivity;
 import se.chalmers.watchme.database.DatabaseAdapter;
 import se.chalmers.watchme.database.ICursorHelper;
@@ -25,10 +24,21 @@ import android.widget.ListView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemLongClickListener;
 
+/**
+ * A fragment that present data about Tags.
+ * 
+ * @author lisastenberg
+ */
 public class TagListFragment extends ContentListFragment {
 	
-	private DatabaseAdapter db;
+	public static final String TAG_ID = "se.chalmers.watchme.TAG_ID";
 	
+	private static final int LOADER_ID = 1;
+	
+	/**
+	 * Creates a new MovieListFragment with the Uri
+	 * WatchMeContentProvider.CONTENT_URI_TAGS
+	 */
 	public TagListFragment() {
 		super(WatchMeContentProvider.CONTENT_URI_TAGS);
 	}
@@ -37,9 +47,7 @@ public class TagListFragment extends ContentListFragment {
 	public void onActivityCreated(Bundle b) {
 		super.onActivityCreated(b);
 		
-		// We want to participate in manipulating the Action bar options menu
-		// TODO But we don't do it?
-		this.setHasOptionsMenu(true);
+		db = new DatabaseAdapter(getActivity().getContentResolver());
 		
 		setUpAdapter();
 		
@@ -56,7 +64,6 @@ public class TagListFragment extends ContentListFragment {
 	
 	@Override
 	public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
-		db = new DatabaseAdapter(getActivity().getContentResolver());
 		
 		return new GenericCursorLoader(getActivity(), new ICursorHelper() {
 			
@@ -85,7 +92,7 @@ public class TagListFragment extends ContentListFragment {
 		 */
 		
 		Intent intent = new Intent(getActivity(), TagMovieListActivity.class);
-		intent.putExtra(MainActivity.TAG_ID, id);
+		intent.putExtra(TAG_ID, id);
 		startActivity(intent);
 		getActivity().overridePendingTransition(R.anim.right_slide_in, R.anim.right_slide_out);
 			
@@ -101,7 +108,6 @@ public class TagListFragment extends ContentListFragment {
      */
     private class OnDeleteListener implements OnItemLongClickListener {
     	public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-			db = new DatabaseAdapter(getActivity().getContentResolver());
 			
 			Cursor selectedTag = (Cursor) getListView().getItemAtPosition(position);
     		final Tag tag = db.getTag(Long.parseLong(selectedTag.getString(0)));
@@ -111,7 +117,6 @@ public class TagListFragment extends ContentListFragment {
             alertbox.setPositiveButton(getString(R.string.delete_button_positive), new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface arg0, int arg1) {
                 	
-                	db = new DatabaseAdapter(getActivity().getContentResolver());
                 	db.removeTag(tag);
                 	
                     Toast.makeText(getActivity().getApplicationContext(), "\"" + tag.getName() + "\" ws deleted" , Toast.LENGTH_SHORT).show();
@@ -128,11 +133,16 @@ public class TagListFragment extends ContentListFragment {
 		}    	
 	}
 
+    /**
+     * Set up adapter and set adapter.
+     */
 	private void setUpAdapter() {
-		String[] from = new String[] { TagsTable.COLUMN_TAG_ID, TagsTable.COLUMN_NAME };
-		int[] to = new int[] { android.R.id.text1 , android.R.id.text1 };
 		
-		getActivity().getSupportLoaderManager().initLoader(1, null, this);
+		// Bind name column in the table Tags to the text field in each row.
+		String[] from = new String[] { TagsTable.COLUMN_NAME };
+		int[] to = new int[] { android.R.id.text1 };
+		
+		getActivity().getSupportLoaderManager().initLoader(LOADER_ID, null, this);
 		super.setAdapter(new SimpleCursorAdapter(getActivity(), android.R.layout.simple_list_item_1 , null, from, to, 0));
 	}
 }

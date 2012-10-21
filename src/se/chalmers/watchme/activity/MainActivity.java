@@ -19,17 +19,12 @@ import android.view.MenuItem;
 import android.widget.SearchView;
 
 
-
 public class MainActivity extends FragmentActivity {
 	
 	public static final String MOVIE_DETAILS_ID = "se.chalmers.watchme.DETAILS_ID";
 	public static final String MOVIE_DETAILS_TITLE = "se.chalmers.watchme.DETAILS_TITLE";
 	public static final String MOVIE_DETAILS_RATING = "se.chalmers.watchme.DETAILS_RATING";
 	public static final String MOVIE_DETAILS_NOTE = "se.chalmers.watchme.DETAILS_NOTE";
-	
-	//TODO: Correct to put key values for Intent.putExtra() here? possibly better
-	// putting it in class where it is used
-	public static final String TAG_ID = "se.chalmers.watchme.TAG_ID";
 	
 	private ViewPager viewPager;
 	private TabsAdapter tabsAdapter;
@@ -66,7 +61,6 @@ public class MainActivity extends FragmentActivity {
         SearchView searchView = (SearchView) menu.findItem(R.id.menu_search_button).getActionView();
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         searchView.setIconifiedByDefault(false); // Do not iconify the widget; expand it by default
-        //searchView.setSubmitButtonEnabled(true);
 
         return true;
     }

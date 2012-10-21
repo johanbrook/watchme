@@ -9,6 +9,7 @@
 package se.chalmers.watchmetest.util;
 
 import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 import android.test.suitebuilder.annotation.SmallTest;
 
@@ -54,6 +55,53 @@ public class DateTimeUtilsTest extends TestCase {
 		String incorrectDate = "2012/03/03";
 		assertEquals(DateTimeUtils.parseYearFromDate(incorrectDate), incorrectDate);
 		
-		assertNull(DateTimeUtils.parseYearFromDate(null), null);
+		assertNull(DateTimeUtils.parseYearFromDate(null));
+	}
+	
+	/**
+	 * Test the relative time function in order
+	 */
+	public void testToHumanDate() {
+		Calendar date = GregorianCalendar.getInstance();
+		
+		assertEquals("today", DateTimeUtils.toHumanDate(date));
+
+		date.add(Calendar.DAY_OF_MONTH, 1);
+		assertEquals("tomorrow", DateTimeUtils.toHumanDate(date));
+		date.add(Calendar.DAY_OF_MONTH, 3);
+		assertEquals("4 days", DateTimeUtils.toHumanDate(date));
+		
+		date.add(Calendar.MONTH, 1);
+		assertEquals("next month", DateTimeUtils.toHumanDate(date));
+		date.add(Calendar.MONTH, 1);
+		assertEquals("2 months", DateTimeUtils.toHumanDate(date));
+		
+		date.add(Calendar.YEAR, 1);
+		assertEquals("next year", DateTimeUtils.toHumanDate(date));
+		date.add(Calendar.YEAR, 3);
+		assertEquals("4 years", DateTimeUtils.toHumanDate(date));
+	}
+	
+	/**
+	 * Now test the relative time function with month before day
+	 */
+	public void testToHumanDateMixedOrder() {
+		Calendar date = GregorianCalendar.getInstance();
+		
+		date.add(Calendar.MONTH, 1);
+		assertEquals("next month", DateTimeUtils.toHumanDate(date));
+		date.add(Calendar.MONTH, 1);
+		assertEquals("2 months", DateTimeUtils.toHumanDate(date));
+		
+		// Return string should still be the same
+		date.add(Calendar.DAY_OF_MONTH, 3);
+		assertEquals("2 months", DateTimeUtils.toHumanDate(date));
+	}
+	
+	public void testToHumanDateOverlap() {
+		Calendar date = GregorianCalendar.getInstance();
+		
+		date.add(Calendar.MONTH, 6);
+		assertEquals("next year", DateTimeUtils.toHumanDate(date));
 	}
 }

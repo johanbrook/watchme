@@ -9,18 +9,18 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 
-
-
 /**
  * The Content Provider for the WatchMe application.
  * 
  * @author lisastenberg
- *
  */
 public class WatchMeContentProvider extends ContentProvider {
 	
 	private DatabaseHelper db;
 	
+	/**
+	 * The authority of the Content Provider
+	 */
 	public static final String AUTHORITY = "se.chalmers.watchme.database." +
 			"providers.WatchMeContentProvider";
 	
@@ -34,10 +34,19 @@ public class WatchMeContentProvider extends ContentProvider {
 	private static final int TAGS_ID = 40;
 	private static final int HAS_TAG = 50;
 	
+	/**
+	 * The Uri that affects the Movie table.
+	 */
 	public static final Uri CONTENT_URI_MOVIES = Uri.parse("content://" 
 			+ AUTHORITY + "/" + BASE_PATH_MOVIES);
+	/**
+	 * The Uri that affects the Tags table.
+	 */
 	public static final Uri CONTENT_URI_TAGS = Uri.parse("content://" 
 			+ AUTHORITY + "/" + BASE_PATH_TAGS);
+	/**
+	 * The Uri that affects the HasTag table.
+	 */
 	public static final Uri CONTENT_URI_HAS_TAG = Uri.parse("content://" 
 			+ AUTHORITY + "/" + BASE_PATH_HAS_TAG);
 	
@@ -47,13 +56,13 @@ public class WatchMeContentProvider extends ContentProvider {
 			ContentResolver.CURSOR_DIR_BASE_TYPE + "/watchme";
 	
 	private static final UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-	  static {
-		    sUriMatcher.addURI(AUTHORITY, BASE_PATH_MOVIES, MOVIES);
-		    sUriMatcher.addURI(AUTHORITY, BASE_PATH_MOVIES + "/#", MOVIES_ID);
-		    sUriMatcher.addURI(AUTHORITY, BASE_PATH_TAGS, TAGS);
-		    sUriMatcher.addURI(AUTHORITY, BASE_PATH_TAGS + "/#", TAGS_ID);
-		    sUriMatcher.addURI(AUTHORITY, BASE_PATH_HAS_TAG, HAS_TAG);
-		  };
+	static {
+		sUriMatcher.addURI(AUTHORITY, BASE_PATH_MOVIES, MOVIES);
+		sUriMatcher.addURI(AUTHORITY, BASE_PATH_MOVIES + "/#", MOVIES_ID);
+		sUriMatcher.addURI(AUTHORITY, BASE_PATH_TAGS, TAGS);
+		sUriMatcher.addURI(AUTHORITY, BASE_PATH_TAGS + "/#", TAGS_ID);
+		sUriMatcher.addURI(AUTHORITY, BASE_PATH_HAS_TAG, HAS_TAG);
+	};
 	
 	@Override
 	public int delete(Uri uri, String selection, String[] selectionArgs) {
@@ -64,9 +73,7 @@ public class WatchMeContentProvider extends ContentProvider {
 		case MOVIES:
 			/*
 			 * movieSel is supposed to contain: " = <movieId>"
-			 */
-			System.out.println("CP: deleteMovie: sel " + selection);
-			
+			 */			
 			String movieSel = selection.split(MoviesTable.COLUMN_MOVIE_ID)[1];
 			Cursor movieCursor = sqlDB.query(HasTagTable.TABLE_HAS_TAG, null, 
 					HasTagTable.COLUMN_MOVIE_ID + movieSel, null, 
@@ -156,9 +163,6 @@ public class WatchMeContentProvider extends ContentProvider {
 		switch(sUriMatcher.match(uri)) {
 		case MOVIES:
 			
-			System.out.println("CP: insertMovie");
-			
-			// TODO It should not be possible to add the same movie twice
 			String movieTitle = values.getAsString(MoviesTable.COLUMN_TITLE);
 			Cursor movieCursor = sqlDB.query(MoviesTable.TABLE_MOVIES, null, 
 					MoviesTable.COLUMN_TITLE + " = \"" + 
@@ -227,7 +231,6 @@ public class WatchMeContentProvider extends ContentProvider {
 	@Override
 	public boolean onCreate() {
 		db = new DatabaseHelper(getContext());
-		System.out.println("--- CREATED DB IN CONTENT PROVIDER ---");
 		return true;
 	}
 

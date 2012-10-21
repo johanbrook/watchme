@@ -5,7 +5,6 @@ import java.net.ResponseCache;
 import java.util.Calendar;
 
 import se.chalmers.watchme.R;
-import se.chalmers.watchme.activity.MainActivity;
 import se.chalmers.watchme.activity.MovieDetailsActivity;
 import se.chalmers.watchme.database.DatabaseAdapter;
 import se.chalmers.watchme.database.GenericCursorLoader;
@@ -43,47 +42,89 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
+/**
+ * A fragment that present data about Movies.
+ * 
+ * @author lisastenberg
+ */
 // TODO Important! API level required does not match with what is used
 @TargetApi(11)
 public class MovieListFragment extends ContentListFragment {
 	
-	private DatabaseAdapter db;
+	/**
+	 * Enum that represents a sort order for Movies
+	 * 
+	 * @author lisastenberg
+	 */
+	public enum SortOrder {
+		
+		ORDER_BY_DATE (MoviesTable.COLUMN_DATE), 
+		ORDER_BY_TITLE (MoviesTable.COLUMN_TITLE), 
+		ORDER_BY_RATING (MoviesTable.COLUMN_RATING + " DESC");
+		
+		private String orderBy;
+		
+		/**
+		 * Creates a new enum that has a string to order by
+		 * @param orderBy
+		 */
+		SortOrder(String orderBy) {
+			this.orderBy = orderBy;
+		}
+		
+		/**
+		 * Return the string to order by
+		 * @return the string to order by
+		 */
+		public String getOrderBy() {
+			return orderBy;
+		}
+	}
+		
+	private static final int LOADER_ID = 0;
 	
 	private AsyncTask<String, Void, Bitmap> imageTask;
 	
-	private static final String ORDER_BY_DATE = MoviesTable.COLUMN_DATE;
-	private static final String ORDER_BY_TITLE = MoviesTable.COLUMN_TITLE;
-	private static final String ORDER_BY_RATING = MoviesTable.COLUMN_RATING + " DESC";
-	
-	private static final long DEFAULT_TAGID = -1;
+	private static final long MISSING_TAGID = -1;
 	private Long tagId;
 	
-	private int sortOrder = 0;
+	/**
+	 * Has the current sort order
+	 */
+	private static int sortOrder;
 	private String query;
 	
+	/**
+	 * Creates a new MovieListFragment with the Uri
+	 * WatchMeContentProvider.CONTENT_URI_MOVIES
+	 */
 	public MovieListFragment() {
 		super(WatchMeContentProvider.CONTENT_URI_MOVIES);
 	}
 	
 	@Override
-	public void onActivityCreated(Bundle b) {
-		super.onActivityCreated(b);
+	public void onActivityCreated(Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
 						
-		// TODO: Has to be done in onCreate instead?
+		db = new DatabaseAdapter(getActivity().getContentResolver());
+		
 		setHasOptionsMenu(true);
+		setRetainInstance(true);
 		
 		final File cacheDir = getActivity().getBaseContext().getCacheDir();
 		ResponseCache.setDefault(new ImageCache(cacheDir));
 
+		/*
+		 * If any arguments where set
+		 */
 		Bundle arguments = getArguments();
 		if (arguments != null) {
 			query = arguments.getString(getString(R.string.search), null);
-			tagId = arguments.getLong(MainActivity.TAG_ID, DEFAULT_TAGID);
+			tagId = arguments.getLong(TagListFragment.TAG_ID, MISSING_TAGID);
 		} else if(tagId == null) {
-			tagId = DEFAULT_TAGID;
+			tagId = MISSING_TAGID;
 		}
-		
+
 		setUpAdapter();
 	    
 		// Set up listeners to delete and view a movie
@@ -121,9 +162,9 @@ public class MovieListFragment extends ContentListFragment {
 	
 	@Override
 	public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
-		db = new DatabaseAdapter(getActivity().getContentResolver());
+		//db = new DatabaseAdapter(getActivity().getContentResolver());
 		
-			return new GenericCursorLoader(getActivity(), new ICursorHelper() {
+		return new GenericCursorLoader(getActivity(), new ICursorHelper() {
 
 			@Override
 			public Uri getUri() {
@@ -132,15 +173,16 @@ public class MovieListFragment extends ContentListFragment {
 
 			@Override
 			public String getSortOrder() {
-				return ORDER_BY_DATE;
+				return SortOrder.values()[sortOrder].getOrderBy();
 			}
 
 			@Override
 			public Cursor getCursor() {
-				if (tagId == -1) {
+				if (tagId == MISSING_TAGID) {
 					if(query == null || query.equals("")) {
 						return db.getAllMoviesCursor(getSortOrder());
 					}
+					// If this is presenting a search.
 					return db.searchForMovies(query);
 				}
 				return db.getAttachedMovies(tagId);
@@ -163,21 +205,11 @@ public class MovieListFragment extends ContentListFragment {
     	return super.onOptionsItemSelected(item);
     }
     
-    public void search(String query) {
-    	db = new DatabaseAdapter(getActivity().getContentResolver());
-    	Cursor c = db.searchForMovies(query);
-    	System.out.println("NUMBER OF MOVIES DETECTED: " + c.getCount());
-    	onLoadFinished(null, c);
-    	getAdapter().notifyDataSetChanged();
-    	//showResult(db.searchForMovies(query));
-    }
-    
     /**
      * Show a Dialog Box with choices of attributes to order the Movies by.
      */
     private void sortList() {
     	final String[] alternatives = { "Date" , "Rating", "Title" };
-    	db = new DatabaseAdapter(getActivity().getContentResolver());
     	
     	AlertDialog.Builder alertbox = new AlertDialog.Builder(getActivity());
     	alertbox.setTitle(getString(R.string.order_dialog_title));
@@ -185,25 +217,14 @@ public class MovieListFragment extends ContentListFragment {
     			new DialogInterface.OnClickListener() {
     			public void onClick(DialogInterface dialog, int item) {
 
-    				Cursor cursor = null;
-    				switch(item) {
-    				case 0:
-    					cursor = db.getAllMoviesCursor(ORDER_BY_DATE);
-    					break;
-    				case 1:
-    					cursor = db.getAllMoviesCursor(ORDER_BY_RATING);
-    					break;
-    				case 2:
-    					cursor = db.getAllMoviesCursor(ORDER_BY_TITLE);
-    					break;
-    				default:
-    					break;
-    				}
     				sortOrder = item;
-    				// Change the cursor
+    				// Fetch the order by-string from SortOrder
+    				String orderBy = SortOrder.values()[sortOrder].getOrderBy();
     				
+    				Cursor cursor = db.getAllMoviesCursor(orderBy);
+    				
+    				// Change the cursor
     				onLoadFinished(null, cursor);
-    				getAdapter().notifyDataSetChanged();
     				
     				dialog.dismiss();
     			}
@@ -224,20 +245,21 @@ public class MovieListFragment extends ContentListFragment {
 		public void onItemClick(AdapterView<?> parent, View view, int position,
 				long id) {
 			
-			db = new DatabaseAdapter(getActivity().getContentResolver());
-			
+			/*
+			 * Cancel any tasks that fetches poster images if a movie is selected
+			 */
 			if(imageTask != null && imageTask.getStatus() == AsyncTask.Status.RUNNING) {
 				imageTask.cancel(true);
 			}
 			
+			// Fetch selected movie from database
 			Cursor selectedMovie = (Cursor) getListView().getItemAtPosition(position);
 			Movie movie = db.getMovie(Long.parseLong(selectedMovie.getString(0)));
 			
 			Intent intent = new Intent(getActivity(), MovieDetailsActivity.class);
-			
-			// TODO Fetch all data from database in DetailsActivity instead?
 			intent.putExtra(MovieDetailsActivity.MOVIE_EXTRA, movie);
 			
+			// .. and jump to the details view
 			startActivity(intent);
 			
 		}
@@ -253,7 +275,6 @@ public class MovieListFragment extends ContentListFragment {
      */
     private class OnDeleteListener implements OnItemLongClickListener {
     	public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-			db = new DatabaseAdapter(getActivity().getContentResolver());
 			
 			Cursor selectedMovie = (Cursor) getListView().getItemAtPosition(position);
     		final Movie movie = db.getMovie(Long.parseLong(selectedMovie.getString(0)));
@@ -263,7 +284,6 @@ public class MovieListFragment extends ContentListFragment {
             alertbox.setPositiveButton(getString(R.string.delete_button_positive), new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface arg0, int arg1) {
                 	
-                	db = new DatabaseAdapter(getActivity().getContentResolver());
                 	db.removeMovie(movie);
                 	
                 	NotificationClient.cancelNotification(getActivity(), movie);
@@ -280,26 +300,27 @@ public class MovieListFragment extends ContentListFragment {
 			return true;
 		}    	
 	}
-
+    
+    /**
+     * Set up adapter and set adapter.
+     */
 	private void setUpAdapter() {
-		System.out.println("--- setUpAdapter ---");
 
-		
+		// Bind columns from the table Movies to items in the rows.
 		String[] from = new String[] { 
-				MoviesTable.COLUMN_MOVIE_ID, 
 				MoviesTable.COLUMN_TITLE,  
 				MoviesTable.COLUMN_RATING ,
 				MoviesTable.COLUMN_DATE,
 				MoviesTable.COLUMN_POSTER_SMALL
 				};
 		
-		int[] to = new int[] { 0 , 
+		int[] to = new int[] { 
 				R.id.title, 
 				R.id.raiting, 
 				R.id.date,
 				R.id.poster};
 		
-		getActivity().getSupportLoaderManager().initLoader(2, null, this);
+		getActivity().getSupportLoaderManager().initLoader(LOADER_ID, null, this);
 		setAdapter(new SimpleCursorAdapter(getActivity(), R.layout.list_item_movie , null, from, to, 0));
 		
 		/**
@@ -315,7 +336,8 @@ public class MovieListFragment extends ContentListFragment {
 					TextView textView = (TextView) view;
 					Calendar cal = Calendar.getInstance();
 					cal.setTimeInMillis(Long.parseLong(date));
-					String formattedDate = DateTimeUtils.toSimpleDate(cal);
+					
+					String formattedDate = DateTimeUtils.toHumanDate(cal);
 					
 					textView.setText(formattedDate);
 					return true;
@@ -345,6 +367,7 @@ public class MovieListFragment extends ContentListFragment {
 						// Fetch the image in an async task
 						imageTask = new ImageDownloadTask(new ImageDownloadTask.TaskActions() {
 							
+							// When task is finished, set the resulting image on the poster view
 							public void onFinished(Bitmap image) {
 								if(image != null) {
 									((ImageView) imageView).setImageBitmap(image);

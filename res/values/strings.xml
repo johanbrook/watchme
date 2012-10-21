@@ -54,5 +54,7 @@
 	<string name="datetime_format">dd-MM-yyyy</string>
 	<string name="movie_detail_runtime">Runtime:</string>
 	<string name="movie_updated_toast_suffix">updated</string>
+	<string name="imdb_site_button">View on IMDb</string>
+	<string name="movie_url_error">Cannot show site for this movie</string>
     
 </resources>

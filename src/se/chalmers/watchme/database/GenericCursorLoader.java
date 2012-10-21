@@ -27,7 +27,6 @@ public class GenericCursorLoader extends CursorLoader {
 	private final ForceLoadContentObserver mObserver;
 	private Uri mUri;
 
-	// Set default to order by Date
 	private String mSortOrder;
 	
 	private Cursor mCursor;
@@ -74,9 +73,7 @@ public class GenericCursorLoader extends CursorLoader {
             if (cursor != null) {
             	
                 // Ensure the cursor window is filled
-            	
-            	int c = cursor.getCount();
-            	System.out.println("CL " + mUri.getLastPathSegment() + ": loadInBackground: count: " + c);
+            	cursor.getCount();
                 registerContentObserver(cursor, mObserver);
             }
             return cursor;
@@ -106,8 +103,10 @@ public class GenericCursorLoader extends CursorLoader {
 			}
 			return;
 		}
+		
 		Cursor oldCursor = mCursor;
 		mCursor = cursor;
+		
 		if (isStarted()) {
 			super.deliverResult(cursor);
 		}

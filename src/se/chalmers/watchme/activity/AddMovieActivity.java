@@ -67,6 +67,8 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
         setContentView(R.layout.activity_add_movie);
         getActionBar().setDisplayHomeAsUpEnabled(true);
         
+        db = new DatabaseAdapter(getContentResolver());
+        
         this.releaseDate = Calendar.getInstance();
         this.autoCompleteAdapter = new AutoCompleteAdapter(this, R.layout.auto_complete_item, new IMDBHandler());
         
@@ -110,7 +112,6 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
     }
     
     private void addMovie() {
-    	db = new DatabaseAdapter(this.getContentResolver());
     	
     	// Get the movie from the auto-complete field 
     	Movie movie = (Movie) this.titleField.getTag();

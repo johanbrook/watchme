@@ -1,5 +1,6 @@
 package se.chalmers.watchme.ui;
 
+import se.chalmers.watchme.database.DatabaseAdapter;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -8,14 +9,24 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SimpleCursorAdapter;
 
+/**
+ * An abstract class that is a ListFragment presenting data from a Content Provider.
+ * 
+ * @author lisastenberg
+ */
 public abstract class ContentListFragment extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
 	private Uri uri;
 	private SimpleCursorAdapter adapter;
 	
+	protected DatabaseAdapter db;
+	
+	/**
+	 * Creates a new ContentListFragment with a Uri.
+	 * @param uri The uri
+	 */
 	public ContentListFragment(Uri uri) {
 		this.uri = uri;
-		
 	}
 	
 	@Override
@@ -23,8 +34,7 @@ public abstract class ContentListFragment extends ListFragment implements Loader
 		super.onActivityCreated(b);
 		Thread.currentThread().setContextClassLoader(getActivity().getClassLoader());
 		
-		System.out.println("ContentListFragment: onActivityCreated");
-		//setRetainInstance(true); 
+		db = new DatabaseAdapter(getActivity().getContentResolver());
 	}
 	
 	/**
@@ -60,18 +70,7 @@ public abstract class ContentListFragment extends ListFragment implements Loader
 	 * Set the adapter of the fragment.
 	 */
 	protected void setAdapter(SimpleCursorAdapter adapter) {
-		System.out.println("-- setAdapter -- " + adapter);
 		this.adapter = adapter;
 		setListAdapter(this.adapter);
-	}
-		
-	/**
-	 * Filter the list from the given string.
-	 * 
-	 * @param search The string to be filtered on.
-	 */
-	public void showResult(Cursor result) {
-		onLoadFinished(null, result);
-		//adapter.notifyDataSetChanged();
 	}
 }
