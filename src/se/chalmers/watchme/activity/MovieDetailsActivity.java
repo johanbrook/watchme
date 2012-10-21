@@ -64,6 +64,8 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
 	
 	private ImageView poster;
 	private ImageDialog dialog;
+	
+	TextView releaseDateLabel;
 	private EditText tagField;
 	private EditText noteField;
 	
@@ -88,6 +90,7 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
         this.poster = (ImageView) findViewById(R.id.poster);
         this.poster.setOnClickListener(new OnPosterClickListener());
         
+        this.releaseDateLabel = (TextView) findViewById(R.id.releaseDate);
         this.tagField = (EditText) findViewById(R.id.tag_field_details);
         this.noteField = (EditText) findViewById(R.id.note_field_details);
         
@@ -263,10 +266,21 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
                 NavUtils.navigateUpFromSameTask(this);
                 return true;
                 
-        	case R.id.menu_save_changes:
+        	case R.id.menu_save:
         		this.saveUserChanges();
         		return true;
-                
+        		
+        	case R.id.menu_cancel:
+        		this.setEditable(false);
+        		
+        		// Restore changes to visual elements
+        		populateFieldsFromMovie(this.movie); 
+        		return true;
+        		
+        	case R.id.menu_edit:
+        		this.setEditable(true);
+        		return true;
+        		
         }
         return super.onOptionsItemSelected(item);
         
@@ -284,7 +298,6 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
 	public void setDate(Calendar pickedDate) {
 		this.tempReleaseDate = pickedDate;
 		
-		TextView releaseDateLabel = (TextView) findViewById(R.id.releaseDate);
 		releaseDateLabel.setText(DateTimeUtils.toSimpleDate(tempReleaseDate));
 	}
 	
@@ -350,6 +363,7 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
 		 * perform necessary actions
 		 */
 		((ToggleButton) findViewById(R.id.toggle_edit)).performClick();
+		this.setEditable(false);
 		
 		db.updateMovie(movie);	// Updates release date, rating and note
 		
@@ -366,7 +380,6 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
 					Toast.LENGTH_SHORT)
 			.show();
 	}
-
 
     /**
      * The IMDb info fetch task.
@@ -459,7 +472,7 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
 
 		public void onClick(View v) {
 			
-			MenuItem saveMenuButton = menu.findItem(R.id.menu_save_changes);
+			MenuItem saveMenuButton = menu.findItem(R.id.menu_save);
 			Button releaseDateButton = (Button) findViewById(R.id.release_date_button);
 			
 
@@ -519,5 +532,44 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
 				
     		}
 		}
+	}
+     /**
+		*Set whether user is able to edit movie data
+     	* @param isEditable True if user is able to edit
+		**/
+    private void setEditable(boolean isEditable) {
+    	
+    	MenuItem editMenuButton = menu.findItem(R.id.menu_edit);
+    	MenuItem saveMenuButton = menu.findItem(R.id.menu_save);
+    	MenuItem cancelMenuButton = menu.findItem(R.id.menu_cancel);
+    	Button releaseDateButton = (Button) findViewById(R.id.release_date_button);
+		
+		editMenuButton.setVisible(!isEditable);
+		saveMenuButton.setVisible(isEditable);
+		cancelMenuButton.setVisible(isEditable);
+		
+		if(isEditable) {
+			releaseDateButton.setVisibility(Button.VISIBLE);
+		}
+		
+		else {
+			releaseDateButton.setVisibility(Button.GONE);
+		}
+		
+		myRatingBar.setIsIndicator(!isEditable);
+		myRatingBar.setEnabled(isEditable);
+		
+		/*
+		 * setFocusable(true) does not work on EditText if it were
+		 * previously set to 'false'. This is a reported android bug and
+		 * at the time of writing there is no fix.
+		 * setFocusableInTouchMode(true) gets the job done for now.
+		 */
+		tagField.setFocusableInTouchMode(isEditable);
+		tagField.setFocusable(isEditable);
+		tagField.setEnabled(isEditable);
+		noteField.setFocusableInTouchMode(isEditable);
+		noteField.setFocusable(isEditable);
+		noteField.setEnabled(isEditable);
     }
 }
