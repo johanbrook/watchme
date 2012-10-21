@@ -54,6 +54,8 @@ public class SearchableActivity extends FragmentActivity {
 		Intent intent = getIntent();
 		if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
 			String query = intent.getStringExtra(SearchManager.QUERY);
+			setTitle("Result: " + query);
+			
 			b.putString(getString(R.string.search), query);
 		}
 

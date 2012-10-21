@@ -27,7 +27,8 @@ public class TagMovieListActivity extends FragmentActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		getActionBar().setDisplayHomeAsUpEnabled(true);
-
+		setTitle("");
+		
 		/*
 		 * Add fragment to this activity and attach the tagId to the fragment
 		 * which were sent from TagListFragment
