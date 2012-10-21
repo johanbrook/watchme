@@ -64,9 +64,7 @@ public class WatchMeContentProvider extends ContentProvider {
 		case MOVIES:
 			/*
 			 * movieSel is supposed to contain: " = <movieId>"
-			 */
-			System.out.println("CP: deleteMovie: sel " + selection);
-			
+			 */			
 			String movieSel = selection.split(MoviesTable.COLUMN_MOVIE_ID)[1];
 			Cursor movieCursor = sqlDB.query(HasTagTable.TABLE_HAS_TAG, null, 
 					HasTagTable.COLUMN_MOVIE_ID + movieSel, null, 
@@ -156,9 +154,6 @@ public class WatchMeContentProvider extends ContentProvider {
 		switch(sUriMatcher.match(uri)) {
 		case MOVIES:
 			
-			System.out.println("CP: insertMovie");
-			
-			// TODO It should not be possible to add the same movie twice
 			String movieTitle = values.getAsString(MoviesTable.COLUMN_TITLE);
 			Cursor movieCursor = sqlDB.query(MoviesTable.TABLE_MOVIES, null, 
 					MoviesTable.COLUMN_TITLE + " = \"" + 
@@ -227,7 +222,6 @@ public class WatchMeContentProvider extends ContentProvider {
 	@Override
 	public boolean onCreate() {
 		db = new DatabaseHelper(getContext());
-		System.out.println("--- CREATED DB IN CONTENT PROVIDER ---");
 		return true;
 	}
 

@@ -66,7 +66,6 @@ public class MainActivity extends FragmentActivity {
         SearchView searchView = (SearchView) menu.findItem(R.id.menu_search_button).getActionView();
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         searchView.setIconifiedByDefault(false); // Do not iconify the widget; expand it by default
-        //searchView.setSubmitButtonEnabled(true);
 
         return true;
     }
