@@ -5,7 +5,6 @@ import se.chalmers.watchme.ui.ContentListFragment;
 import se.chalmers.watchme.ui.MovieListFragment;
 import android.app.SearchManager;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -15,17 +14,25 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.SearchView;
 
+/**
+ * 
+ * 
+ * @author lisastenberg
+ */
 public class TagMovieListActivity extends FragmentActivity {
 	
 	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getActionBar().setDisplayHomeAsUpEnabled(true);
         
+        /*
+         * Add fragment to this activity and attach the tagId to the fragment
+         * which were sent from TagListFragment
+         */
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction ft = fragmentManager.beginTransaction();
         
         ContentListFragment fragment = new MovieListFragment();
-        // Send forward the tagId sent from TagListFragment
         fragment.setArguments(getIntent().getExtras());
         
         ft.add(android.R.id.content, fragment);
@@ -38,6 +45,9 @@ public class TagMovieListActivity extends FragmentActivity {
         MenuItem mailItem = menu.findItem(R.id.menu_send_email_button);
 		mailItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
 		
+		/*
+		 * Add necessary functionality for the search widget
+		 */
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         SearchView searchView = (SearchView) menu.findItem(R.id.menu_search_button).getActionView();
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
