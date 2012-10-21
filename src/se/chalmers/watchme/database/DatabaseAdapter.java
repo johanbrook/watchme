@@ -135,8 +135,9 @@ public class DatabaseAdapter {
 	 * 
 	 * @param movie Movie to be inserted.
 	 * @return the id of the added Movie.
+	 * @throws MovieAlreadyExistsException If the movie already exists in the database
 	 */
-	public long addMovie(Movie movie) {
+	public long addMovie(Movie movie) throws MovieAlreadyExistsException {
 		ContentValues values = new ContentValues();
 	    values.put(MoviesTable.COLUMN_TITLE, movie.getTitle());
 	    values.put(MoviesTable.COLUMN_RATING, movie.getRating());
@@ -147,8 +148,14 @@ public class DatabaseAdapter {
 	    values.put(MoviesTable.COLUMN_POSTER_SMALL, movie.getPosterURL(Movie.PosterSize.THUMB));
 	    
 		Uri uri_movie_id = contentResolver.insert(uri_movies, values);
-		movie.setId(Long.parseLong(uri_movie_id.getLastPathSegment()));
-		return movie.getId();
+		long id = Long.parseLong(uri_movie_id.getLastPathSegment());
+		movie.setId(id);
+		
+		if(id == 0) {
+			throw new MovieAlreadyExistsException("'"+movie.getTitle() + "' already exists!", movie);
+		}
+		
+		return id;
 	}
 	
 	/**

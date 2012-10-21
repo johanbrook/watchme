@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 import org.json.JSONObject;
 import se.chalmers.watchme.database.DatabaseAdapter;
+import se.chalmers.watchme.database.MovieAlreadyExistsException;
 import se.chalmers.watchme.model.Movie;
 import se.chalmers.watchme.R;
 import se.chalmers.watchme.ui.DatePickerFragment;
@@ -106,7 +107,6 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
     public void onAddButtonClick(View view) {
     	
     	addMovie();
-		finish();
     }
     
     private void addMovie() {
@@ -137,22 +137,28 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
 		int rating = (int) ratingBar.getRating();
 		movie.setRating(rating);
 		
-		Log.i("Custom", movie.getPosterURLs().toString());
-		
 		// Insert into database
-		db.addMovie(movie);
-		
-		/* 
-		 * Split the text input into separate strings input at
-		 * commas (",") from tag-field
-		 */
-		String [] tagStrings = tagField.getText().toString().split(",");
-		
-		// TODO Shouldn't the tags be added to database in the addMovie-method?
-		db.attachTags(movie, MovieHelper.stringArrayToTagList(tagStrings));
-		
-		// Set a notification for the date picked
-    	this.setNotification(movie);
+		try {
+			db.addMovie(movie);
+			// Set a notification for the date picked
+	    	this.setNotification(movie);
+	    	
+	    	/* 
+			 * Split the text input into separate strings input at
+			 * commas (",") from tag-field
+			 */
+			String [] tagStrings = tagField.getText().toString().split(",");
+			
+			// TODO Shouldn't the tags be added to database in the addMovie-method?
+			db.attachTags(movie, MovieHelper.stringArrayToTagList(tagStrings));
+	    	
+			// If everything went alright, return to the movie list view
+	    	finish();
+	    	
+		} catch (MovieAlreadyExistsException e) {
+			// If the movie already exists, show a message
+			Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+		}
     }
     
     /**
