@@ -3,7 +3,7 @@
     <item 
         android:id="@+id/menu_send_email_button" 
         android:title="@string/share_movie_list" 
-        android:showAsAction="never|withText" 
+        android:showAsAction="always|withText" 
         android:icon="@drawable/ic_action_send">
         
     </item>
@@ -12,7 +12,7 @@
         android:id="@+id/menu_sort_button" 
         android:title="@string/sort" 
         android:icon="@drawable/ic_action_paste"
-        android:showAsAction="never|withText">
+        android:showAsAction="always|withText">
     </item>
     
     <item android:id="@+id/menu_search_button"

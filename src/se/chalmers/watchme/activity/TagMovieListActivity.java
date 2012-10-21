@@ -46,9 +46,16 @@ public class TagMovieListActivity extends FragmentActivity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.activity_main, menu);
+		
+		/*
+		 * It should not be possible to mail or sort in this activity
+		 */
 		MenuItem mailItem = menu.findItem(R.id.menu_send_email_button);
 		mailItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
 
+		MenuItem sortItem = menu.findItem(R.id.menu_sort_button);
+		sortItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
+		
 		/*
 		 * Add necessary functionality for the search widget
 		 */

@@ -42,6 +42,8 @@ public abstract class ContentListFragment extends ListFragment implements
 		super.onActivityCreated(b);
 		Thread.currentThread().setContextClassLoader(
 				getActivity().getClassLoader());
+		
+		setHasOptionsMenu(true);
 
 		db = new DatabaseAdapter(getActivity().getContentResolver());
 	}

@@ -117,11 +117,6 @@ public class MovieListFragment extends ContentListFragment {
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 
-		db = new DatabaseAdapter(getActivity().getContentResolver());
-
-		setHasOptionsMenu(true);
-		setRetainInstance(true);
-
 		final File cacheDir = getActivity().getBaseContext().getCacheDir();
 		ResponseCache.setDefault(new ImageCache(cacheDir));
 
@@ -141,29 +136,6 @@ public class MovieListFragment extends ContentListFragment {
 		// Set up listeners to delete and view a movie
 		this.getListView().setOnItemClickListener(new OnDetailsListener());
 		this.getListView().setOnItemLongClickListener(new OnDeleteListener());
-	}
-
-	/*
-	 * Show the Share and Sort buttons while movie list view
-	 */
-	@Override
-	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-		MenuItem sortItem = menu.findItem(R.id.menu_sort_button);
-		MenuItem shareItem = menu.findItem(R.id.menu_send_email_button);
-
-		sortItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-		shareItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-
-		// If there aren't any movies in the list, disable the "Share list"
-		// button
-		int count = new DatabaseAdapter(getActivity().getContentResolver())
-				.getMovieCount();
-
-		if (count == 0) {
-			shareItem.setEnabled(false);
-		}
-
-		super.onCreateOptionsMenu(menu, inflater);
 	}
 
 	@Override

@@ -19,6 +19,8 @@ import se.chalmers.watchme.database.GenericCursorLoader;
 import se.chalmers.watchme.database.WatchMeContentProvider;
 import se.chalmers.watchme.model.Tag;
 import android.app.AlertDialog;
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -27,10 +29,14 @@ import android.os.Bundle;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.SearchView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemLongClickListener;
 
@@ -51,9 +57,7 @@ public class TagListFragment extends ContentListFragment {
 	@Override
 	public void onActivityCreated(Bundle b) {
 		super.onActivityCreated(b);
-		
-		db = new DatabaseAdapter(getActivity().getContentResolver());
-		
+				
 		setUpAdapter();
 		
 		// Set up listener to delete a Tag.
@@ -65,6 +69,21 @@ public class TagListFragment extends ContentListFragment {
 			Bundle savedInstanceState) {
 		
 		return inflater.inflate(R.layout.tag_list_fragment_view, container, false);
+	}
+	
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		
+		/*
+		 * It should not be possible to mail or sort in this fragment
+		 */
+		MenuItem mailItem = menu.findItem(R.id.menu_send_email_button);
+		mailItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
+
+		MenuItem sortItem = menu.findItem(R.id.menu_sort_button);
+		sortItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
+
+		super.onCreateOptionsMenu(menu, inflater);
 	}
 	
 	@Override

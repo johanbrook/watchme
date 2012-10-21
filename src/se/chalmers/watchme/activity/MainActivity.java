@@ -70,7 +70,18 @@ public class MainActivity extends FragmentActivity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.activity_main, menu);
+		
+		
+		
+		int nbrOfMovies = new DatabaseAdapter(getContentResolver()).getMovieCount();
 
+		if (nbrOfMovies == 0) {
+			System.out.println("nbrofmovies 0");
+			MenuItem mailItem = menu.findItem(R.id.menu_send_email_button);
+			mailItem.setEnabled(false);
+		}
+		
+		
 		/*
 		 * Add necessary functionality for the search widget
 		 */
