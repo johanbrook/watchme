@@ -40,54 +40,59 @@ public class MovieListFragmentTest extends
 		dbh.onUpgrade(dbh.getWritableDatabase(), 1, 1);
 	}
 
-	// TODO: solo.sleep(n) ugly code? better with .waitFor___() method?
 	public void testAddMovie() {
 		// Clear list of movies stored in database
 		dbh.onUpgrade(dbh.getWritableDatabase(), 1, 1);
 		
+		solo.waitForActivity("MainActivity");
 		solo.assertCurrentActivity("MainActivity expected", MainActivity.class);
-		solo.clickOnText("Movies");
 		solo.clickOnActionBarItem(R.id.menu_add_movie);
+		solo.waitForActivity("AddMovieActivity");
 		solo.assertCurrentActivity("AddMovieActivity expected",
 				AddMovieActivity.class);
 		solo.enterText(Constants.TITLE_FIELD, "Batman");
 		solo.setProgressBar(Constants.RATING_BAR, 1);
 		solo.clickOnText("Pick");
+		solo.waitForText("Done");
 		solo.setDatePicker(Constants.DATE_PICKER, 2013, 12, 24);
 		solo.clickOnText("Done");
+		solo.waitForDialogToClose(Constants.WAIT_FOR_DIALOG_TO_CLOSE_TIME);
 		solo.enterText(Constants.TAG_FIELD, "Action");
 		solo.enterText(Constants.NOTE_FIELD, "Mum said I'd like this");
 		solo.clickOnButton(Constants.ADD_MOVIE_BUTTON);
+		solo.waitForActivity("MainActivity");
 		solo.assertCurrentActivity("MainActivity expected", MainActivity.class);
 		boolean movieFound = solo.searchText("Batman");
 		assertTrue(movieFound);
 	}
 
-	// TODO: Can you be sure that the application is in the state as when the
-	// last test was done? In that case, first rows can be removed.
 	public void testRemoveMovie() {
 		// Clear list of movies stored in database
 		dbh.onUpgrade(dbh.getWritableDatabase(), 1, 1);
 
-		solo.assertCurrentActivity("MainActivity expected", MainActivity.class);
-		solo.clickOnText("Movies");
 		solo.clickOnActionBarItem(R.id.menu_add_movie);
 		solo.enterText(Constants.TITLE_FIELD, "TEST_MOVIE");
 		solo.clickOnButton(Constants.ADD_MOVIE_BUTTON);
+		solo.waitForActivity("MainActivity");
 		solo.assertCurrentActivity("MainActivity expected", MainActivity.class);
 		solo.clickLongOnText("TEST_MOVIE");
 
 		boolean dialogAppeared = solo
-				.searchText("Are you sure you want to delete \"TEST_MOVIE\"?");
+				.waitForText("Are you sure you want to delete \"TEST_MOVIE\"?");
 		assertTrue(dialogAppeared);
 
 		solo.clickOnText("Cancel");
+		solo.waitForDialogToClose(Constants.WAIT_FOR_DIALOG_TO_CLOSE_TIME);
+		
 		boolean expected = true;
 		boolean actual = solo.searchText("TEST_MOVIE");
 		assertEquals("TEST_MOVIE was not found", expected, actual);
 
 		solo.clickLongOnText("TEST_MOVIE");
+		solo
+		.waitForText("Are you sure you want to delete \"TEST_MOVIE\"?");
 		solo.clickOnText("Yes");
+		solo.waitForDialogToClose(Constants.WAIT_FOR_DIALOG_TO_CLOSE_TIME);
 
 		// Delay. Gives TEST_MOVIE time to disappear 
 		solo.sleep(5000);
@@ -101,13 +106,14 @@ public class MovieListFragmentTest extends
 		// Clear list of movies stored in database
 		dbh.onUpgrade(dbh.getWritableDatabase(), 1, 1);
 		
-		solo.assertCurrentActivity("MainActivity expected", MainActivity.class);
-		solo.clickOnText("Movies");
+		solo.waitForActivity("MainActivity");
 		solo.clickOnActionBarItem(R.id.menu_add_movie);
+		solo.waitForActivity("AddMovieActivity");
 		solo.enterText(Constants.TITLE_FIELD, "TEST_MOVIE");
 		solo.clickOnButton(Constants.ADD_MOVIE_BUTTON);
-		solo.assertCurrentActivity("MainActivity expected", MainActivity.class);
+		solo.waitForActivity("MainActivity");
 		solo.clickOnText("TEST_MOVIE");
+		solo.waitForActivity("MovieDetailsActivity");
 		solo.assertCurrentActivity("MovieDetailsActivity expected",
 				MovieDetailsActivity.class);
 	}
@@ -116,9 +122,7 @@ public class MovieListFragmentTest extends
 	public void testSort() {
 		// Clear list of movies stored in database
 		dbh.onUpgrade(dbh.getWritableDatabase(), 1, 1);
-
-		solo.assertCurrentActivity("MainActivity expected", MainActivity.class);
-		solo.clickOnText("Movies");
+		solo.waitForActivity("MainActivity");
 
 		// Add three movies with different titles, rating and dates
 		char movieFirstCharacter = 'A';
@@ -126,13 +130,16 @@ public class MovieListFragmentTest extends
 		int rating = 1;
 		for (int i = 0; i < 3; i++) {
 			solo.clickOnActionBarItem(R.id.menu_add_movie);
+			solo.waitForActivity("AddMovieActivity");
 			solo.enterText(Constants.TITLE_FIELD, movieFirstCharacter + "_MOVIE");
 			solo.setProgressBar(Constants.RATING_BAR, rating);
 			solo.clickOnText("Pick");
+			solo.waitForText("Done");
 			solo.setDatePicker(Constants.DATE_PICKER, year, 12, 24);
 			solo.clickOnText("Done");
+			solo.waitForDialogToClose(Constants.WAIT_FOR_DIALOG_TO_CLOSE_TIME);
 			solo.clickOnButton(Constants.ADD_MOVIE_BUTTON);
-			solo.sleep(2000);
+			solo.waitForActivity("MainActivity");
 
 			movieFirstCharacter++;
 			year++;
@@ -140,11 +147,11 @@ public class MovieListFragmentTest extends
 		}
 
 		solo.clickOnActionBarItem(R.id.menu_sort_button);
-		boolean dialogAppeared = solo.searchText("Order by");
+		boolean dialogAppeared = solo.waitForText("Order by");
 		assertTrue(dialogAppeared);
 
 		solo.clickOnText("Title");
-		solo.sleep(2000);
+		solo.waitForDialogToClose(Constants.WAIT_FOR_DIALOG_TO_CLOSE_TIME);
 
 		// Extract movie titles from text fields found in the
 		// MovieListFragment's list.
@@ -172,8 +179,9 @@ public class MovieListFragmentTest extends
 		assertTrue(areMoviesInCorrectOrder);
 
 		solo.clickOnActionBarItem(R.id.menu_sort_button);
+		solo.waitForText("Order by");
 		solo.clickOnText("Rating");
-		solo.sleep(2000);
+		solo.waitForDialogToClose(Constants.WAIT_FOR_DIALOG_TO_CLOSE_TIME);
 
 		// Extract movie's rating from rating bars found in the
 		// MovieListFragment's list.
