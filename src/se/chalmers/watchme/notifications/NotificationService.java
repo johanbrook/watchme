@@ -5,6 +5,8 @@
 *	clients to connect to.
 *
 *	@author Johan
+*	@copyright (c) 2012 Johan Brook
+*	@license MIT
 */
 
 package se.chalmers.watchme.notifications;
