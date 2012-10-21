@@ -1,6 +1,7 @@
 package se.chalmers.watchme.activity;
 
 import se.chalmers.watchme.R;
+import se.chalmers.watchme.ui.ContentListFragment;
 import se.chalmers.watchme.ui.MovieListFragment;
 import android.content.Intent;
 import android.os.Bundle;
@@ -17,14 +18,14 @@ public class TagMovieListActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         getActionBar().setDisplayHomeAsUpEnabled(true);
         
-        // Receive tagId sent from TagListFragment
-        Intent intent = getIntent();
-        Long tagId = intent.getLongExtra(MainActivity.TAG_ID, -1);
-        
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction ft = fragmentManager.beginTransaction();
         
-        ft.add(android.R.id.content, new MovieListFragment(tagId));
+        ContentListFragment fragment = new MovieListFragment();
+        // Send forward the tagId sent from TagListFragment
+        fragment.setArguments(getIntent().getExtras());
+        
+        ft.add(android.R.id.content, fragment);
         ft.commit();
 	}
 	

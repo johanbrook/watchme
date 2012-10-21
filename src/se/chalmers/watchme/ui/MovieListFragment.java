@@ -5,6 +5,7 @@ import java.net.ResponseCache;
 import java.util.Calendar;
 
 import se.chalmers.watchme.R;
+import se.chalmers.watchme.activity.MainActivity;
 import se.chalmers.watchme.activity.MovieDetailsActivity;
 import se.chalmers.watchme.database.DatabaseAdapter;
 import se.chalmers.watchme.database.GenericCursorLoader;
@@ -50,41 +51,40 @@ public class MovieListFragment extends ContentListFragment {
 	private DatabaseAdapter db;
 	
 	private AsyncTask<String, Void, Bitmap> imageTask;
-	private Long tagId;
 	
-	private static final String orderByDate = MoviesTable.COLUMN_DATE;
-	private static final String orderByTitle = MoviesTable.COLUMN_TITLE;
-	private static final String orderByRating = MoviesTable.COLUMN_RATING + " DESC";
+	private static final String ORDER_BY_DATE = MoviesTable.COLUMN_DATE;
+	private static final String ORDER_BY_TITLE = MoviesTable.COLUMN_TITLE;
+	private static final String ORDER_BY_RATING = MoviesTable.COLUMN_RATING + " DESC";
+	
+	private static final long DEFAULT_TAGID = -1;
+	private Long tagId;
 	
 	private int sortOrder = 0;
 	private String query;
 	
 	public MovieListFragment() {
 		super(WatchMeContentProvider.CONTENT_URI_MOVIES);
-		this.tagId = (long) -1;
-	}
-
-	public MovieListFragment(Long tagId) {
-		super(WatchMeContentProvider.CONTENT_URI_MOVIES);
-		this.tagId = tagId;
 	}
 	
 	@Override
 	public void onActivityCreated(Bundle b) {
 		super.onActivityCreated(b);
-				
+						
 		// TODO: Has to be done in onCreate instead?
 		setHasOptionsMenu(true);
 		
 		final File cacheDir = getActivity().getBaseContext().getCacheDir();
 		ResponseCache.setDefault(new ImageCache(cacheDir));
 
-		setUpAdapter();
-		
 		Bundle arguments = getArguments();
 		if (arguments != null) {
-			query = arguments.getString(getString(R.string.search));
+			query = arguments.getString(getString(R.string.search), null);
+			tagId = arguments.getLong(MainActivity.TAG_ID, DEFAULT_TAGID);
+		} else if(tagId == null) {
+			tagId = DEFAULT_TAGID;
 		}
+		
+		setUpAdapter();
 	    
 		// Set up listeners to delete and view a movie
         this.getListView().setOnItemClickListener(new OnDetailsListener());
@@ -132,13 +132,13 @@ public class MovieListFragment extends ContentListFragment {
 
 			@Override
 			public String getSortOrder() {
-				return orderByDate;
+				return ORDER_BY_DATE;
 			}
 
 			@Override
 			public Cursor getCursor() {
 				if (tagId == -1) {
-					if(query == null) {
+					if(query == null || query.equals("")) {
 						return db.getAllMoviesCursor(getSortOrder());
 					}
 					return db.searchForMovies(query);
@@ -188,13 +188,13 @@ public class MovieListFragment extends ContentListFragment {
     				Cursor cursor = null;
     				switch(item) {
     				case 0:
-    					cursor = db.getAllMoviesCursor(orderByDate);
+    					cursor = db.getAllMoviesCursor(ORDER_BY_DATE);
     					break;
     				case 1:
-    					cursor = db.getAllMoviesCursor(orderByRating);
+    					cursor = db.getAllMoviesCursor(ORDER_BY_RATING);
     					break;
     				case 2:
-    					cursor = db.getAllMoviesCursor(orderByTitle);
+    					cursor = db.getAllMoviesCursor(ORDER_BY_TITLE);
     					break;
     				default:
     					break;
