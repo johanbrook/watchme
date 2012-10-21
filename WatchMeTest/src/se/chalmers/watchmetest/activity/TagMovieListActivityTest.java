@@ -7,6 +7,12 @@ import android.content.Intent;
 import android.support.v4.app.FragmentManager;
 import android.test.ActivityInstrumentationTestCase2;
 
+/**
+ * Class that tests functionality implemented in the TagMovieListActivity class.
+ * 
+ * @author mattiashenriksson
+ * 
+ */
 public class TagMovieListActivityTest extends
 		ActivityInstrumentationTestCase2<TagMovieListActivity> {
 
@@ -20,7 +26,7 @@ public class TagMovieListActivityTest extends
 	}
 
 	/**
-	 * Test if code in TagMovieListActivity.onCreate() is working properly, i.e.
+	 * Test if code in onCreate() is working properly, i.e.
 	 * that the tag id that is sent into the activity with an intent is passed
 	 * on to the MovieListFragment that is created there.
 	 */
