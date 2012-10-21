@@ -16,6 +16,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.SearchView;
 
+/**
+ * The Activity that receives the search query, and then forwards to its 
+ * fragment to search the data, and then displays the search results.
+ * 
+ * @author lisastenberg
+ */
+
 //TODO Important! API level required does not match with what is used
 @TargetApi(11)
 public class SearchableActivity extends FragmentActivity {
@@ -36,7 +43,9 @@ public class SearchableActivity extends FragmentActivity {
         fragment = new MovieListFragment();
         Bundle b = new Bundle();
         
-		// Get the intent, verify the action and get the query
+		/* Get the intent, verify the action and put the query as
+		 * an argument to the fragment.
+		 */
 		Intent intent = getIntent();
 		if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
 			String query = intent.getStringExtra(SearchManager.QUERY);
