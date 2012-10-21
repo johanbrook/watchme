@@ -1,8 +1,8 @@
 package se.chalmers.watchmetest.activity;
 
-import se.chalmers.watchme.activity.MainActivity;
 import se.chalmers.watchme.activity.TagMovieListActivity;
 import se.chalmers.watchme.ui.MovieListFragment;
+import se.chalmers.watchme.ui.TagListFragment;
 import android.content.Intent;
 import android.support.v4.app.FragmentManager;
 import android.test.ActivityInstrumentationTestCase2;
@@ -35,7 +35,7 @@ public class TagMovieListActivityTest extends
 
 		// Inject intent with a tag id into activity
 		Intent intent = new Intent();
-		intent.putExtra(MainActivity.TAG_ID, randomTagId);
+		intent.putExtra(TagListFragment.TAG_ID, randomTagId);
 		this.setActivityIntent(intent);
 		
 		TagMovieListActivity tmla = this.getActivity();
