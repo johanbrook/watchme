@@ -29,7 +29,6 @@
     <string name="details_cast_title_hint">Cast</string>
     <string name="details_cast_list">No cast found</string>
     <string name="details_activity_title">Movie Details</string>
-    <string name="details_menu_toggle">Edit</string>
     <string name="details_menu_save">Save</string>
     
     <string name="tab_movies">Movies</string>

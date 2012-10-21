@@ -248,9 +248,6 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.activity_movie_details, menu);
         
-        View toggleView = menu.findItem(R.id.menu_toggle_edit).getActionView();
-        toggleView.setOnClickListener(new OnEditClickListener());
-        
         this.menu = menu;	// Can't get reference outside of this method,
         					// reference needs to be stored here
         
@@ -358,11 +355,6 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
 					removedTags.toString());
 		}
 		
-		/*
-		 * Call the togglebuttons onClickListener to toggle it's state and
-		 * perform necessary actions
-		 */
-		((ToggleButton) findViewById(R.id.toggle_edit)).performClick();
 		this.setEditable(false);
 		
 		db.updateMovie(movie);	// Updates release date, rating and note
@@ -380,6 +372,47 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
 					Toast.LENGTH_SHORT)
 			.show();
 	}
+	
+    /**
+     * Set whether user is able to edit movie data
+     * 
+     * @param isEditable True if user is able to edit
+     */
+    private void setEditable(boolean isEditable) {
+    	
+    	MenuItem editMenuButton = menu.findItem(R.id.menu_edit);
+    	MenuItem saveMenuButton = menu.findItem(R.id.menu_save);
+    	MenuItem cancelMenuButton = menu.findItem(R.id.menu_cancel);
+    	Button releaseDateButton = (Button) findViewById(R.id.release_date_button);
+		
+		editMenuButton.setVisible(!isEditable);
+		saveMenuButton.setVisible(isEditable);
+		cancelMenuButton.setVisible(isEditable);
+		
+		if(isEditable) {
+			releaseDateButton.setVisibility(Button.VISIBLE);
+		}
+		
+		else {
+			releaseDateButton.setVisibility(Button.GONE);
+		}
+		
+		myRatingBar.setIsIndicator(!isEditable);
+		myRatingBar.setEnabled(isEditable);
+		
+		/*
+		 * setFocusable(true) does not work on EditText if it were
+		 * previously set to 'false'. This is a reported android bug and
+		 * at the time of writing there is no fix.
+		 * setFocusableInTouchMode(true) gets the job done for now.
+		 */
+		tagField.setFocusableInTouchMode(isEditable);
+		tagField.setFocusable(isEditable);
+		tagField.setEnabled(isEditable);
+		noteField.setFocusableInTouchMode(isEditable);
+		noteField.setFocusable(isEditable);
+		noteField.setEnabled(isEditable);
+    }
 
     /**
      * The IMDb info fetch task.
@@ -453,123 +486,5 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
 			dialog.show();
 		}
     	
-    }
-    
-    /**
-     * <p>Listener class for when user clicks the edit toggle button.</p>
-     * 
-     * <p>If the toggle button is checked the data that the user can change
-     * becomes editable.</p>
-     * 
-     * <p>If the toggle button is unchecked no element is editable. Also, the
-     * data shown is the last saved state. 
-     * </p>
-     * 
-     * @author Robin
-     *
-     */
-    private class OnEditClickListener implements OnClickListener {
-
-		public void onClick(View v) {
-			
-			MenuItem saveMenuButton = menu.findItem(R.id.menu_save);
-			Button releaseDateButton = (Button) findViewById(R.id.release_date_button);
-			
-
-			// Enter edit state, make elements editable
-			if(((ToggleButton) v).isChecked()) {
-				
-				saveMenuButton.setVisible(true);
-				releaseDateButton.setVisibility(Button.VISIBLE);
-				myRatingBar.setIsIndicator(false);
-				myRatingBar.setEnabled(true);
-				
-				/*
-				 * setFocusable(true) does not work on EditText if it were
-				 * previously set to 'false'. This is a reported android bug and
-				 * at the time of writing there is no fix.
-				 * setFocusableInTouchMode(true) gets the job done for now.
-				 */
-				tagField.setFocusableInTouchMode(true);
-				tagField.setFocusable(true);
-				tagField.setEnabled(true);
-				noteField.setFocusableInTouchMode(true);
-				noteField.setFocusable(true);
-				noteField.setEnabled(true);
-    			
-    		}
-			
-			// Exit edit state, cancel changes and make elements uneditable
-    		else {
-    			
-    			/*
-    			 *  TODO Set flags to allow conditional statement so that
-    			 * populateFieldsFromMovie doesn't has to be executed if nothing
-    			 * has changed
-    			 */
-    			
-    			/*
-    			 * Restore visual elements to reflect a saved state
-    			 */
-    			populateFieldsFromMovie(movie);
-				
-    			saveMenuButton.setVisible(false);
-    			
-    			releaseDateButton.setVisibility(Button.GONE);
-				myRatingBar.setIsIndicator(true);
-				myRatingBar.setEnabled(false);
-				
-				/*
-				 * Both disallow the user from interacting with the text field
-				 * and remove the focus from it (if focus is at this element)  
-				 */
-				tagField.setFocusableInTouchMode(false);
-				tagField.setFocusable(false);
-				tagField.setEnabled(false);
-				noteField.setFocusableInTouchMode(false);
-				noteField.setFocusable(false);
-				noteField.setEnabled(false);
-				
-    		}
-		}
-	}
-     /**
-		*Set whether user is able to edit movie data
-     	* @param isEditable True if user is able to edit
-		**/
-    private void setEditable(boolean isEditable) {
-    	
-    	MenuItem editMenuButton = menu.findItem(R.id.menu_edit);
-    	MenuItem saveMenuButton = menu.findItem(R.id.menu_save);
-    	MenuItem cancelMenuButton = menu.findItem(R.id.menu_cancel);
-    	Button releaseDateButton = (Button) findViewById(R.id.release_date_button);
-		
-		editMenuButton.setVisible(!isEditable);
-		saveMenuButton.setVisible(isEditable);
-		cancelMenuButton.setVisible(isEditable);
-		
-		if(isEditable) {
-			releaseDateButton.setVisibility(Button.VISIBLE);
-		}
-		
-		else {
-			releaseDateButton.setVisibility(Button.GONE);
-		}
-		
-		myRatingBar.setIsIndicator(!isEditable);
-		myRatingBar.setEnabled(isEditable);
-		
-		/*
-		 * setFocusable(true) does not work on EditText if it were
-		 * previously set to 'false'. This is a reported android bug and
-		 * at the time of writing there is no fix.
-		 * setFocusableInTouchMode(true) gets the job done for now.
-		 */
-		tagField.setFocusableInTouchMode(isEditable);
-		tagField.setFocusable(isEditable);
-		tagField.setEnabled(isEditable);
-		noteField.setFocusableInTouchMode(isEditable);
-		noteField.setFocusable(isEditable);
-		noteField.setEnabled(isEditable);
     }
 }
