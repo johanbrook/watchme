@@ -73,9 +73,7 @@ public class DatePickerFragment extends DialogFragment implements
 	 */
 	public void onDateSet(DatePicker view, int year, int month, int day) {
 
-		// TODO Is there a way around changing from Calendar to ints repeatedly?
 		pickedDate.set(year, month, day);
-
 		datePickerListener.setDate(pickedDate);
 	}
 

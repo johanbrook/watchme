@@ -360,13 +360,6 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
 		
 		if(!newTags.isEmpty()) {
 			
-			/*
-			 * TODO How to avoid doing the same thing in two different places?
-			 * (update database and the movie model) Skip Movie model altogether
-			 * or make Movie model communicate with database instead of doing
-			 * these calls all over the place! Same problem in next conditional
-			 * statement.
-			 */
 			db.attachTags(movie, newTags);
 			Log.i("Custom", movie.getTitle() + " - attached Tags: " +
 					newTags.toString());

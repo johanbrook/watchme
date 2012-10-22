@@ -27,7 +27,6 @@ import android.os.Bundle;
 import android.annotation.SuppressLint;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -35,7 +34,6 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.Button;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.support.v4.app.DialogFragment;
@@ -82,7 +80,6 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
      * Create references to UI elements in the XML
      */
     private void initUIControls() {
-    	 //TODO Use the XML-value although it is overwritten here?
         this.dateField = (TextView) findViewById(R.id.release_date_label);
         this.dateField.setText(DateTimeUtils.toSimpleDate(this.releaseDate));
         
@@ -148,7 +145,6 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
 			 */
 			String [] tagStrings = tagField.getText().toString().split(",");
 			
-			// TODO Shouldn't the tags be added to database in the addMovie-method?
 			db.attachTags(movie, MovieHelper.stringArrayToTagList(tagStrings));
 	    	
 			// If everything went alright, return to the movie list view

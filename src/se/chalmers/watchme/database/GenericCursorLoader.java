@@ -70,7 +70,6 @@ public class GenericCursorLoader extends CursorLoader {
 	@Override
 	public Cursor loadInBackground() {
 		synchronized (this) {
-			// TODO: Unnecessary?
 			mCancellationSignal = new CancellationSignal();
 		}
 		try {
@@ -85,7 +84,6 @@ public class GenericCursorLoader extends CursorLoader {
 			return cursor;
 		} finally {
 			synchronized (this) {
-				// TODO: Unnecessary?
 				mCancellationSignal = null;
 			}
 		}
