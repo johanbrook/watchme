@@ -99,7 +99,7 @@ public class SearchableActivity extends FragmentActivity {
 			NavUtils.navigateUpFromSameTask(this);
 			return true;
 
-		case R.id.menu_add_movie:
+		case R.id.menu_main_add_movie:
 			Intent intent = new Intent(this, AddMovieActivity.class);
 			startActivity(intent);
 			return true;
