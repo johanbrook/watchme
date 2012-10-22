@@ -10,7 +10,7 @@
     <string name="title_activity_add_movie">Add Movie</string>
     <string name="input_movie_hint">Movie title</string>
     <string name="input_note_hint">Personal note</string>
-    <string name="release_date_button">Pick</string>
+    <string name="release_date_button">Date</string>
     <string name="release_date_hint">Release date</string>
     <string name="rating_hint">How badly do you want to see this movie?</string>
     <string name="input_tag_hint">Add tags</string>

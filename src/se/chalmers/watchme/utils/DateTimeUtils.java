@@ -1,7 +1,7 @@
 /**
  *	DateTimeUtils.java
  *
- *  A utility class for converting date's to common formats
+ *  A utility class for converting dates to common formats
  *
  *	@author Robin Andersson, Johan Brook
  *	@copyright (c) 2012 Robin Andersson, Johan Brook, Mattias Henriksson, Lisa Stenberg
