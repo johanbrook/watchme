@@ -19,6 +19,7 @@ import se.chalmers.watchme.model.Movie;
 import se.chalmers.watchme.ui.MovieListFragment;
 import se.chalmers.watchme.ui.TagListFragment;
 import se.chalmers.watchme.utils.DateTimeUtils;
+import se.chalmers.watchme.utils.MenuUtils;
 import android.app.ActionBar;
 import android.app.SearchManager;
 import android.content.Context;
@@ -40,6 +41,10 @@ public class MainActivity extends FragmentActivity {
 	private ViewPager viewPager;
 	private TabsAdapter tabsAdapter;
 	private ActionBar actionBar;
+	
+	MenuItem mailItem;
+	MenuItem sortItem;
+	MenuItem searchItem;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -71,17 +76,11 @@ public class MainActivity extends FragmentActivity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.activity_main, menu);
 		
-		int nbrOfMovies = new DatabaseAdapter(getContentResolver()).getMovieCount();
-
-		// If there are no movies make the mail button and sort button disabled
-		if (nbrOfMovies == 0) {
-			MenuItem mailItem = menu.findItem(R.id.menu_send_email_button);
-			MenuItem sortItem = menu.findItem(R.id.menu_sort_button);
-			
-			mailItem.setEnabled(false);
-			sortItem.setEnabled(false);
-		}
+		mailItem = menu.findItem(R.id.menu_send_email_button);
+		sortItem = menu.findItem(R.id.menu_sort_button);
+		searchItem = menu.findItem(R.id.menu_search_button);
 		
+		setButtonsState();
 		
 		/*
 		 * Add necessary functionality for the search widget
@@ -95,6 +94,43 @@ public class MainActivity extends FragmentActivity {
 													// expand it by default
 
 		return true;
+	}
+	
+	
+	
+	@Override
+	public void onResume() {
+		
+		/*
+		 * Updates the button state when returning to Main Activity. The menu
+		 * items are null when first creating them.
+		 */
+		if(mailItem != null && sortItem != null && searchItem != null) {
+			setButtonsState();
+		}
+		
+		super.onResume();
+		
+	}
+	
+	/**
+	 * Sets the button states for Action Bar items (disabled/enabled)
+	 * accordingly. Also changes the icon to reflect the state (is not done
+	 * automatically by android)
+	 */
+	private void setButtonsState() {
+		int nbrOfMovies = new DatabaseAdapter(getContentResolver()).getMovieCount();
+		boolean existMovies = nbrOfMovies == 0;
+		
+		// If there are no movies make the mail button and sort button disabled
+		mailItem.setEnabled(!existMovies);
+		sortItem.setEnabled(!existMovies);
+		searchItem.setEnabled(!existMovies);
+		
+		MenuUtils.setMenuIconState(mailItem);
+		MenuUtils.setMenuIconState(sortItem);
+		MenuUtils.setMenuIconState(searchItem);
+		
 	}
 
 	/**

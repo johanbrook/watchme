@@ -19,6 +19,7 @@ import se.chalmers.watchme.R;
 import se.chalmers.watchme.ui.DatePickerFragment;
 import se.chalmers.watchme.ui.DatePickerFragment.DatePickerListener;
 import se.chalmers.watchme.utils.DateTimeUtils;
+import se.chalmers.watchme.utils.MenuUtils;
 import se.chalmers.watchme.utils.MovieHelper;
 import se.chalmers.watchme.net.IMDBHandler;
 import se.chalmers.watchme.notifications.NotificationClient;
@@ -179,6 +180,7 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
         getMenuInflater().inflate(R.menu.activity_add_movie, menu);
         
         menuAddButton = menu.findItem(R.id.menu_add_movie);
+        MenuUtils.setMenuIconState(menuAddButton);
         
         return true;
     }
@@ -230,7 +232,9 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
         public void onTextChanged(CharSequence s, int start, int before, int count) {
         	
         	// Show/hide add movie button in menu if title is set
-        	menuAddButton.setVisible(!s.toString().isEmpty());
+        	menuAddButton.setEnabled(!s.toString().isEmpty());
+        	
+        	MenuUtils.setMenuIconState(menuAddButton);
         }
 
 		public void afterTextChanged(Editable arg0) {
