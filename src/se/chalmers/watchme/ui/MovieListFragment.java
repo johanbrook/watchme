@@ -126,7 +126,7 @@ public class MovieListFragment extends ContentListFragment {
 		ResponseCache.setDefault(new ImageCache(cacheDir));
 
 		/*
-		 * If any arguments where set fetch the values
+		 * If any arguments were set, fetch the values
 		 */
 		Bundle arguments = getArguments();
 		if (arguments != null) {
@@ -158,12 +158,12 @@ public class MovieListFragment extends ContentListFragment {
 		sortItem = menu.findItem(R.id.menu_sort_button);
 		searchItem = menu.findItem(R.id.menu_search_button);
 
-		enableButtons();
+		setButtonsState();
 
 		super.onCreateOptionsMenu(menu, inflater);
 	}
 	
-	private void enableButtons() {
+	private void setButtonsState() {
 		boolean existMovies = (db.getMovieCount() == 0);
 		
 		// If there are no movies make the mail, search and sort buttons disabled
@@ -225,7 +225,7 @@ public class MovieListFragment extends ContentListFragment {
 	 */
 	private void sortList() {
 		final String[] alternatives = { "Date", "Rating", "Title" };
-
+		
 		AlertDialog.Builder alertbox = new AlertDialog.Builder(getActivity());
 		alertbox.setTitle(getString(R.string.order_dialog_title));
 		alertbox.setSingleChoiceItems(alternatives, sortOrder,
@@ -315,7 +315,7 @@ public class MovieListFragment extends ContentListFragment {
 
 							db.removeMovie(movie);
 
-							enableButtons();
+							setButtonsState();
 							
 							NotificationClient.cancelNotification(
 									getActivity(), movie);
