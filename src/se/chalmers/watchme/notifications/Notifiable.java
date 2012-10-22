@@ -31,9 +31,9 @@ public interface Notifiable {
 	public long getDateInMilliSeconds();
 	
 	/**
-	 * The string representation of this notifiable object.
+	 * The short string representation of this notifiable object.
 	 * 
 	 * @return The title to represent in the notification
 	 */
-	public String toString();
+	public String getTitle();
 }

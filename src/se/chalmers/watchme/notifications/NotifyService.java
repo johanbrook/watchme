@@ -80,7 +80,7 @@ public class NotifyService extends Service {
 
 		// The content of the notification box
 		CharSequence title = getString(se.chalmers.watchme.R.string.notification_title);
-		CharSequence text = "'" + obj.toString() + "' "+getString(se.chalmers.watchme.R.string.notification_suffix);
+		CharSequence text = "'" + obj.getTitle() + "' "+getString(se.chalmers.watchme.R.string.notification_suffix);
 		int icon = R.drawable.ic_popup_reminder;
 		
 		// The intent to launch an activity if the user presses this notification
