@@ -10,6 +10,7 @@ import se.chalmers.watchme.database.DatabaseHelper;
 import se.chalmers.watchmetest.Constants;
 import android.test.ActivityInstrumentationTestCase2;
 import android.view.View;
+import android.webkit.WebView.FindListener;
 import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -70,12 +71,12 @@ public class MovieListFragmentTest extends
 				AddMovieActivity.class);
 		solo.enterText(Constants.TITLE_FIELD, "TEST_MOVIE");
 		solo.setProgressBar(Constants.RATING_BAR, 1);
-		solo.clickOnText("Pick");
+		solo.clickOnView(solo.getView(R.id.release_date_button));
 		
 		if(!solo.waitForText("Done")) {
 			solo.sleep(2000);
 		}
-		
+		solo.clickOnView(solo.getView(R.id.release_date_button));
 		solo.setDatePicker(Constants.DATE_PICKER, 2013, 12, 24);
 		solo.clickOnText("Done");
 		solo.waitForDialogToClose(Constants.WAIT_FOR_DIALOG_TO_CLOSE_TIME);
@@ -177,7 +178,7 @@ public class MovieListFragmentTest extends
 			solo.enterText(Constants.TITLE_FIELD, movieFirstCharacter
 					+ "_MOVIE");
 			solo.setProgressBar(Constants.RATING_BAR, rating);
-			solo.clickOnText("Pick");
+			solo.clickOnView(solo.getView(R.id.release_date_button));
 			solo.waitForText("Done");
 			solo.setDatePicker(Constants.DATE_PICKER, year, 12, 24);
 			solo.clickOnText("Done");

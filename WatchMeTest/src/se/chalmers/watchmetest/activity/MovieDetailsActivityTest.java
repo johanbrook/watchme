@@ -59,7 +59,7 @@ public class MovieDetailsActivityTest extends
 		solo.waitForActivity("AddMovieActivity");
 		solo.enterText(Constants.TITLE_FIELD, "TEST_MOVIE");
 		solo.setProgressBar(Constants.RATING_BAR, 1);
-		solo.clickOnText("Pick");
+		solo.clickOnView(solo.getView(R.id.release_date_button));
 		solo.waitForText("Done");
 		solo.setDatePicker(Constants.DATE_PICKER, 2014 - 1, 12, 24);
 		solo.clickOnText("Done");
@@ -101,13 +101,13 @@ public class MovieDetailsActivityTest extends
 		dbh.onUpgrade(dbh.getWritableDatabase(), 1, 1);
 
 		solo.waitForActivity("MainActivity");
-		
+
 		// Add movie
 		solo.clickOnActionBarItem(R.id.menu_main_add_movie);
 		solo.waitForActivity("AddMovieActivity");
 		solo.enterText(Constants.TITLE_FIELD, "TEST_MOVIE");
 		solo.clickOnActionBarItem(R.id.menu_add_movie);
-		
+
 		// Navigate to details view
 		solo.waitForActivity("MainActivity");
 		solo.clickOnText("TEST_MOVIE");
@@ -118,7 +118,7 @@ public class MovieDetailsActivityTest extends
 		TextView releaseDateLabel = (TextView) solo.getView(R.id.releaseDate);
 		EditText noteField = (EditText) solo.getView(R.id.note_field_details);
 		EditText tagField = (EditText) solo.getView(R.id.tag_field_details);
-		
+
 		assertTrue(ratingBar.getRating() == 0);
 		assertFalse(releaseDateLabel.getText().equals("24 Jan, 2014"));
 		assertTrue(noteField.getText().toString().equals(""));
@@ -127,7 +127,7 @@ public class MovieDetailsActivityTest extends
 		// Edit movie details
 		solo.clickOnActionBarItem(R.id.menu_edit);
 		solo.setProgressBar(Constants.RATING_BAR, 1);
-		solo.clickOnText("Pick");
+		solo.clickOnView(solo.getView(R.id.release_date_button));
 		solo.waitForText("Done");
 		solo.setDatePicker(Constants.DATE_PICKER, 2014 - 1, 12, 24);
 		solo.clickOnText("Done");
@@ -135,13 +135,13 @@ public class MovieDetailsActivityTest extends
 		solo.enterText(0, "Action");
 		solo.enterText(1, "Mum said I'd like this");
 		solo.clickOnActionBarItem(R.id.menu_save);
-		
+
 		// Navigate out from and back to details view
 		solo.clickOnActionBarHomeButton();
 		solo.waitForActivity("MainActivity");
 		solo.clickOnText("TEST_MOVIE");
 		solo.waitForActivity("MovieDetailsActivity");
-		
+
 		// Check if new details are viewed
 		assertTrue(ratingBar.getRating() == 1);
 		assertTrue(releaseDateLabel.getText().equals("24 Jan, 2014"));
