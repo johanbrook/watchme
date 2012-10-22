@@ -2,7 +2,7 @@
 *	AddMovieActivity.java
 *
 *	@author Robin Andersson
-*	@copyright (c) 2012 Robin Andersson
+*	@copyright (c) 2012 Johan Brook, Robin Andersson, Lisa Stenberg, Mattias Henriksson
 *	@license MIT
 */
 

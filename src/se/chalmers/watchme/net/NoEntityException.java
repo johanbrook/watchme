@@ -4,7 +4,7 @@
 *	Custom class reporting failures with HTTP entities.
 *
 *	@author Johan Brook
-*	@copyright (c) 2012 Johan Brook
+*	@copyright (c) 2012 Johan Brook, Robin Andersson, Lisa Stenberg, Mattias Henriksson
 *	@license MIT
 */
 

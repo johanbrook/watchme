@@ -17,7 +17,6 @@ import java.util.concurrent.TimeUnit;
 
 import se.chalmers.watchme.R;
 import se.chalmers.watchme.activity.MovieDetailsActivity;
-import se.chalmers.watchme.database.DatabaseAdapter;
 import se.chalmers.watchme.database.GenericCursorLoader;
 import se.chalmers.watchme.database.ICursorHelper;
 import se.chalmers.watchme.database.MoviesTable;
@@ -42,7 +41,6 @@ import android.support.v4.app.NavUtils;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v4.widget.SimpleCursorAdapter.ViewBinder;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
