@@ -55,7 +55,7 @@ public class MovieDetailsActivityTest extends
 		solo.waitForActivity("MainActivity");
 
 		// Add movie
-		solo.clickOnActionBarItem(R.id.menu_add_movie);
+		solo.clickOnActionBarItem(R.id.menu_main_add_movie);
 		solo.waitForActivity("AddMovieActivity");
 		solo.enterText(Constants.TITLE_FIELD, "TEST_MOVIE");
 		solo.setProgressBar(Constants.RATING_BAR, 1);
@@ -66,7 +66,7 @@ public class MovieDetailsActivityTest extends
 		solo.waitForDialogToClose(Constants.WAIT_FOR_DIALOG_TO_CLOSE_TIME);
 		solo.enterText(Constants.TAG_FIELD, "Action");
 		solo.enterText(Constants.NOTE_FIELD, "Mum said I'd like this");
-		solo.clickOnButton(Constants.ADD_MOVIE_BUTTON);
+		solo.clickOnActionBarItem(R.id.menu_add_movie);
 
 		// Navigate to details view
 		solo.waitForActivity("MainActivity");
@@ -103,10 +103,10 @@ public class MovieDetailsActivityTest extends
 		solo.waitForActivity("MainActivity");
 		
 		// Add movie
-		solo.clickOnActionBarItem(R.id.menu_add_movie);
+		solo.clickOnActionBarItem(R.id.menu_main_add_movie);
 		solo.waitForActivity("AddMovieActivity");
 		solo.enterText(Constants.TITLE_FIELD, "TEST_MOVIE");
-		solo.clickOnButton(Constants.ADD_MOVIE_BUTTON);
+		solo.clickOnActionBarItem(R.id.menu_add_movie);
 		
 		// Navigate to details view
 		solo.waitForActivity("MainActivity");
@@ -134,7 +134,7 @@ public class MovieDetailsActivityTest extends
 		solo.waitForDialogToClose(Constants.WAIT_FOR_DIALOG_TO_CLOSE_TIME);
 		solo.enterText(0, "Action");
 		solo.enterText(1, "Mum said I'd like this");
-		solo.clickOnText("Save");
+		solo.clickOnActionBarItem(R.id.menu_save);
 		
 		// Navigate out from and back to details view
 		solo.clickOnActionBarHomeButton();
@@ -147,6 +147,6 @@ public class MovieDetailsActivityTest extends
 		assertTrue(releaseDateLabel.getText().equals("24 Jan, 2014"));
 		assertTrue(noteField.getText().toString()
 				.equals("Mum said I'd like this"));
-		assertTrue(tagField.getText().toString().equals("action"));
+		assertTrue(tagField.getText().toString().equals("Action"));
 	}
 }
