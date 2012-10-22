@@ -4,7 +4,7 @@
 *	The service responsible for showing notifications.
 *
 *	@author Johan
-*	@copyright (c) 2012 Johan Brook
+*	@copyright (c) 2012 Johan Brook, Robin Andersson, Lisa Stenberg, Mattias Henriksson
 *	@license MIT
 */
 

@@ -12,15 +12,12 @@ package se.chalmers.watchme.ui;
 
 import se.chalmers.watchme.R;
 import se.chalmers.watchme.activity.TagMovieListActivity;
-import se.chalmers.watchme.database.DatabaseAdapter;
 import se.chalmers.watchme.database.ICursorHelper;
 import se.chalmers.watchme.database.TagsTable;
 import se.chalmers.watchme.database.GenericCursorLoader;
 import se.chalmers.watchme.database.WatchMeContentProvider;
 import se.chalmers.watchme.model.Tag;
 import android.app.AlertDialog;
-import android.app.SearchManager;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -36,7 +33,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.SearchView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemLongClickListener;
 
