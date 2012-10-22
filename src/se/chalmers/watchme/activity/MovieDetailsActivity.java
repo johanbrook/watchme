@@ -205,13 +205,8 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
         }
         this.tagField.setText(tags.toString());
     }
-    
-    /*
-     * TODO: These JSON-to-Android view parsing is too tight coupled to the
-     * Activity I think .. I'd like to put this stuff somewhere else
-     * where it's easier to test. 
-     */
-    
+
+
     public void populateFieldsFromJSON(JSONObject json) {
     	
     	/*
