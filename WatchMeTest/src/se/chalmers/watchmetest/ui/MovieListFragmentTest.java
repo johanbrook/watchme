@@ -68,10 +68,14 @@ public class MovieListFragmentTest extends
 		solo.waitForActivity("AddMovieActivity");
 		solo.assertCurrentActivity("AddMovieActivity expected",
 				AddMovieActivity.class);
-		solo.enterText(Constants.TITLE_FIELD, "Batman");
+		solo.enterText(Constants.TITLE_FIELD, "TEST_MOVIE");
 		solo.setProgressBar(Constants.RATING_BAR, 1);
 		solo.clickOnText("Pick");
-		solo.waitForText("Done");
+		
+		if(!solo.waitForText("Done")) {
+			solo.sleep(2000);
+		}
+		
 		solo.setDatePicker(Constants.DATE_PICKER, 2013, 12, 24);
 		solo.clickOnText("Done");
 		solo.waitForDialogToClose(Constants.WAIT_FOR_DIALOG_TO_CLOSE_TIME);
@@ -82,7 +86,7 @@ public class MovieListFragmentTest extends
 		// Check if movie is added in movie list
 		solo.waitForActivity("MainActivity");
 		solo.assertCurrentActivity("MainActivity expected", MainActivity.class);
-		boolean movieFound = solo.searchText("Batman");
+		boolean movieFound = solo.searchText("TEST_MOVIE");
 		assertTrue(movieFound);
 	}
 
