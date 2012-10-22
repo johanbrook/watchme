@@ -104,7 +104,7 @@ public class MainActivity extends FragmentActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 
 		switch (item.getItemId()) {
-		case R.id.menu_add_movie:
+		case R.id.menu_main_add_movie:
 			Intent intent = new Intent(this, AddMovieActivity.class);
 			startActivity(intent);
 			return true;
