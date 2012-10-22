@@ -82,7 +82,6 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
      * Create references to UI elements in the XML
      */
     private void initUIControls() {
-    	 //TODO Use the XML-value although it is overwritten here?
         this.dateField = (TextView) findViewById(R.id.release_date_label);
         this.dateField.setText(DateTimeUtils.toSimpleDate(this.releaseDate));
         
@@ -148,7 +147,6 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
 			 */
 			String [] tagStrings = tagField.getText().toString().split(",");
 			
-			// TODO Shouldn't the tags be added to database in the addMovie-method?
 			db.attachTags(movie, MovieHelper.stringArrayToTagList(tagStrings));
 	    	
 			// If everything went alright, return to the movie list view

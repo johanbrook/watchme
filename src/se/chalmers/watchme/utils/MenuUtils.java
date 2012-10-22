@@ -14,7 +14,6 @@ import android.view.MenuItem;
 
 public class MenuUtils {
 	
-	// TODO Make more general, for instance, receive icon instead of MenuItem
 	/**
 	 * Changes the menu item's icon to reflect enabled or disabled state.
 	 * 
