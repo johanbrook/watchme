@@ -10,6 +10,7 @@ import se.chalmers.watchme.database.DatabaseHelper;
 import se.chalmers.watchmetest.Constants;
 import android.test.ActivityInstrumentationTestCase2;
 import android.view.View;
+import android.webkit.WebView.FindListener;
 import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -64,25 +65,29 @@ public class MovieListFragmentTest extends
 		solo.assertCurrentActivity("MainActivity expected", MainActivity.class);
 
 		// Input movie data
-		solo.clickOnActionBarItem(R.id.menu_add_movie);
+		solo.clickOnActionBarItem(R.id.menu_main_add_movie);
 		solo.waitForActivity("AddMovieActivity");
 		solo.assertCurrentActivity("AddMovieActivity expected",
 				AddMovieActivity.class);
-		solo.enterText(Constants.TITLE_FIELD, "Batman");
+		solo.enterText(Constants.TITLE_FIELD, "TEST_MOVIE");
 		solo.setProgressBar(Constants.RATING_BAR, 1);
-		solo.clickOnText("Pick");
-		solo.waitForText("Done");
+		solo.clickOnView(solo.getView(R.id.release_date_button));
+		
+		if(!solo.waitForText("Done")) {
+			solo.sleep(2000);
+		}
+		solo.clickOnView(solo.getView(R.id.release_date_button));
 		solo.setDatePicker(Constants.DATE_PICKER, 2013, 12, 24);
 		solo.clickOnText("Done");
 		solo.waitForDialogToClose(Constants.WAIT_FOR_DIALOG_TO_CLOSE_TIME);
 		solo.enterText(Constants.TAG_FIELD, "Action");
 		solo.enterText(Constants.NOTE_FIELD, "Mum said I'd like this");
-		solo.clickOnButton(Constants.ADD_MOVIE_BUTTON);
+		solo.clickOnActionBarItem(R.id.menu_add_movie);
 
 		// Check if movie is added in movie list
 		solo.waitForActivity("MainActivity");
 		solo.assertCurrentActivity("MainActivity expected", MainActivity.class);
-		boolean movieFound = solo.searchText("Batman");
+		boolean movieFound = solo.searchText("TEST_MOVIE");
 		assertTrue(movieFound);
 	}
 
@@ -97,9 +102,9 @@ public class MovieListFragmentTest extends
 		solo.waitForActivity("MainActivity");
 
 		// Add movie
-		solo.clickOnActionBarItem(R.id.menu_add_movie);
+		solo.clickOnActionBarItem(R.id.menu_main_add_movie);
 		solo.enterText(Constants.TITLE_FIELD, "TEST_MOVIE");
-		solo.clickOnButton(Constants.ADD_MOVIE_BUTTON);
+		solo.clickOnActionBarItem(R.id.menu_add_movie);
 		
 		solo.waitForActivity("MainActivity");
 		solo.assertCurrentActivity("MainActivity expected", MainActivity.class);
@@ -141,10 +146,10 @@ public class MovieListFragmentTest extends
 		solo.waitForActivity("MainActivity");
 		
 		// Add movie
-		solo.clickOnActionBarItem(R.id.menu_add_movie);
+		solo.clickOnActionBarItem(R.id.menu_main_add_movie);
 		solo.waitForActivity("AddMovieActivity");
 		solo.enterText(Constants.TITLE_FIELD, "TEST_MOVIE");
-		solo.clickOnButton(Constants.ADD_MOVIE_BUTTON);
+		solo.clickOnActionBarItem(R.id.menu_add_movie);
 		
 		solo.waitForActivity("MainActivity");
 		
@@ -168,17 +173,17 @@ public class MovieListFragmentTest extends
 		int year = 2012;
 		int rating = 1;
 		for (int i = 0; i < 3; i++) {
-			solo.clickOnActionBarItem(R.id.menu_add_movie);
+			solo.clickOnActionBarItem(R.id.menu_main_add_movie);
 			solo.waitForActivity("AddMovieActivity");
 			solo.enterText(Constants.TITLE_FIELD, movieFirstCharacter
 					+ "_MOVIE");
 			solo.setProgressBar(Constants.RATING_BAR, rating);
-			solo.clickOnText("Pick");
+			solo.clickOnView(solo.getView(R.id.release_date_button));
 			solo.waitForText("Done");
 			solo.setDatePicker(Constants.DATE_PICKER, year, 12, 24);
 			solo.clickOnText("Done");
 			solo.waitForDialogToClose(Constants.WAIT_FOR_DIALOG_TO_CLOSE_TIME);
-			solo.clickOnButton(Constants.ADD_MOVIE_BUTTON);
+			solo.clickOnActionBarItem(R.id.menu_add_movie);
 			solo.waitForActivity("MainActivity");
 
 			movieFirstCharacter++;

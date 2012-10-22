@@ -54,11 +54,11 @@ public class SearchableActivityTest extends
 		// Add two movies with different titles
 		char movieFirstCharacter = 'A';
 		for (int i = 0; i < 2; i++) {
-			solo.clickOnActionBarItem(R.id.menu_add_movie);
+			solo.clickOnActionBarItem(R.id.menu_main_add_movie);
 			solo.waitForActivity("AddMovieActivity");
 			solo.enterText(Constants.TITLE_FIELD, movieFirstCharacter
 					+ "_MOVIE");
-			solo.clickOnButton(Constants.ADD_MOVIE_BUTTON);
+			solo.clickOnActionBarItem(R.id.menu_add_movie);
 			solo.waitForActivity("MainActivity");
 
 			movieFirstCharacter++;

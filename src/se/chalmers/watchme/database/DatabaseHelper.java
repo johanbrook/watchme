@@ -43,28 +43,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			+ HasTagTable.TABLE_HAS_TAG + " WHERE " + HasTagTable.COLUMN_TAG_ID
 			+ " = old." + TagsTable.COLUMN_TAG_ID + "; END;";
 
-	// TODO Delete if we don't get it to work correctly
-	private static final String CREATE_TRIGGER_DELETETAG = "CREATE TRIGGER deleteTag AFTER "
-			+ "DELETE ON "
-			+ HasTagTable.TABLE_HAS_TAG
-			+ " BEGIN "
-			+ "SELECT CASE WHEN (1 > (SELECT Count(*) "
-			+ "FROM "
-			+ HasTagTable.TABLE_HAS_TAG
-			+ " WHERE "
-			+ HasTagTable.COLUMN_TAG_ID
-			+ " = old."
-			+ HasTagTable.COLUMN_TAG_ID
-			+ "))"
-			+ " THEN "
-			+ "DELETE FROM "
-			+ TagsTable.TABLE_TAGS
-			+ " WHERE "
-			+ TagsTable.COLUMN_TAG_ID
-			+ " = old."
-			+ HasTagTable.COLUMN_TAG_ID
-			+ "; END; " + "END;";
-
 	public DatabaseHelper(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
 	}
