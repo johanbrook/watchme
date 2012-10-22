@@ -118,7 +118,7 @@ public class TagListFragment extends ContentListFragment {
 		Intent intent = new Intent(getActivity(), TagMovieListActivity.class);
 		intent.putExtra(TAG_ID, id);
 		startActivity(intent);
-		getActivity().overridePendingTransition(R.anim.right_slide_in, R.anim.right_slide_out);
+		getActivity().overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
 			
 	}
 	
