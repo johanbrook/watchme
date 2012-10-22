@@ -44,7 +44,8 @@
 		    	android:text="@string/release_date_button"
 		    	android:layout_alignBaseline="@+id/releaseDate"
 		    	android:visibility="gone"
-		        android:onClick="onDatePickerButtonClick" />
+		        android:onClick="onDatePickerButtonClick"
+		        android:textSize="11sp" />
 		    
 		    <TextView
 		        android:id="@+id/genres"
