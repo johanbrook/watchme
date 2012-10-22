@@ -323,7 +323,7 @@ public class Movie implements Serializable, Notifiable {
 			return false;
 		} else {
 			Movie tmp = (Movie) o;
-			return this.title == tmp.title;
+			return this.title.equals(tmp.title);
 		}
 	}
 

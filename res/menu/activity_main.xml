@@ -22,7 +22,7 @@
           android:actionViewClass="android.widget.SearchView" />
     
     <item 
-        android:id="@+id/menu_add_movie" 
+        android:id="@+id/menu_main_add_movie" 
         android:icon="@drawable/add"
         android:showAsAction="always|withText" 
         android:title="@string/add_movie_button">

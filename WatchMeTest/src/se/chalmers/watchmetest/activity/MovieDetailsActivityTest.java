@@ -125,7 +125,7 @@ public class MovieDetailsActivityTest extends
 		assertTrue(tagField.getText().toString().equals(""));
 
 		// Edit movie details
-		solo.clickOnText("Edit");
+		solo.clickOnActionBarItem(R.id.menu_edit);
 		solo.setProgressBar(Constants.RATING_BAR, 1);
 		solo.clickOnText("Pick");
 		solo.waitForText("Done");

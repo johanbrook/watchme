@@ -19,6 +19,7 @@ import se.chalmers.watchme.R;
 import se.chalmers.watchme.ui.DatePickerFragment;
 import se.chalmers.watchme.ui.DatePickerFragment.DatePickerListener;
 import se.chalmers.watchme.utils.DateTimeUtils;
+import se.chalmers.watchme.utils.MenuUtils;
 import se.chalmers.watchme.utils.MovieHelper;
 import se.chalmers.watchme.net.IMDBHandler;
 import se.chalmers.watchme.notifications.NotificationClient;
@@ -48,7 +49,7 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
 	private TextView tagField;
 	private TextView noteField;
 	private AutoCompleteTextView titleField;
-	private Button addButton;
+	private MenuItem menuAddButton;
 	
 	// The handler to interface with the notification system and scheduler
 	private NotificationClient notifications = new NotificationClient(this);
@@ -97,9 +98,6 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
         
         this.titleField.setAdapter(this.autoCompleteAdapter);
         
-        // Disable add movie button on init
-        this.addButton = (Button) findViewById(R.id.add_movie_button);
-        this.addButton.setEnabled(false);
     }
     
     /**
@@ -180,6 +178,10 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.activity_add_movie, menu);
+        
+        menuAddButton = menu.findItem(R.id.menu_add_movie);
+        MenuUtils.setMenuIconState(menuAddButton);
+        
         return true;
     }
     
@@ -200,6 +202,10 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
             case android.R.id.home:
                 NavUtils.navigateUpFromSameTask(this);
                 return true;
+                
+            case R.id.menu_add_movie:
+            	addMovie();
+            	
         }
         return super.onOptionsItemSelected(item);
     }
@@ -224,11 +230,11 @@ public class AddMovieActivity extends FragmentActivity implements DatePickerList
     private class AddButtonToggler implements TextWatcher {
         	
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-           	if(s.toString().isEmpty()) {
-           		addButton.setEnabled(false);
-           	} else {
-           		addButton.setEnabled(true);
-           	}
+        	
+        	// Show/hide add movie button in menu if title is set
+        	menuAddButton.setEnabled(!s.toString().isEmpty());
+        	
+        	MenuUtils.setMenuIconState(menuAddButton);
         }
 
 		public void afterTextChanged(Editable arg0) {

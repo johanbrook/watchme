@@ -27,6 +27,7 @@ import se.chalmers.watchme.net.ImageDownloadTask;
 import se.chalmers.watchme.notifications.NotificationClient;
 import se.chalmers.watchme.utils.DateTimeUtils;
 import se.chalmers.watchme.utils.ImageCache;
+import se.chalmers.watchme.utils.MenuUtils;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -104,7 +105,11 @@ public class MovieListFragment extends ContentListFragment {
 	 */
 	private static int sortOrder;
 	private String query;
-
+	
+	private MenuItem mailItem;
+	private MenuItem sortItem;
+	private MenuItem searchItem;
+	
 	/**
 	 * Creates a new MovieListFragment with the Uri
 	 * WatchMeContentProvider.CONTENT_URI_MOVIES
@@ -144,6 +149,31 @@ public class MovieListFragment extends ContentListFragment {
 
 		return inflater.inflate(R.layout.movie_list_fragment_view, container,
 				false);
+	}
+	
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		
+		mailItem = menu.findItem(R.id.menu_send_email_button);
+		sortItem = menu.findItem(R.id.menu_sort_button);
+		searchItem = menu.findItem(R.id.menu_search_button);
+
+		enableButtons();
+
+		super.onCreateOptionsMenu(menu, inflater);
+	}
+	
+	private void enableButtons() {
+		boolean existMovies = (db.getMovieCount() == 0);
+		
+		// If there are no movies make the mail, search and sort buttons disabled
+		mailItem.setEnabled(!existMovies);
+		sortItem.setEnabled(!existMovies);
+		searchItem.setEnabled(!existMovies);
+		
+		MenuUtils.setMenuIconState(mailItem);
+		MenuUtils.setMenuIconState(sortItem);
+		MenuUtils.setMenuIconState(searchItem);
 	}
 
 	@Override
@@ -285,6 +315,8 @@ public class MovieListFragment extends ContentListFragment {
 
 							db.removeMovie(movie);
 
+							enableButtons();
+							
 							NotificationClient.cancelNotification(
 									getActivity(), movie);
 							Toast.makeText(

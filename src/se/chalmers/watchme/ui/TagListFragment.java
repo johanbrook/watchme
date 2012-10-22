@@ -78,9 +78,9 @@ public class TagListFragment extends ContentListFragment {
 		 * It should not be possible to mail or sort in this fragment
 		 */
 		MenuItem mailItem = menu.findItem(R.id.menu_send_email_button);
-		mailItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
-
 		MenuItem sortItem = menu.findItem(R.id.menu_sort_button);
+		
+		mailItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
 		sortItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
 
 		super.onCreateOptionsMenu(menu, inflater);
