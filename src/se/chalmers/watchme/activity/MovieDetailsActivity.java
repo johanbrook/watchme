@@ -2,7 +2,7 @@
 *	MovieDetailsActivity.java
 *
 *	@author Robin Andersson
-*	@copyright (c) 2012 Robin Andersson
+*	@copyright (c) 2012 Johan Brook, Robin Andersson, Lisa Stenberg, Mattias Henriksson
 *	@license MIT
 */
 
@@ -205,13 +205,8 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
         }
         this.tagField.setText(tags.toString());
     }
-    
-    /*
-     * TODO: These JSON-to-Android view parsing is too tight coupled to the
-     * Activity I think .. I'd like to put this stuff somewhere else
-     * where it's easier to test. 
-     */
-    
+
+
     public void populateFieldsFromJSON(JSONObject json) {
     	
     	/*
@@ -365,13 +360,6 @@ public class MovieDetailsActivity extends FragmentActivity implements DatePicker
 		
 		if(!newTags.isEmpty()) {
 			
-			/*
-			 * TODO How to avoid doing the same thing in two different places?
-			 * (update database and the movie model) Skip Movie model altogether
-			 * or make Movie model communicate with database instead of doing
-			 * these calls all over the place! Same problem in next conditional
-			 * statement.
-			 */
 			db.attachTags(movie, newTags);
 			Log.i("Custom", movie.getTitle() + " - attached Tags: " +
 					newTags.toString());

@@ -67,6 +67,15 @@ public class SearchableActivity extends FragmentActivity {
 
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.activity_main, menu);
+		
+		/*
+		 * It should not be possible to mail or sort in this activity
+		 */
+		MenuItem mailItem = menu.findItem(R.id.menu_send_email_button);
+		mailItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
+		
+		MenuItem sortItem = menu.findItem(R.id.menu_sort_button);
+		sortItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
 
 		/*
 		 * Add necessary functionality for the search widget
@@ -90,7 +99,7 @@ public class SearchableActivity extends FragmentActivity {
 			NavUtils.navigateUpFromSameTask(this);
 			return true;
 
-		case R.id.menu_add_movie:
+		case R.id.menu_main_add_movie:
 			Intent intent = new Intent(this, AddMovieActivity.class);
 			startActivity(intent);
 			return true;

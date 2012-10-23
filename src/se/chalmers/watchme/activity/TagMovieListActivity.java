@@ -46,9 +46,16 @@ public class TagMovieListActivity extends FragmentActivity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.activity_main, menu);
+		
+		/*
+		 * It should not be possible to mail or sort in this activity
+		 */
 		MenuItem mailItem = menu.findItem(R.id.menu_send_email_button);
 		mailItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
 
+		MenuItem sortItem = menu.findItem(R.id.menu_sort_button);
+		sortItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
+		
 		/*
 		 * Add necessary functionality for the search widget
 		 */
@@ -68,8 +75,7 @@ public class TagMovieListActivity extends FragmentActivity {
 		switch (item.getItemId()) {
 		case android.R.id.home:
 			NavUtils.navigateUpFromSameTask(this);
-			overridePendingTransition(R.anim.right_slide_in,
-					R.anim.right_slide_out);
+			overridePendingTransition(R.anim.slide_in_from_left, R.anim.slide_out_to_right);
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
@@ -78,7 +84,7 @@ public class TagMovieListActivity extends FragmentActivity {
 	@Override
 	public void onBackPressed() {
 		this.finish();
-		overridePendingTransition(R.anim.right_slide_in, R.anim.right_slide_out);
+		overridePendingTransition(R.anim.slide_in_from_left, R.anim.slide_out_to_right);
 		return;
 	}
 

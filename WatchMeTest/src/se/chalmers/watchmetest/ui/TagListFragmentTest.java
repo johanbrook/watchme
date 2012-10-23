@@ -60,11 +60,11 @@ public class TagListFragmentTest extends
 		solo.waitForActivity("MainActivity");
 
 		// Add movie
-		solo.clickOnActionBarItem(R.id.menu_add_movie);
+		solo.clickOnActionBarItem(R.id.menu_main_add_movie);
 		solo.waitForActivity("AddMovieActivity");
 		solo.enterText(Constants.TITLE_FIELD, "Batman");
 		solo.enterText(Constants.TAG_FIELD, "Action");
-		solo.clickOnButton(Constants.ADD_MOVIE_BUTTON);
+		solo.clickOnActionBarItem(R.id.menu_add_movie);
 
 		// Check if tag is found in tag list
 		solo.waitForActivity("MainActivity");
@@ -85,19 +85,19 @@ public class TagListFragmentTest extends
 
 		// Add two movies with different tags.
 		solo.waitForActivity("MainActivity");
-		solo.clickOnActionBarItem(R.id.menu_add_movie);
+		solo.clickOnActionBarItem(R.id.menu_main_add_movie);
 		solo.waitForActivity("AddMovieActivity");
 		solo.enterText(Constants.TITLE_FIELD, "Batman");
 		solo.enterText(Constants.TAG_FIELD, "Action");
-		solo.clickOnButton(Constants.ADD_MOVIE_BUTTON);
+		solo.clickOnActionBarItem(R.id.menu_add_movie);
 		solo.waitForActivity("MainActivity");
 
 		solo.waitForActivity("MainActivity");
-		solo.clickOnActionBarItem(R.id.menu_add_movie);
+		solo.clickOnActionBarItem(R.id.menu_main_add_movie);
 		solo.waitForActivity("AddMovieActivity");
 		solo.enterText(Constants.TITLE_FIELD, "Dead poet society");
 		solo.enterText(Constants.TAG_FIELD, "Drama");
-		solo.clickOnButton(Constants.ADD_MOVIE_BUTTON);
+		solo.clickOnActionBarItem(R.id.menu_add_movie);
 		solo.waitForActivity("MainActivity");
 
 		// Navigate to and click on a tag
@@ -129,11 +129,11 @@ public class TagListFragmentTest extends
 		solo.waitForActivity("MainActivity");
 		
 		// Add movie
-		solo.clickOnActionBarItem(R.id.menu_add_movie);
+		solo.clickOnActionBarItem(R.id.menu_main_add_movie);
 		solo.waitForActivity("AddMovieActivity");
 		solo.enterText(Constants.TITLE_FIELD, "Batman");
 		solo.enterText(Constants.TAG_FIELD, "Action");
-		solo.clickOnButton(Constants.ADD_MOVIE_BUTTON);
+		solo.clickOnActionBarItem(R.id.menu_add_movie);
 		solo.waitForActivity("MainActivity");
 		
 		// Navigate to tags list

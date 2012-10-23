@@ -55,18 +55,18 @@ public class MovieDetailsActivityTest extends
 		solo.waitForActivity("MainActivity");
 
 		// Add movie
-		solo.clickOnActionBarItem(R.id.menu_add_movie);
+		solo.clickOnActionBarItem(R.id.menu_main_add_movie);
 		solo.waitForActivity("AddMovieActivity");
 		solo.enterText(Constants.TITLE_FIELD, "TEST_MOVIE");
 		solo.setProgressBar(Constants.RATING_BAR, 1);
-		solo.clickOnText("Pick");
+		solo.clickOnView(solo.getView(R.id.release_date_button));
 		solo.waitForText("Done");
 		solo.setDatePicker(Constants.DATE_PICKER, 2014 - 1, 12, 24);
 		solo.clickOnText("Done");
 		solo.waitForDialogToClose(Constants.WAIT_FOR_DIALOG_TO_CLOSE_TIME);
 		solo.enterText(Constants.TAG_FIELD, "Action");
 		solo.enterText(Constants.NOTE_FIELD, "Mum said I'd like this");
-		solo.clickOnButton(Constants.ADD_MOVIE_BUTTON);
+		solo.clickOnActionBarItem(R.id.menu_add_movie);
 
 		// Navigate to details view
 		solo.waitForActivity("MainActivity");
@@ -101,13 +101,13 @@ public class MovieDetailsActivityTest extends
 		dbh.onUpgrade(dbh.getWritableDatabase(), 1, 1);
 
 		solo.waitForActivity("MainActivity");
-		
+
 		// Add movie
-		solo.clickOnActionBarItem(R.id.menu_add_movie);
+		solo.clickOnActionBarItem(R.id.menu_main_add_movie);
 		solo.waitForActivity("AddMovieActivity");
 		solo.enterText(Constants.TITLE_FIELD, "TEST_MOVIE");
-		solo.clickOnButton(Constants.ADD_MOVIE_BUTTON);
-		
+		solo.clickOnActionBarItem(R.id.menu_add_movie);
+
 		// Navigate to details view
 		solo.waitForActivity("MainActivity");
 		solo.clickOnText("TEST_MOVIE");
@@ -118,35 +118,35 @@ public class MovieDetailsActivityTest extends
 		TextView releaseDateLabel = (TextView) solo.getView(R.id.releaseDate);
 		EditText noteField = (EditText) solo.getView(R.id.note_field_details);
 		EditText tagField = (EditText) solo.getView(R.id.tag_field_details);
-		
+
 		assertTrue(ratingBar.getRating() == 0);
 		assertFalse(releaseDateLabel.getText().equals("24 Jan, 2014"));
 		assertTrue(noteField.getText().toString().equals(""));
 		assertTrue(tagField.getText().toString().equals(""));
 
 		// Edit movie details
-		solo.clickOnText("Edit");
+		solo.clickOnActionBarItem(R.id.menu_edit);
 		solo.setProgressBar(Constants.RATING_BAR, 1);
-		solo.clickOnText("Pick");
+		solo.clickOnView(solo.getView(R.id.release_date_button));
 		solo.waitForText("Done");
 		solo.setDatePicker(Constants.DATE_PICKER, 2014 - 1, 12, 24);
 		solo.clickOnText("Done");
 		solo.waitForDialogToClose(Constants.WAIT_FOR_DIALOG_TO_CLOSE_TIME);
 		solo.enterText(0, "Action");
 		solo.enterText(1, "Mum said I'd like this");
-		solo.clickOnText("Save");
-		
+		solo.clickOnActionBarItem(R.id.menu_save);
+
 		// Navigate out from and back to details view
 		solo.clickOnActionBarHomeButton();
 		solo.waitForActivity("MainActivity");
 		solo.clickOnText("TEST_MOVIE");
 		solo.waitForActivity("MovieDetailsActivity");
-		
+
 		// Check if new details are viewed
 		assertTrue(ratingBar.getRating() == 1);
 		assertTrue(releaseDateLabel.getText().equals("24 Jan, 2014"));
 		assertTrue(noteField.getText().toString()
 				.equals("Mum said I'd like this"));
-		assertTrue(tagField.getText().toString().equals("action"));
+		assertTrue(tagField.getText().toString().equals("Action"));
 	}
 }

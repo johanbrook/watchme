@@ -5,7 +5,7 @@
 *	notifications on a specific date.
 *
 *	@author Johan Brook
-*	@copyright (c) 2012 Johan Brook
+*	@copyright (c) 2012 Johan Brook, Robin Andersson, Lisa Stenberg, Mattias Henriksson
 *	@license MIT
 */
 
@@ -31,9 +31,9 @@ public interface Notifiable {
 	public long getDateInMilliSeconds();
 	
 	/**
-	 * The string representation of this notifiable object.
+	 * The short string representation of this notifiable object.
 	 * 
 	 * @return The title to represent in the notification
 	 */
-	public String toString();
+	public String getTitle();
 }

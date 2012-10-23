@@ -17,7 +17,6 @@ import java.util.concurrent.TimeUnit;
 
 import se.chalmers.watchme.R;
 import se.chalmers.watchme.activity.MovieDetailsActivity;
-import se.chalmers.watchme.database.DatabaseAdapter;
 import se.chalmers.watchme.database.GenericCursorLoader;
 import se.chalmers.watchme.database.ICursorHelper;
 import se.chalmers.watchme.database.MoviesTable;
@@ -27,6 +26,7 @@ import se.chalmers.watchme.net.ImageDownloadTask;
 import se.chalmers.watchme.notifications.NotificationClient;
 import se.chalmers.watchme.utils.DateTimeUtils;
 import se.chalmers.watchme.utils.ImageCache;
+import se.chalmers.watchme.utils.MenuUtils;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -41,7 +41,6 @@ import android.support.v4.app.NavUtils;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v4.widget.SimpleCursorAdapter.ViewBinder;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -104,7 +103,11 @@ public class MovieListFragment extends ContentListFragment {
 	 */
 	private static int sortOrder;
 	private String query;
-
+	
+	private MenuItem mailItem;
+	private MenuItem sortItem;
+	private MenuItem searchItem;
+	
 	/**
 	 * Creates a new MovieListFragment with the Uri
 	 * WatchMeContentProvider.CONTENT_URI_MOVIES
@@ -117,16 +120,11 @@ public class MovieListFragment extends ContentListFragment {
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 
-		db = new DatabaseAdapter(getActivity().getContentResolver());
-
-		setHasOptionsMenu(true);
-		setRetainInstance(true);
-
 		final File cacheDir = getActivity().getBaseContext().getCacheDir();
 		ResponseCache.setDefault(new ImageCache(cacheDir));
 
 		/*
-		 * If any arguments where set fetch the values
+		 * If any arguments were set, fetch the values
 		 */
 		Bundle arguments = getArguments();
 		if (arguments != null) {
@@ -143,35 +141,37 @@ public class MovieListFragment extends ContentListFragment {
 		this.getListView().setOnItemLongClickListener(new OnDeleteListener());
 	}
 
-	/*
-	 * Show the Share and Sort buttons while movie list view
-	 */
-	@Override
-	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-		MenuItem sortItem = menu.findItem(R.id.menu_sort_button);
-		MenuItem shareItem = menu.findItem(R.id.menu_send_email_button);
-
-		sortItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-		shareItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-
-		// If there aren't any movies in the list, disable the "Share list"
-		// button
-		int count = new DatabaseAdapter(getActivity().getContentResolver())
-				.getMovieCount();
-
-		if (count == 0) {
-			shareItem.setEnabled(false);
-		}
-
-		super.onCreateOptionsMenu(menu, inflater);
-	}
-
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 
 		return inflater.inflate(R.layout.movie_list_fragment_view, container,
 				false);
+	}
+	
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		
+		mailItem = menu.findItem(R.id.menu_send_email_button);
+		sortItem = menu.findItem(R.id.menu_sort_button);
+		searchItem = menu.findItem(R.id.menu_search_button);
+
+		setButtonsState();
+
+		super.onCreateOptionsMenu(menu, inflater);
+	}
+	
+	private void setButtonsState() {
+		boolean existMovies = (db.getMovieCount() == 0);
+		
+		// If there are no movies make the mail, search and sort buttons disabled
+		mailItem.setEnabled(!existMovies);
+		sortItem.setEnabled(!existMovies);
+		searchItem.setEnabled(!existMovies);
+		
+		MenuUtils.setMenuIconState(mailItem);
+		MenuUtils.setMenuIconState(sortItem);
+		MenuUtils.setMenuIconState(searchItem);
 	}
 
 	@Override
@@ -223,7 +223,7 @@ public class MovieListFragment extends ContentListFragment {
 	 */
 	private void sortList() {
 		final String[] alternatives = { "Date", "Rating", "Title" };
-
+		
 		AlertDialog.Builder alertbox = new AlertDialog.Builder(getActivity());
 		alertbox.setTitle(getString(R.string.order_dialog_title));
 		alertbox.setSingleChoiceItems(alternatives, sortOrder,
@@ -313,6 +313,8 @@ public class MovieListFragment extends ContentListFragment {
 
 							db.removeMovie(movie);
 
+							setButtonsState();
+							
 							NotificationClient.cancelNotification(
 									getActivity(), movie);
 							Toast.makeText(

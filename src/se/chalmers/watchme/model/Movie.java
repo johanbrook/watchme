@@ -307,10 +307,22 @@ public class Movie implements Serializable, Notifiable {
 		this.posters.putAll(posters);
 	}
 
-	// TODO Include more in toString!
 	@Override
 	public String toString() {
-		return this.title;
+		
+		String rating = String.valueOf(this.getRating());
+		String note = this.getNote().isEmpty() ? "no note" : this.getNote();
+		String tags = this.getTags().isEmpty() ?
+				"no tags" : this.getTags().toString();
+		
+		String generatedString = "[" +
+				"ID: " + this.getId() + ", " +
+				"Title: " + this.getTitle() + ", " +
+				"Rating: " + rating + ", " +
+				"Note: " + "\"" + note + "\", " +
+				"Tags: " + tags + "]";
+		
+		return generatedString;
 	}
 
 	@Override
@@ -323,7 +335,7 @@ public class Movie implements Serializable, Notifiable {
 			return false;
 		} else {
 			Movie tmp = (Movie) o;
-			return this.title == tmp.title;
+			return this.title.equals(tmp.title);
 		}
 	}
 

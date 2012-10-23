@@ -4,7 +4,7 @@
  *  Class for showing the Android date-picker and returning the selected date
  *
  *	@author Robin Andersson
- *	@copyright (c) 2012 Robin Andersson
+ *	@copyright (c) 2012 Johan Brook, Robin Andersson, Lisa Stenberg, Mattias Henriksson
  *	@license MIT
  */
 
@@ -73,9 +73,7 @@ public class DatePickerFragment extends DialogFragment implements
 	 */
 	public void onDateSet(DatePicker view, int year, int month, int day) {
 
-		// TODO Is there a way around changing from Calendar to ints repeatedly?
 		pickedDate.set(year, month, day);
-
 		datePickerListener.setDate(pickedDate);
 	}
 
